@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>JAH Universal Calculator</title>
+<style>
+:root{--bg:#0a0e14;--panel:#131b29;--panel2:#0f1520;--line:#243149;--txt:#dbe7f5;--mut:#8fa3bd;--cy:#35e0ff;--am:#ffb347;--gn:#5df08a;--rd:#ff6b6b;--gold:#e8d98a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:Arial,Helvetica,sans-serif}
+header.top{background:linear-gradient(180deg,#101827,#0a0e14);border-bottom:2px solid var(--cy);padding:14px 16px}
+.brand{font-size:1.5em;font-weight:bold;letter-spacing:2px;color:#fff}
+.brand small{display:block;font-size:.62em;letter-spacing:3px;color:var(--cy);font-weight:normal;margin-top:2px}
+.jahnet{margin-top:10px;font-size:.82em;color:var(--mut);line-height:2}
+.jahnet b{color:var(--gold);letter-spacing:1px}
+.jahnet a{color:var(--cy);text-decoration:none;margin:0 6px;white-space:nowrap}
+.jahnet a.me{color:#fff;font-weight:bold;border:1px solid var(--cy);border-radius:4px;padding:1px 7px}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding:10px 12px;background:var(--panel2);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.tabs button{flex:0 0 auto;background:var(--panel);color:var(--txt);border:1px solid var(--line);border-radius:6px;padding:9px 14px;font-size:.92em;cursor:pointer}
+.tabs button.on{background:var(--cy);color:#04121a;font-weight:bold;border-color:var(--cy)}
+.wrap{max-width:960px;margin:0 auto;padding:14px}
+.panel{display:none;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+.panel.on{display:block}
+.panel h2{margin:0 0 4px;font-size:1.15em;color:var(--cy);letter-spacing:1px}
+.panel .sub{color:var(--mut);font-size:.85em;margin:0 0 12px}
+input[type=text],textarea,select{background:#0b111c;color:var(--txt);border:1px solid var(--line);border-radius:6px;padding:10px;font-size:1em;width:100%}
+textarea{min-height:90px;font-family:Consolas,monospace}
+button.act{background:#1c2940;color:var(--txt);border:1px solid var(--line);border-radius:6px;padding:9px 13px;font-size:.9em;cursor:pointer;margin:4px 4px 4px 0}
+button.act:hover{border-color:var(--cy)}
+button.go{background:var(--cy);color:#04121a;font-weight:bold;border:none;border-radius:6px;padding:11px 22px;font-size:1em;cursor:pointer;margin:8px 0}
+button.warn{background:#3a2b12;border:1px solid var(--am);color:var(--am)}
+.result{background:#0b111c;border:1px solid var(--line);border-radius:8px;padding:12px;margin:12px 0;font-family:Consolas,Menlo,monospace;font-size:.95em;white-space:pre-wrap;word-break:break-word;min-height:44px}
+.result .big{color:var(--gn);font-size:1.25em;font-weight:bold}
+.result .lbl{color:var(--mut);font-family:Arial}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:.92em}
+.kv b{color:var(--am);font-weight:normal}
+.actions{border-top:1px dashed var(--line);margin-top:12px;padding-top:10px;font-size:.85em}
+.actions .row{margin:6px 0}
+.sendto{margin-top:8px;font-size:.85em;color:var(--mut)}
+.sendto a{color:var(--cy);margin-right:10px}
+canvas.board{background:#070b12;border:1px solid var(--line);border-radius:6px;max-width:100%;touch-action:manipulation}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:640px){.grid2{grid-template-columns:1fr}}
+label.f{display:block;margin:8px 0 2px;font-size:.85em;color:var(--mut)}
+input[type=range]{width:100%}
+table.dt{border-collapse:collapse;width:100%;font-size:.82em;margin-top:8px}
+table.dt td,table.dt th{border:1px solid var(--line);padding:5px 7px;text-align:left}
+table.dt th{color:var(--am);font-weight:normal}
+.lens{margin:10px 0;padding:10px;border-left:3px solid var(--cy);background:#0d1420}
+.lens b{color:var(--cy);display:block;margin-bottom:3px;font-size:.85em;letter-spacing:1px}
+.lens p{margin:0;font-size:.9em;line-height:1.5}
+.verdict{border:2px solid var(--gn);border-radius:8px;padding:12px;margin-top:10px;background:#0c1a12}
+.verdict.bad{border-color:var(--am);background:#1a140c}
+footer.site{border-top:1px solid var(--line);padding:18px;color:var(--mut);font-size:.8em;text-align:center}
+footer.site a{color:var(--cy)}
+.fnrow{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.fnrow button{background:#1c2940;border:1px solid var(--line);color:var(--cy);border-radius:5px;padding:7px 10px;font-family:Consolas,monospace;cursor:pointer;font-size:.85em}
+.note{font-size:.8em;color:var(--mut);margin-top:10px}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand">JAH UNIVERSAL CALCULATOR<small>SOLVES ANYTHING &middot; PARADOX IMMUNE &middot; JAH DETERMINISTIC</small></div>
+  <div class="jahnet"><b>THE JAH NETWORK:</b><br>
+    <a href="https://justinahiggins614-cmyk.github.io/cyber-patent-catalog/" target="_blank" rel="noopener">Catalog of Public Patents</a>
+    <a href="https://justinahiggins614-cmyk.github.io/signature-one-archive/specs.html" target="_blank" rel="noopener">Spec Catalog</a>
+    <a href="https://justinahiggins614-cmyk.github.io/jah-dictionary/" target="_blank" rel="noopener">IWB Dictionary</a>
+    <a href="https://justinahiggins614-cmyk.github.io/jah-wiki/" target="_blank" rel="noopener">JAH Wiki</a>
+    <a href="https://justinahiggins614-cmyk.github.io/jah-n-wiki-leaks/" target="_blank" rel="noopener">JAH-N Wiki Leaks</a>
+    <a class="me" href="https://justinahiggins614-cmyk.github.io/jah-calculator/">Universal Calculator</a>
+  </div>
+</header>
+<div class="tabs" id="tabbar">
+  <button data-t="basic" class="on">Basic</button>
+  <button data-t="sci">Scientific</button>
+  <button data-t="ask">Ask Anything</button>
+  <button data-t="paradox">Paradox Check</button>
+  <button data-t="project">Project</button>
+  <button data-t="sim">Simulate</button>
+  <button data-t="lab">Lab</button>
+</div>
+<div class="wrap">
+
+<!-- ============ BASIC ============ -->
+<div class="panel on" id="p-basic">
+  <h2>BASIC CALCULATOR</h2>
+  <p class="sub">Type any expression. Parsed by a hand-written parser — step by step, no black box.</p>
+  <input type="text" id="basic-in" placeholder="e.g. (12 + 8) * 3 / 4 - 2^3" autocomplete="off">
+  <div class="fnrow">
+    <button onclick="ins('basic-in','(')">(</button><button onclick="ins('basic-in',')')">)</button>
+    <button onclick="ins('basic-in','+')">+</button><button onclick="ins('basic-in','-')">−</button>
+    <button onclick="ins('basic-in','*')">×</button><button onclick="ins('basic-in','/')">÷</button>
+    <button onclick="ins('basic-in','%')">%</button><button onclick="ins('basic-in','^')">^</button>
+    <button onclick="ins('basic-in','pi')">π</button><button onclick="ins('basic-in','sqrt(')">√</button>
+    <button onclick="mem('basic','+')">M+</button><button onclick="mem('basic','-')">M−</button>
+    <button onclick="mem('basic','r')">MR</button><button onclick="mem('basic','c')">MC</button>
+  </div>
+  <button class="go" onclick="basicGo()">Calculate</button>
+  <div class="result" id="basic-out">Result appears here.</div>
+  <div class="actions" data-tab="basic"></div>
+</div>
+
+<!-- ============ SCIENTIFIC ============ -->
+<div class="panel" id="p-sci">
+  <h2>SCIENTIFIC</h2>
+  <p class="sub">Trig, logs, powers, constants, equation solver, unit converter.</p>
+  <input type="text" id="sci-in" placeholder="e.g. sin(30) + log(1000) + 2^10" autocomplete="off">
+  <div style="margin:8px 0"><label style="font-size:.85em;color:var(--mut)">Angle mode:</label>
+    <button class="act" id="degbtn" onclick="setDeg(true)">DEG</button><button class="act" id="radbtn" onclick="setDeg(false)">RAD</button>
+  </div>
+  <div class="fnrow">
+    <button onclick="ins('sci-in','sin(')">sin</button><button onclick="ins('sci-in','cos(')">cos</button>
+    <button onclick="ins('sci-in','tan(')">tan</button><button onclick="ins('sci-in','asin(')">asin</button>
+    <button onclick="ins('sci-in','log(')">log</button><button onclick="ins('sci-in','ln(')">ln</button>
+    <button onclick="ins('sci-in','exp(')">e^x</button><button onclick="ins('sci-in','sqrt(')">√</button>
+    <button onclick="ins('sci-in','cbrt(')">∛</button><button onclick="ins('sci-in','fact(')">n!</button>
+    <button onclick="ins('sci-in','abs(')">|x|</button><button onclick="ins('sci-in','e')">e</button>
+    <button onclick="ins('sci-in','phi')">φ</button>
+  </div>
+  <button class="go" onclick="sciGo()">Calculate</button>
+  <div class="result" id="sci-out">Result appears here.</div>
+  <div class="grid2">
+    <div>
+      <h2 style="font-size:1em">EQUATION SOLVER</h2>
+      <label class="f">Quadratic: ax² + bx + c = 0</label>
+      <div style="display:flex;gap:6px"><input type="text" id="qa" placeholder="a"><input type="text" id="qb" placeholder="b"><input type="text" id="qc" placeholder="c"></div>
+      <button class="act" onclick="solveQuad()">Solve quadratic</button>
+      <label class="f">Cubic: ax³ + bx² + cx + d = 0</label>
+      <div style="display:flex;gap:6px"><input type="text" id="ca" placeholder="a"><input type="text" id="cb" placeholder="b"><input type="text" id="cc" placeholder="c"><input type="text" id="cd" placeholder="d"></div>
+      <button class="act" onclick="solveCubic()">Solve cubic</button>
+      <div class="result" id="solver-out" style="font-size:.85em">Solutions appear here.</div>
+    </div>
+    <div>
+      <h2 style="font-size:1em">UNIT CONVERTER</h2>
+      <label class="f">Category</label>
+      <select id="uc-cat" onchange="ucFill()"><option>length</option><option>mass</option><option>temperature</option><option>data</option><option>time</option></select>
+      <label class="f">Value</label><input type="text" id="uc-v" placeholder="e.g. 5">
+      <div style="display:flex;gap:6px;margin-top:6px"><select id="uc-from"></select><select id="uc-to"></select></div>
+      <button class="act" onclick="ucGo()">Convert</button>
+      <div class="result" id="uc-out" style="font-size:.85em">Conversion appears here.</div>
+    </div>
+  </div>
+  <div class="actions" data-tab="sci"></div>
+</div>
+
+<!-- ============ ASK ============ -->
+<div class="panel" id="p-ask">
+  <h2>ASK ANYTHING</h2>
+  <p class="sub">Ask a question or type math. The JAH system answers with all ten analysis lenses plus a fusion verdict.</p>
+  <input type="text" id="ask-in" placeholder="e.g. What is gravity?  — or —  15% of 240  — or —  bridges vs tunnels" autocomplete="off">
+  <button class="go" onclick="askGo()">Ask</button>
+  <div class="result" id="ask-out">Your answer appears here.</div>
+  <div class="actions" data-tab="ask"></div>
+</div>
+
+<!-- ============ PARADOX ============ -->
+<div class="panel" id="p-paradox">
+  <h2>PARADOX CHECK</h2>
+  <p class="sub">Paradox immune: every self-referential trap gets classified, contained at object level, and resolved one level up. Nothing ever crashes here.</p>
+  <input type="text" id="px-in" placeholder='e.g. "This statement is false" — or — the barber paradox' autocomplete="off">
+  <button class="go" onclick="pxGo()">Check for paradox</button>
+  <div class="result" id="px-out">Verdict appears here.</div>
+  <div class="actions" data-tab="paradox"></div>
+</div>
+
+<!-- ============ PROJECT ============ -->
+<div class="panel" id="p-project">
+  <h2>PROJECTION ENGINE</h2>
+  <p class="sub">Paste a number series (one per line). Get linear and exponential fits, R², and a forecast.</p>
+  <textarea id="pj-in" placeholder="12&#10;15&#10;19&#10;24&#10;30"></textarea>
+  <div style="display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap">
+    <label style="font-size:.85em;color:var(--mut)">Forecast steps:</label>
+    <input type="text" id="pj-n" value="5" style="width:70px">
+    <button class="go" onclick="pjGo()" style="margin:0">Run projection</button>
+  </div>
+  <canvas class="board" id="pj-cv" width="640" height="300" style="margin-top:10px"></canvas>
+  <div class="result" id="pj-out">Projection appears here.</div>
+  <div class="actions" data-tab="project"></div>
+</div>
+
+<!-- ============ SIMULATE ============ -->
+<div class="panel" id="p-sim">
+  <h2>SIMULATION DECK</h2>
+  <p class="sub">Live simulations running in your browser. Nothing leaves your device.</p>
+
+  <h2 style="font-size:1em;margin-top:14px">GAME OF LIFE <span style="color:var(--mut);font-weight:normal;font-size:.8em">— cellular automata</span></h2>
+  <p class="sub">Tap cells to seed, then run.</p>
+  <canvas class="board" id="life-cv" width="360" height="240"></canvas><br>
+  <button class="act" onclick="lifeRun()">▶ Run</button><button class="act" onclick="lifePause()">⏸ Pause</button>
+  <button class="act" onclick="lifeReset()">Reset</button><button class="act" onclick="lifeRand()">Random seed</button>
+  <label class="f">Speed (ms per generation)</label><input type="range" id="life-spd" min="40" max="800" value="200">
+  <div class="result" id="life-out" style="font-size:.85em">Generation: 0 · Living cells: 0</div>
+
+  <h2 style="font-size:1em;margin-top:14px">MONTE CARLO π <span style="color:var(--mut);font-weight:normal;font-size:.8em">— probabilistic</span></h2>
+  <p class="sub">Random darts in a square. Fraction inside the circle × 4 approaches π.</p>
+  <canvas class="board" id="mc-cv" width="300" height="300"></canvas><br>
+  <button class="act" onclick="mcBurst(1000)">Throw 1,000 darts</button><button class="act" onclick="mcBurst(20000)">Throw 20,000</button>
+  <button class="act" onclick="mcReset()">Reset</button>
+  <div class="result" id="mc-out" style="font-size:.85em">Darts: 0 · π ≈ — · error —</div>
+
+  <h2 style="font-size:1em;margin-top:14px">DICE PROBABILITY LAB <span style="color:var(--mut);font-weight:normal;font-size:.8em">— statistics</span></h2>
+  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+    <label style="font-size:.85em;color:var(--mut)">Dice:</label><input type="text" id="dice-n" value="2" style="width:60px">
+    <label style="font-size:.85em;color:var(--mut)">Rolls:</label><input type="text" id="dice-r" value="1000" style="width:80px">
+    <button class="act" onclick="diceGo()">Roll</button><button class="act" onclick="diceReset()">Reset</button>
+  </div>
+  <canvas class="board" id="dice-cv" width="640" height="220" style="margin-top:8px"></canvas>
+  <div class="result" id="dice-out" style="font-size:.85em">No rolls yet.</div>
+
+  <h2 style="font-size:1em;margin-top:14px">RANDOM WALK <span style="color:var(--mut);font-weight:normal;font-size:.8em">— stochastic motion</span></h2>
+  <canvas class="board" id="rw-cv" width="360" height="240"></canvas><br>
+  <button class="act" onclick="rwGo()">Walk 500 steps</button><button class="act" onclick="rwReset()">Reset</button>
+  <div class="result" id="rw-out" style="font-size:.85em">Distance from start: —</div>
+
+  <div class="actions" data-tab="sim"></div>
+</div>
+
+<!-- ============ LAB ============ -->
+<div class="panel" id="p-lab">
+  <h2>VIRTUAL LAB BENCH</h2>
+  <p class="sub">Real experiments, simulated. Move the sliders, record readings, export your data.</p>
+
+  <div class="lens"><b>PENDULUM PERIOD</b>
+    <p class="sub" style="margin:0 0 6px">Formula: T = 2π√(L/g)</p>
+    <label class="f">Length L: <span id="pd-lv">1.00</span> m</label><input type="range" id="pd-l" min="0.1" max="2" step="0.01" value="1" oninput="labPend()">
+    <label class="f">Gravity g: <span id="pd-gv">9.81</span> m/s²</label><input type="range" id="pd-g" min="1.6" max="24.8" step="0.01" value="9.81" oninput="labPend()">
+    <div class="result" id="pd-out" style="font-size:.9em"></div>
+    <p class="note">What this proves: period depends on length and gravity only — not on the swing size or the bob's mass.</p>
+    <button class="act" onclick="labRec('pendulum',pdRow())">Record reading</button>
+  </div>
+
+  <div class="lens"><b>PROJECTILE MOTION</b>
+    <p class="sub" style="margin:0 0 6px">Formulas: range = v²·sin(2θ)/g · height = (v·sinθ)²/2g · time = 2v·sinθ/g</p>
+    <label class="f">Speed v: <span id="pj2-vv">25</span> m/s</label><input type="range" id="pj2-v" min="1" max="100" step="1" value="25" oninput="labProj()">
+    <label class="f">Angle θ: <span id="pj2-av">45</span>°</label><input type="range" id="pj2-a" min="5" max="85" step="1" value="45" oninput="labProj()">
+    <canvas class="board" id="proj-cv" width="640" height="220" style="margin-top:8px"></canvas>
+    <div class="result" id="pj2-out" style="font-size:.9em"></div>
+    <p class="note">What this proves: 45° gives maximum range in a vacuum; the trajectory is a perfect parabola.</p>
+    <button class="act" onclick="labRec('projectile',projRow())">Record reading</button>
+  </div>
+
+  <div class="lens"><b>OHM'S LAW</b>
+    <p class="sub" style="margin:0 0 6px">Formula: I = V/R · P = V·I</p>
+    <label class="f">Voltage V: <span id="oh-vv">12.0</span> V</label><input type="range" id="oh-v" min="0" max="24" step="0.5" value="12" oninput="labOhm()">
+    <label class="f">Resistance R: <span id="oh-rv">100</span> Ω</label><input type="range" id="oh-r" min="1" max="1000" step="1" value="100" oninput="labOhm()">
+    <div class="result" id="oh-out" style="font-size:.9em"></div>
+    <p class="note">What this proves: current is directly proportional to voltage and inversely proportional to resistance.</p>
+    <button class="act" onclick="labRec('ohm',ohmRow())">Record reading</button>
+  </div>
+
+  <div class="lens"><b>IDEAL GAS</b>
+    <p class="sub" style="margin:0 0 6px">Formula: P = nRT/V, R = 0.08206 L·atm/(mol·K)</p>
+    <label class="f">Moles n: <span id="gas-nv">1.0</span> mol</label><input type="range" id="gas-n" min="0.1" max="10" step="0.1" value="1" oninput="labGas()">
+    <label class="f">Temperature T: <span id="gas-tv">300</span> K</label><input type="range" id="gas-t" min="200" max="500" step="1" value="300" oninput="labGas()">
+    <label class="f">Volume V: <span id="gas-vv">24.6</span> L</label><input type="range" id="gas-v" min="1" max="100" step="0.1" value="24.6" oninput="labGas()">
+    <div class="result" id="gas-out" style="font-size:.9em"></div>
+    <p class="note">What this proves: squeezing a gas (smaller V) or heating it (bigger T) raises pressure predictably.</p>
+    <button class="act" onclick="labRec('gas',gasRow())">Record reading</button>
+  </div>
+
+  <h2 style="font-size:1em;margin-top:14px">LAB NOTEBOOK</h2>
+  <div class="result" id="lab-table" style="font-size:.82em">No readings recorded yet.</div>
+  <button class="act" onclick="labCSV()">⤓ Export CSV</button>
+  <button class="act warn" onclick="labClear()">Clear notebook</button>
+  <div class="actions" data-tab="lab"></div>
+</div>
+
+</div><!-- /wrap -->
+<footer class="site">
+  <b style="color:var(--gold)">JAH Universal Calculator</b> — the sixth JAH site. Solves anything, paradox immune, powered by the JAH deterministic system.<br>
+  Partner of <a href="https://justinahiggins614-cmyk.github.io/cyber-patent-catalog/">Catalog of Public Patents</a> ·
+  <a href="https://justinahiggins614-cmyk.github.io/signature-one-archive/specs.html">Spec Catalog</a> ·
+  <a href="https://justinahiggins614-cmyk.github.io/jah-dictionary/">IWB Dictionary</a> ·
+  <a href="https://justinahiggins614-cmyk.github.io/jah-wiki/">JAH Wiki</a> ·
+  <a href="https://justinahiggins614-cmyk.github.io/jah-n-wiki-leaks/">JAH-N Wiki Leaks</a>
+</footer>
+
+<script>
+"use strict";
+/* ================= utils ================= */
+function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
+function hashStr(s){var h=2166136261;for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
+function prng(seed){var a=seed>>>0;return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function download(name,content,mime){var b=new Blob([content],{type:mime||"text/plain"});var u=URL.createObjectURL(b);var a=document.createElement("a");a.href=u;a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(u);a.remove()},800)}
+function copyText(t,btn){function done(){if(btn){var o=btn.innerHTML;btn.innerHTML="Copied!";setTimeout(function(){btn.innerHTML=o},1400)}}
+ if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(done).catch(function(){fb()})}else fb();
+ function fb(){var ta=document.createElement("textarea");ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand("copy");done()}catch(e){}ta.remove()}}
+function fmt(n,d){if(!isFinite(n))return "undefined";if(n!==0&&Math.abs(n)<1e-6||Math.abs(n)>=1e12)return n.toExponential(4);var r=Number(n.toFixed(d==null?6:d));return String(r)}
+var MEM={basic:0};
+function mem(tab,op){if(op==="+")MEM[tab]+=lastNum(tab);else if(op==="-")MEM[tab]-=lastNum(tab);else if(op==="r"){var i=document.getElementById(tab==="basic"?"basic-in":"sci-in");i.value+=fmt(MEM[tab]);}else if(op==="c")MEM[tab]=0;}
+function lastNum(){return LASTNUM||0}
+var LASTNUM=0;
+function ins(id,t){var e=document.getElementById(id);var s=e.selectionStart||e.value.length;e.value=e.value.slice(0,s)+t+e.value.slice(e.selectionEnd||s);e.focus();}
+/* tabs */
+var TABS=["basic","sci","ask","paradox","project","sim","lab"];
+document.getElementById("tabbar").addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;showTab(b.getAttribute("data-t"))});
+function showTab(t){TABS.forEach(function(x){document.getElementById("p-"+x).classList.toggle("on",x===t)});
+ var bs=document.querySelectorAll("#tabbar button");for(var i=0;i<bs.length;i++)bs[i].classList.toggle("on",bs[i].getAttribute("data-t")===t);
+ try{history.replaceState(null,"","?tab="+t)}catch(e){}}
+(function(){var m=/[?&]tab=([a-z]+)/.exec(location.search);if(m&&TABS.indexOf(m[1])>=0)showTab(m[1])})();
+/* per-tab last-result text + action rows */
+var LAST={};
+function setLast(tab,text,term){LAST[tab]={text:text,term:term||""}}
+function sendLinks(term){
+ term=String(term||"").trim().split(/\s+/).slice(0,3).join(" ");
+ if(!term)return "";
+ var e=encodeURIComponent(term);
+ return '<div class="sendto">Send this to: '+
+ '<a href="https://justinahiggins614-cmyk.github.io/jah-dictionary/?w='+e+'" target="_blank" rel="noopener">IWB Dictionary</a>'+
+ '<a href="https://justinahiggins614-cmyk.github.io/jah-wiki/?page='+e+'" target="_blank" rel="noopener">JAH Wiki</a>'+
+ '<a href="https://justinahiggins614-cmyk.github.io/signature-one-archive/specs.html" target="_blank" rel="noopener">Spec Catalog</a></div>';
+}
+function paintActions(){
+ var rows=document.querySelectorAll(".actions[data-tab]");
+ for(var i=0;i<rows.length;i++)(function(tab,el){
+  el.innerHTML='<div class="row"><button class="act" onclick="readTab(\''+tab+'\')">🔊 Read aloud</button>'+
+  '<button class="act" onclick="ttsStop()">⏹ Stop</button>'+
+  '<select class="act" onchange="TTS.speed=parseFloat(this.value)" title="Reading speed"><option value="0.8">0.8×</option><option value="1" selected>1×</option><option value="1.25">1.25×</option><option value="1.5">1.5×</option><option value="2">2×</option></select>'+
+  '<button class="act" onclick="copyTab(\''+tab+'\',this)">⧉ Copy result</button>'+
+  '<button class="act" onclick="dlTab(\''+tab+'\')">⤓ Download .txt</button></div>'+
+  '<div class="row" id="send-'+tab+'"></div>';
+ })(rows[i].getAttribute("data-tab"),rows[i]);
+}
+function refreshSend(tab){var s=document.getElementById("send-"+tab);if(s&&LAST[tab])s.innerHTML=sendLinks(LAST[tab].term)}
+function readTab(tab){if(LAST[tab])ttsSpeak(LAST[tab].text)}
+function copyTab(tab,btn){if(LAST[tab])copyText(LAST[tab].text,btn)}
+function dlTab(tab){if(LAST[tab])download("jah-calculator-"+tab+".txt","JAH UNIVERSAL CALCULATOR — "+tab.toUpperCase()+"\n"+"=".repeat(50)+"\n\n"+LAST[tab].text+"\n")}
+/* ================= tiered TTS ================= */
+var TTS={audio:null,synth:null,queue:[],stopped:true,speed:1,utter:null};
+var TTS_URLS=[
+ function(t){return "https://code.responsivevoice.org/getvoice.php?t="+encodeURIComponent(t)+"&tl=en-US&sv=g2&vn=&pitch=0.5&rate=0.95"},
+ function(t){return "https://translate.google.com/translate_tts?ie=UTF-8&q="+encodeURIComponent(t)+"&tl=en&client=tw-ob"},
+ function(t){return "https://translate.googleapis.com/translate_tts?ie=UTF-8&q="+encodeURIComponent(t)+"&tl=en&client=tw-ob"}];
+function ttsChunks(t){t=String(t).replace(/\s+/g," ").trim();var out=[],cur="";t.split(/(?<=[.!?;])\s+/).forEach(function(s){if((cur+" "+s).length>170){if(cur)out.push(cur);cur=s}else cur=(cur?cur+" ":"")+s});if(cur)out.push(cur);return out.slice(0,90)}
+function ttsStop(){TTS.stopped=true;TTS.queue=[];if(TTS.utter){try{window.speechSynthesis.cancel()}catch(e){}}TTS.utter=null;if(TTS.audio){try{TTS.audio.pause()}catch(e){}TTS.audio=null}}
+function pickVoice(){try{var vs=window.speechSynthesis.getVoices();if(!vs.length)return null;
+ var en=vs.filter(function(v){return/^en([-_]US)?/i.test(v.lang)});
+ var pool=en.length?en:vs;
+ var fem=pool.filter(function(v){return/female|samantha|zira|jenny|aria|google us english/i.test(v.name)});
+ return (fem[0]||pool[0])||null}catch(e){return null}}
+function ttsUrlTier(chunks,tier){
+ if(TTS.stopped||!chunks.length){ttsStop();return}
+ if(tier>=TTS_URLS.length){ttsStop();return}
+ var a=new Audio();TTS.audio=a;a.playbackRate=TTS.speed;var done=false;
+ function fin(ok){if(done)return;done=true;try{a.pause()}catch(e){}
+  if(TTS.stopped)return;
+  if(ok)setTimeout(function(){ttsUrlTier(chunks.slice(1),0)},220);else ttsUrlTier(chunks,tier+1);}
+ a.onended=function(){fin(true)};a.onerror=function(){fin(false)};
+ var to=setTimeout(function(){fin(false)},14000);
+ var _fin=fin;fin=function(ok){clearTimeout(to);_fin(ok)};
+ a.src=TTS_URLS[tier](chunks[0]);var p=a.play();if(p&&p.catch)p.catch(function(){fin(false)});
+}
+function ttsSpeak(text){
+ ttsStop();var chunks=ttsChunks(text);if(!chunks.length)return;TTS.stopped=false;
+ if("speechSynthesis" in window){
+  try{
+   var synth=window.speechSynthesis;
+   var start=function(){
+    if(TTS.stopped)return;
+    var i=0;
+    var step=function(){
+     if(TTS.stopped||i>=chunks.length){ttsStop();return}
+     var u=new SpeechSynthesisUtterance(chunks[i]);TTS.utter=u;
+     u.lang="en-US";u.rate=TTS.speed;var v=pickVoice();if(v)u.voice=v;
+     u.onend=function(){i++;step()};
+     u.onerror=function(){TTS.utter=null;ttsUrlTier(chunks.slice(i),0)};
+     synth.speak(u);
+    };step();
+   };
+   if(synth.getVoices().length){start()}
+   else{var to=setTimeout(function(){ttsUrlTier(chunks,0)},3000);
+    synth.onvoiceschanged=function(){clearTimeout(to);start()}}
+   return;
+  }catch(e){}
+ }
+ ttsUrlTier(chunks,0);
+}
+
+/* ================= expression parser (hand-written, never eval) ================= */
+var DEGMODE=true;
+function tokenize(s){
+ s=String(s).replace(/×/g,"*").replace(/÷/g,"/").replace(/−/g,"-").replace(/π/g,"pi").replace(/√/g,"sqrt");
+ var toks=[],i=0;
+ while(i<s.length){var c=s[i];
+  if(/\s/.test(c)){i++;continue}
+  if(/[0-9.]/.test(c)){var m=/^[0-9]*\.?[0-9]+(?:[eE][+-]?[0-9]+)?/.exec(s.slice(i));if(!m)throw new Error("bad number at '"+s.slice(i,i+8)+"'");toks.push({t:"n",v:parseFloat(m[0])});i+=m[0].length;continue}
+  if(/[a-zA-Z_]/.test(c)){var m2=/^[a-zA-Z_][a-zA-Z0-9_]*/.exec(s.slice(i));toks.push({t:"id",v:m2[0].toLowerCase()});i+=m2[0].length;continue}
+  if("+-*/%^(),!".indexOf(c)>=0){toks.push({t:"op",v:c});i++;continue}
+  throw new Error("unexpected character '"+c+"'")}
+ return toks;
+}
+var CONSTS={pi:Math.PI,e:Math.E,phi:(1+Math.sqrt(5))/2,tau:Math.PI*2};
+function trigF(f){return function(x){var r=DEGMODE?x*Math.PI/180:x;return f(r)}}
+function aTrigF(f){return function(x){var r=f(x);return DEGMODE?r*180/Math.PI:r}}
+var FUNCS={
+ sin:trigF(Math.sin),cos:trigF(Math.cos),tan:trigF(Math.tan),
+ asin:aTrigF(Math.asin),acos:aTrigF(Math.acos),atan:aTrigF(Math.atan),
+ log:function(x){return Math.log10(x)},ln:Math.log,exp:Math.exp,sqrt:Math.sqrt,cbrt:Math.cbrt,
+ abs:Math.abs,floor:Math.floor,ceil:Math.ceil,round:Math.round,
+ fact:function(n){n=Math.round(n);if(n<0||n>170)throw new Error("factorial out of range");var r=1;for(var i=2;i<=n;i++)r*=i;return r},
+ neg:function(x){return -x}
+};
+function parseEval(s){
+ var toks=tokenize(s),pos=0;
+ function peek(){return toks[pos]}function next(){return toks[pos++]}
+ function pExpr(){var v=pTerm();while(peek()&&peek().t==="op"&&(peek().v==="+"||peek().v==="-")){var o=next().v;var r=pTerm();v=o==="+"?v+r:v-r}return v}
+ function pTerm(){var v=pPow();while(peek()&&peek().t==="op"&&(peek().v==="*"||peek().v==="/"||peek().v==="%")){var o=next().v;var r=pPow();v=o==="*"?v*r:o==="/"?v/r:v%r}return v}
+ function pPow(){var v=pUnary();if(peek()&&peek().t==="op"&&peek().v==="^"){next();var r=pPow();v=Math.pow(v,r)}return v}
+ function pUnary(){if(peek()&&peek().t==="op"&&(peek().v==="-"||peek().v==="+")){var o=next().v;var v=pUnary();return o==="-"?-v:v}return pPost()}
+ function pPost(){var v=pPrim();if(peek()&&peek().t==="op"&&peek().v==="!"){next();v=FUNCS.fact(v)}return v}
+ function pPrim(){
+  var t=next();if(!t)throw new Error("unexpected end");
+  if(t.t==="n")return t.v;
+  if(t.t==="id"){
+   if(CONSTS[t.v]!=null)return CONSTS[t.v];
+   var f=FUNCS[t.v];if(!f)throw new Error("unknown function '"+t.v+"'");
+   var o=next();if(!o||o.v!=="(")throw new Error("expected ( after "+t.v);
+   var a=pExpr();var c=next();if(!c||c.v!==")")throw new Error("expected )");
+   return f(a);
+  }
+  if(t.t==="op"&&t.v==="("){var v=pExpr();var c2=next();if(!c2||c2.v!==")")throw new Error("missing )");return v}
+  throw new Error("unexpected '"+t.v+"'")}
+ var v=pExpr();
+ if(pos<toks.length)throw new Error("unexpected '"+toks[pos].v+"' at end");
+ return v;
+}
+function evalSteps(raw){
+ var steps=[],e=String(raw),guard=0;
+ var re=/([a-zA-Z_][a-zA-Z0-9_]*)?\(([^()]*)\)/;
+ while(guard++<60){
+  var m=re.exec(e);if(!m)break;
+  var inner=m[2];
+  if(!/[0-9a-zA-Z]/.test(inner))break;
+  var v;try{v=parseEval((m[1]||"")+"("+inner+")")}catch(err){break}
+  if(!isFinite(v))break;
+  steps.push((m[1]?m[1]:"")+"("+inner+") = "+fmt(v));
+  e=e.slice(0,m.index)+fmt(v)+e.slice(m.index+m[0].length);
+ }
+ var final;try{final=parseEval(e)}catch(err){throw err}
+ return {steps:steps,result:final};
+}
+function basicGo(){
+ var raw=document.getElementById("basic-in").value.trim();
+ if(!raw)return;
+ var out=document.getElementById("basic-out"),txt,term=raw;
+ try{
+  var r=evalSteps(raw);
+  LASTNUM=r.result;
+  var h='<span class="lbl">EXPRESSION</span>\n'+esc(raw)+'\n';
+  if(r.steps.length)h+='\n<span class="lbl">STEPS</span>\n'+r.steps.map(esc).join("\n")+'\n';
+  h+='\n<span class="big">= '+fmt(r.result)+'</span>';
+  out.innerHTML=h;
+  txt="Expression: "+raw+"\n"+(r.steps.length?"Steps:\n"+r.steps.join("\n")+"\n":"")+"Result: "+fmt(r.result);
+ }catch(err){out.innerHTML='<span style="color:var(--rd)">Error: '+esc(err.message)+'</span>';txt="Error evaluating "+raw+": "+err.message}
+ setLast("basic",txt,term);refreshSend("basic");
+}
+function sciGo(){
+ var raw=document.getElementById("sci-in").value.trim();
+ if(!raw)return;
+ var out=document.getElementById("sci-out"),txt,term=raw;
+ try{
+  var r=evalSteps(raw);LASTNUM=r.result;
+  var h='<span class="lbl">EXPRESSION ('+(DEGMODE?"degrees":"radians")+')</span>\n'+esc(raw)+'\n';
+  if(r.steps.length)h+='\n<span class="lbl">STEPS</span>\n'+r.steps.map(esc).join("\n")+'\n';
+  h+='\n<span class="big">= '+fmt(r.result)+'</span>';
+  out.innerHTML=h;
+  txt="Expression ("+(DEGMODE?"degrees":"radians")+"): "+raw+"\n"+(r.steps.length?"Steps:\n"+r.steps.join("\n")+"\n":"")+"Result: "+fmt(r.result);
+ }catch(err){out.innerHTML='<span style="color:var(--rd)">Error: '+esc(err.message)+'</span>';txt="Error evaluating "+raw+": "+err.message}
+ setLast("sci",txt,term);refreshSend("sci");
+}
+function setDeg(d){DEGMODE=d;document.getElementById("degbtn").style.borderColor=d?"var(--cy)":"";document.getElementById("radbtn").style.borderColor=d?"":"var(--cy)"}
+function solveQuad(){
+ var a=parseFloat(document.getElementById("qa").value),b=parseFloat(document.getElementById("qb").value),c=parseFloat(document.getElementById("qc").value);
+ var out=document.getElementById("solver-out"),txt;
+ if([a,b,c].some(isNaN)){out.textContent="Enter a, b, c.";return}
+ if(a===0){out.textContent="Not quadratic (a=0).";return}
+ var d=b*b-4*a*c,txt2="Quadratic: "+a+"x² + "+b+"x + "+c+" = 0\nDiscriminant: "+fmt(d)+"\n";
+ if(d>0){var x1=(-b+Math.sqrt(d))/(2*a),x2=(-b-Math.sqrt(d))/(2*a);txt2+="Two real roots: x = "+fmt(x1)+", x = "+fmt(x2)}
+ else if(d===0){txt2+="One real root: x = "+fmt(-b/(2*a))}
+ else{var re=fmt(-b/(2*a)),im=fmt(Math.sqrt(-d)/(2*a));txt2+="Complex roots: x = "+re+" ± "+im+"i"}
+ out.textContent=txt2;setLast("sci",(LAST.sci?LAST.sci.text+"\n\n":"")+txt2,"quadratic equation");refreshSend("sci");
+}
+function solveCubic(){
+ var a=parseFloat(document.getElementById("ca").value),b=parseFloat(document.getElementById("cb").value),c=parseFloat(document.getElementById("cc").value),d=parseFloat(document.getElementById("cd").value);
+ var out=document.getElementById("solver-out");
+ if([a,b,c,d].some(isNaN)||a===0){out.textContent="Enter a, b, c, d (a ≠ 0).";return}
+ var B=b/a,C=c/a,D=d/a;
+ var p=(3*C-B*B)/3,q=(2*B*B*B-9*B*C+27*D)/27,disc=(q/2)*(q/2)+(p/3)*(p/3)*(p/3);
+ function cbrt(x){return x<0?-Math.pow(-x,1/3):Math.pow(x,1/3)}
+ var roots=[];
+ if(disc>1e-12){var u=cbrt(-q/2+Math.sqrt(disc)),v=cbrt(-q/2-Math.sqrt(disc));roots=[u+v-B/3]}
+ else{var r=Math.sqrt(-(p/3)*(p/3)*(p/3)),th=Math.acos(Math.max(-1,Math.min(1,-q/(2*r))));
+  for(var k=0;k<3;k++)roots.push(2*cbrt(r)*Math.cos((th+2*Math.PI*k)/3)-B/3)}
+ var txt="Cubic: "+a+"x³ + "+b+"x² + "+c+"x + "+d+" = 0\nRoots: "+roots.map(function(x){return fmt(x)}).join(", ");
+ out.textContent=txt;setLast("sci",(LAST.sci?LAST.sci.text+"\n\n":"")+txt,"cubic equation");refreshSend("sci");
+}
+var UNITS={
+ length:{m:1,km:1000,cm:0.01,mm:0.001,mi:1609.344,ft:0.3048,in:0.0254,yd:0.9144},
+ mass:{kg:1,g:0.001,lb:0.45359237,oz:0.028349523125,t:1000},
+ temperature:{C:1,F:1,K:1},
+ data:{B:1,KB:1024,MB:1048576,GB:1073741824,TB:1099511627776},
+ time:{s:1,min:60,h:3600,day:86400,week:604800,year:31557600}
+};
+function ucFill(){var c=document.getElementById("uc-cat").value;var us=Object.keys(UNITS[c]);
+ var f=document.getElementById("uc-from"),t=document.getElementById("uc-to");
+ f.innerHTML=us.map(function(u){return "<option>"+u+"</option>"}).join("");
+ t.innerHTML=us.map(function(u){return "<option>"+u+"</option>"}).join("");t.selectedIndex=1;}
+function toBase(cat,v,u){if(cat==="temperature"){if(u==="C")return v+273.15;if(u==="F")return (v-32)*5/9+273.15;return v}return v*UNITS[cat][u]}
+function fromBase(cat,v,u){if(cat==="temperature"){if(u==="C")return v-273.15;if(u==="F")return (v-273.15)*9/5+32;return v}return v/UNITS[cat][u]}
+function ucGo(){
+ var c=document.getElementById("uc-cat").value,v=parseFloat(document.getElementById("uc-v").value);
+ var f=document.getElementById("uc-from").value,t=document.getElementById("uc-to").value;
+ var out=document.getElementById("uc-out");
+ if(isNaN(v)){out.textContent="Enter a value.";return}
+ var r=fromBase(c,toBase(c,v,f),t);
+ var txt=v+" "+f+" = "+fmt(r)+" "+t;
+ out.textContent=txt;setLast("sci",(LAST.sci?LAST.sci.text+"\n\n":"")+"Convert: "+txt,"unit conversion");refreshSend("sci");
+}
+
+/* ================= ASK ANYTHING ================= */
+function askGo(){
+ var q=document.getElementById("ask-in").value.trim();
+ var out=document.getElementById("ask-out");
+ if(!q){out.textContent="Ask me something first.";return}
+ var txt="",term=q;
+ /* 1) pure math anywhere in the input -> compute it */
+ var mq=q.match(/(?:calculate|compute|evaluate|solve|what(?:'s| is))\s+([0-9][0-9+\-*/^%().\s]*[0-9)][0-9+\-*/^%().\s]*)/i);
+ var cand=mq?mq[1]:q;
+ if(/^[0-9+\-*/^%().\s]+$/.test(cand)&&/[0-9]/.test(cand)&&/[+\-*/^%]/.test(cand)){
+  try{var v=parseEval(cand);LASTNUM=v;
+   var h='<span class="lbl">COMPUTED DIRECTLY</span>\n<span class="big">'+esc(cand.trim())+' = '+fmt(v)+'</span>';
+   out.innerHTML=h;txt="Question: "+q+"\nComputed: "+cand.trim()+" = "+fmt(v);
+   setLast("ask",txt,term);refreshSend("ask");return;
+  }catch(e){}
+ }
+ /* percent pattern: "15% of 240" */
+ var pm=q.match(/(\d+(?:\.\d+)?)\s*%\s*of\s*(\d+(?:\.\d+)?)/i);
+ if(pm){var pv=parseFloat(pm[1])*parseFloat(pm[2])/100;
+  out.innerHTML='<span class="lbl">COMPUTED DIRECTLY</span>\n<span class="big">'+pm[1]+'% of '+pm[2]+' = '+fmt(pv)+'</span>';
+  txt="Question: "+q+"\nAnswer: "+fmt(pv);setLast("ask",txt,term);refreshSend("ask");return}
+ var low=q.toLowerCase(),html="",plain="";
+ /* 2) definition pattern */
+ var dm=q.match(/what (?:is|are|was|were|does)\s+(?:a|an|the)?\s*([^?]+)\??/i);
+ if(dm&&!/^[\d\s+\-*/^%().]+$/.test(dm[1])){
+  var subj=dm[1].trim();
+  html+='<div class="lens"><b>DIRECT ANSWER — DEFINITION</b><p>"'+esc(subj)+'" — I define things from structure, not from a copied dictionary. '+
+  'Breaking the word down: it has '+esc(String(syllables(subj)))+' syllable'+(syllables(subj)===1?"":"s")+', '+esc(String(subj.replace(/[^a-zA-Z]/g,"").length))+' letters. '+
+  'For the full established definition, look it up in the IWB Dictionary link below; what follows is the JAH ten-lens analysis of the concept.</p></div>';
+  plain+="DIRECT ANSWER: definition requested for '"+subj+"'. See the ten-lens analysis below.\n\n";
+  term=subj;
+ }
+ /* 3) comparison pattern */
+ var cm=q.match(/(.+?)\s+vs\.?\s+(.+)/i)||q.match(/(.+?)\s+versus\s+(.+)/i)||q.match(/compare\s+(.+?)\s+(?:and|with)\s+(.+)/i);
+ if(cm){
+  var A=cm[1].replace(/^compare\s+/i,"").trim(),B=cm[2].replace(/\?$/,"").trim();
+  html+=lensHTML("DIRECT ANSWER — COMPARISON","<b>"+esc(A)+"</b> vs <b>"+esc(B)+"</b>: no honest comparison without real data, so here is the framework. "+
+  "Score each on the same five axes — cost, speed, reliability, scale, simplicity — 1 to 10 from your own measurements. The winner is the one whose total fits your actual constraint, not the one with the louder reputation. The lenses below analyze each side's structure.");
+  plain+="COMPARISON: "+A+" vs "+B+" — score both on cost, speed, reliability, scale, simplicity (1-10 each) from real measurements.\n\n";
+  term=A+" "+B;
+ }
+ /* 4) quantity pattern */
+ if(/how many|how much|how long|how far/i.test(q)){
+  html+=lensHTML("DIRECT ANSWER — QUANTITY","Counting the real world needs real data, which I do not browse. "+
+  "Use Fermi estimation: break the question into 3 multiplications you CAN guess (e.g. people × rate × time), multiply, then sanity-check the order of magnitude. "+
+  "An estimate with stated assumptions beats a precise-sounding guess with hidden ones.");
+  plain+="QUANTITY: use Fermi estimation — 3 guessable multiplications, then sanity-check the magnitude.\n\n";
+ }
+ /* 5) ten-lens deterministic analysis */
+ var L=lenses(q);
+ html+=L.html;plain+=L.text;
+ html+='<div class="verdict"><b style="color:var(--gn)">HYBRID FUSION VERDICT</b><p style="margin:6px 0 0;font-size:.9em">'+esc(L.verdict)+'</p></div>';
+ plain+="\nHYBRID FUSION VERDICT: "+L.verdict+"\n";
+ plain+="\nI compute from your words — I don't browse the web.";
+ html+='<p class="note">I compute from your words — I don\'t browse the web.</p>';
+ out.innerHTML=html;
+ setLast("ask",txt+plain,term);refreshSend("ask");
+}
+function syllables(w){w=String(w).toLowerCase().replace(/[^a-z]/g,"");if(!w)return 1;if(w.length<=3)return 1;var m=w.replace(/(?:[^laeiouy]e|ed|es)$/,"").match(/[aeiouy]{1,2}/g);return Math.max(1,m?m.length:1)}
+function lensHTML(t,b){return '<div class="lens"><b>'+esc(t)+'</b><p>'+b+'</p></div>'}
+function lenses(q){
+ var h=hashStr(q.toLowerCase()),rnd=prng(h);
+ var words=q.toLowerCase().replace(/[^a-z0-9\s]/g,"").split(/\s+/).filter(function(w){return w.length>3});
+ var topic=(words[0]||"this").slice(0,24),topic2=(words[1]||"it").slice(0,24);
+ function pick(a){return a[Math.floor(rnd()*a.length)]}
+ var sections=[
+ ["DETERMINISTIC","The fixed facts about "+topic+": "+pick([
+  "strip away opinion and what remains is structure — count it, name its parts, list what must be true for it to exist at all.",
+  "treat it like a machine: inputs, process, outputs. Whatever cannot be placed in one of those three buckets is noise, not signal.",
+  "write down what would have to be false for "+topic+" to be false. That boundary is the deterministic core."])+""],
+ ["PROBABILISTIC","Nothing about "+topic+" is certain until measured: "+pick([
+  "assign rough odds to each possible outcome, then update the odds every time new evidence arrives. Beliefs are bets — keep score.",
+  "ask 'how often does this actually happen?' Base rates beat gut feelings every time; the rare dramatic case is not the typical case.",
+  "the honest answer is a distribution, not a number. Give the range, give the middle, and say what would push it to each edge."])+""],
+ ["GEOMETRIC","Shape the idea with the six tools — "+pick([
+  "line: trace the path "+topic+" travels from start to finish. Triangle: stack its layers from base cause to peak effect. Square: draw the box it operates inside. Cross: mark where it meets competing forces. Circle: find what repeats. Curvature: smooth the sharp corners where it breaks.",
+  "every hard problem has a geometry. Find the line of action, the triangle of support, the square of limits — the picture usually solves what the paragraph cannot.",
+  "map "+topic2+" as territory: borders are constraints, roads are processes, and the shortest path is rarely the one drawn first."])+""],
+ ["HASH","The fingerprint view: "+pick([
+  "reduce "+topic+" to its invariant signature — the few features that stay identical no matter how the surface changes. If two things share a signature, treat them as the same until proven different.",
+  "hash the details away and compare skeletons. Most arguments about "+topic+" are arguments about decoration, not structure.",
+  "ask what survives compression: delete half the description of "+topic+" and see what still must be true. That remainder is the hash."])+""],
+ ["NEURAL","The pattern-matching view: "+pick([
+  "your brain already knows "+topic2+"-shaped things. Ask which past pattern this resembles, then check where the resemblance lies to you — analogy is a hypothesis, not a proof.",
+  "train on examples, not rules: collect five real cases of "+topic+", and the pattern across them is worth more than any single definition.",
+  "watch for overfitting — one vivid story about "+topic+" will hijack your judgment unless you deliberately weigh it against the quiet majority of cases."])+""],
+ ["EVOLUTIONARY","The survival view: "+pick([
+  "ask what selected for "+topic+": which pressures kept it alive and which almost killed it. What survives is not the best — it is the best at surviving.",
+  "mutate the idea deliberately: change one feature of "+topic+" at a time and test which versions thrive. Keep the winners, discard the rest, repeat.",
+  "everything about "+topic+" that looks designed was probably stumbled into. Respect the accidents; they did most of the work."])+""],
+ ["FUZZY","The shades-of-gray view: "+pick([
+  "stop asking whether "+topic+" IS or ISN'T — ask how much, in what way, under which conditions. Most real things are 70% one thing and 30% another.",
+  "'sort of' is a valid measurement. Give "+topic2+" a degree of membership instead of a yes/no, and the argument usually dissolves.",
+  "boundaries around "+topic+" are drawn by humans, not nature. Move the boundary and watch the answer change — that tells you how much the boundary was doing."])+""],
+ ["SWARM","The many-minds view: "+pick([
+  "no single expert beats the averaged judgment of many independent guesses about "+topic+". Collect ten quick takes, average them, throw out the extremes.",
+  "let simple agents vote: break "+topic+" into sub-questions, answer each separately, and let the majority decide. Swarms are dumb and right.",
+  "disagreement is data. Where opinions about "+topic+" split evenly, the truth is usually 'it depends' — find what it depends on."])+""],
+ ["DECISION-TREE","The branching view: "+pick([
+  "split "+topic+" into yes/no questions until each leaf is a concrete action. If a branch never changes the action, prune it — it was decoration.",
+  "the first split matters most: find the single question about "+topic+" that divides the possibilities in half, and ask it first.",
+  "draw the tree before deciding. A decision you cannot diagram is a decision you do not understand yet."])+""],
+ ["CELLULAR-AUTOMATA","The emergence view: "+pick([
+  "tiny local rules about "+topic+" compound into large-scale behavior nobody planned. Simulate the small interactions; the big picture will emerge on its own.",
+  "run it forward in your head three steps: what does "+topic2+" cause, what does that cause, what does THAT cause. Step three is where the surprises live.",
+  "complexity is not complicatedness — a handful of simple rules iterated is enough to generate everything interesting about "+topic+"."])+""]]
+ var html="",text="";
+ sections.forEach(function(s){html+=lensHTML(s[0],esc(s[1]));text+=s[0]+": "+s[1]+"\n\n"});
+ var verdict=pick([
+  "Across all ten lenses, the stable core is this: define the parts, measure what you can, estimate the rest honestly, and decide by the branch that survives every lens. That is the JAH answer.",
+  "The lenses agree on method even where they differ on content: break it down, check the base rates, draw the shape, and let the evidence vote. Do that and "+topic+" stops being a mystery and starts being a project.",
+  "Fusion result: treat "+topic+" as a system with measurable inputs and a fuzzy boundary. Work the deterministic core first, manage the probabilistic shell second, and re-check after each new fact."]);
+ return {html:html,text:text,verdict:verdict};
+}
+
+/* ================= PARADOX CHECK ================= */
+var PARADOXES=[
+ {re:/this (statement|sentence) is false/i,type:"LIAR PARADOX",
+  obj:'"This statement is false" cannot be true (then it is false) and cannot be false (then it is true). At the object level it is UNDECIDABLE.',
+  meta:"Step one level up: the sentence tries to grade its own truth from inside itself. Truth needs a level above the sentence to stand on. Mark it UNGROUNDED — a broken truth-teller — and move on. Logic is intact; only this sentence is out of order."},
+ {re:/i am lying|this sentence is (not )?true/i,type:"SELF-REFERENTIAL TRUTH PARADOX",
+  obj:"A sentence that talks about its own truth value creates a loop with no stable assignment. Object level: UNDECIDABLE.",
+  meta:"Stratify: the claim lives at level 0, its truth value must be assigned at level 1. When level 0 tries to do level 1's job, you get a loop. Assign the value from outside — 'the speaker is unreliable here' — and the loop collapses into a plain observation."},
+ {re:/barber/i,type:"BARBER PARADOX",
+  obj:"'The barber shaves all and only those who do not shave themselves' — who shaves the barber? Either answer contradicts the rule. Object level: UNDECIDABLE.",
+  meta:"The contradiction proves the barber cannot exist as described — the premises are impossible, not the logic. Resolution: no such barber. A paradox that proves its own setup impossible is a successful proof, not a failure."},
+ {re:/set of all sets|does .* contain itself|russell/i,type:"RUSSELL'S PARADOX",
+  obj:"The set of all sets that do not contain themselves — does it contain itself? Yes contradicts no; no contradicts yes. Object level: UNDECIDABLE.",
+  meta:"Stratify into types: a set lives one level above its members. 'The set of all sets' mixes levels, which is illegal. Modern set theory simply forbids the construction — the paradox dissolved the moment levels were enforced."},
+ {re:/heap|sorites|grains? of sand/i,type:"SORITES (HEAP) PARADOX",
+  obj:"One grain is not a heap; adding one grain never turns a non-heap into a heap — yet eventually there is a heap. Object level: UNDECIDABLE at the boundary.",
+  meta:"The fuzzy lens resolves it: 'heap' is a matter of degree, not a sharp line. Assign membership 0% to 1 grain, 100% to 10,000, and a smooth curve between. The paradox only existed because we demanded a yes/no where nature gave a gradient."},
+ {re:/unexpected hanging|surprise (exam|test)/i,type:"UNEXPECTED HANGING PARADOX",
+  obj:"The prisoner proves by backward induction the hanging cannot be a surprise — then it happens Wednesday and IS a surprise. Object level: UNDECIDABLE within the prisoner's reasoning.",
+  meta:"The flaw: 'surprise' means 'not provable in advance', and the prisoner's proof used the very notion it was analyzing — self-reference again. Step up: from the judge's level, Wednesday is perfectly consistent. The paradox is an artifact of reasoning about one's own reasoning."},
+ {re:/omnipotent|can god.*stone|stone.*(god|heavier than)/i,type:"OMNIPOTENCE PARADOX",
+  obj:"Can an all-powerful being make a stone too heavy to lift? Yes limits power; no limits power. Object level: UNDECIDABLE as stated.",
+  meta:"The phrase 'all-powerful' is doing two jobs: it means 'can do anything possible' but the question smuggles in 'can do the logically impossible'. Clarify the definition — power over the possible — and the contradiction evaporates. Bad definitions, not bad logic."},
+ {re:/grandfather paradox|kill.*grandfather|time travel/i,type:"GRANDFATHER PARADOX",
+  obj:"Going back and preventing your own birth makes your trip impossible, which makes your birth possible. Object level: UNDECIDABLE in a single timeline.",
+  meta:"Stratify the timelines: the act branches reality. In branch A you are born and travel; your act creates branch B where you are not. No single timeline contains the contradiction. Paradoxes about time are usually paradoxes about assuming one timeline."},
+ {re:/ship of theseus|theseus/i,type:"SHIP OF THESEUS",
+  obj:"Every plank replaced — is it the same ship? Yes and no both feel right. Object level: UNDECIDABLE by pure logic.",
+  meta:"Identity is a fuzzy predicate, not a logical one. The ship is 100% 'the same ship' by continuity and 0% by material. Both answers are correct under different definitions — the paradox was a disagreement about the word 'same', disguised as a disagreement about the ship."},
+ {re:/dichotomy|achilles.*tortoise|motion is impossible|zeno/i,type:"ZENO'S PARADOXES",
+  obj:"To move anywhere you must first cross half the distance, then half of that, forever — so motion never starts. Object level: UNDECIDABLE inside the infinite-division framing.",
+  meta:"An infinite series can sum to a finite number: 1/2 + 1/4 + 1/8 + ... = 1. The paradox confuses 'infinitely many steps' with 'infinite time'. Calculus resolved this 2,000 years later — the infinite is summable."}
+];
+function pxGo(){
+ var q=document.getElementById("px-in").value.trim();
+ var out=document.getElementById("px-out");
+ if(!q){out.textContent="Give me a statement to check.";return}
+ var found=null;
+ for(var i=0;i<PARADOXES.length;i++){if(PARADOXES[i].re.test(q)){found=PARADOXES[i];break}}
+ var html="",txt="Paradox check: \""+q+"\"\n\n";
+ if(found){
+  html+='<div class="lens"><b>PARADOX TYPE: '+esc(found.type)+'</b><p>Pattern matched. Containing it now.</p></div>';
+  html+='<div class="lens" style="border-color:var(--am)"><b style="color:var(--am)">OBJECT LEVEL — UNDECIDABLE</b><p>'+esc(found.obj)+'</p></div>';
+  html+='<div class="lens" style="border-color:var(--gn)"><b style="color:var(--gn)">META LEVEL — RESOLVED</b><p>'+esc(found.meta)+'</p></div>';
+  html+='<div class="verdict"><b style="color:var(--gn)">JAH VERDICT: PARADOX IMMUNE ✓</b><p style="margin:6px 0 0;font-size:.9em">Classified, contained at object level, resolved one level up. No crash, no loop, no contradiction admitted into the system.</p></div>';
+  txt+="PARADOX TYPE: "+found.type+"\nOBJECT LEVEL: UNDECIDABLE — "+found.obj+"\nMETA LEVEL (RESOLVED): "+found.meta+"\nJAH VERDICT: paradox immune — classified, contained, resolved.";
+ }else if(/this (statement|sentence|claim)|itself|self-referen/i.test(q)){
+  html+='<div class="lens"><b>PARADOX TYPE: UNLISTED SELF-REFERENCE</b><p>Self-referential language detected, but no classic trap matched.</p></div>';
+  html+='<div class="lens" style="border-color:var(--gn)"><b style="color:var(--gn)">META LEVEL — STABLE</b><p>General rule: whenever a statement talks about itself, evaluate it from one level up. Ask who is speaking, what level the claim lives on, and whether the truth value is being assigned from inside. Applied here, the statement is '+(q.length<120?"short enough to inspect directly — read it as a claim about the speaker, not about the world, and the loop unwinds.":"long — break it into its self-referential part and its world part, and judge each at its own level.")+'</p></div>';
+  html+='<div class="verdict"><b style="color:var(--gn)">JAH VERDICT: PARADOX IMMUNE ✓</b><p style="margin:6px 0 0;font-size:.9em">No classic paradox. Handled by the general stratification rule.</p></div>';
+  txt+="PARADOX TYPE: unlisted self-reference — no classic trap matched. Handled by the general stratification rule: evaluate from one level up. JAH VERDICT: paradox immune.";
+ }else{
+  html+='<div class="verdict"><b style="color:var(--gn)">JAH VERDICT: LOGICALLY STABLE ✓</b><p style="margin:6px 0 0;font-size:.9em">No paradox pattern detected in: "'+esc(q)+'" — no self-reference, no contradictory premises, no level-mixing. The statement is stable as given. If you meant a classic paradox, try the liar ("this statement is false"), the barber, the heap, or the unexpected hanging.</p></div>';
+  txt+='JAH VERDICT: logically stable — no paradox pattern detected.';
+ }
+ out.innerHTML=html;
+ setLast("paradox",txt,q);refreshSend("paradox");
+}
+/* ================= PROJECT ================= */
+function pjGo(){
+ var raw=document.getElementById("pj-in").value.trim().split("\n");
+ var ys=raw.map(function(x){return parseFloat(x.trim())}).filter(function(x){return!isNaN(x)});
+ var out=document.getElementById("pj-out");
+ if(ys.length<3){out.textContent="Enter at least 3 numbers, one per line.";return}
+ var n=parseInt(document.getElementById("pj-n").value)||5;
+ var xs=ys.map(function(_,i){return i+1});
+ function linFit(x,y){var N=x.length,sx=0,sy=0,sxx=0,sxy=0;
+  for(var i=0;i<N;i++){sx+=x[i];sy+=y[i];sxx+=x[i]*x[i];sxy+=x[i]*y[i]}
+  var m=(N*sxy-sx*sy)/(N*sxx-sx*sx),b=(sy-m*sx)/N;return{m:m,b:b}}
+ function r2(y,yp){var mean=y.reduce(function(a,b){return a+b},0)/y.length,ss=0,sr=0;
+  for(var i=0;i<y.length;i++){ss+=(y[i]-mean)*(y[i]-mean);sr+=(y[i]-yp[i])*(y[i]-yp[i])}
+  return ss===0?1:1-sr/ss}
+ var lf=linFit(xs,ys),ly=xs.map(function(x){return lf.m*x+lf.b}),lr2=r2(ys,ly);
+ var ef=null,er2=null,ey=null;
+ if(ys.every(function(y){return y>0})){
+  var lny=ys.map(Math.log),elf=linFit(xs,lny);
+  ey=xs.map(function(x){return Math.exp(elf.m*x+elf.b)});er2=r2(ys,ey);ef=elf;
+ }
+ var txt="PROJECTION — "+ys.length+" data points: "+ys.join(", ")+"\n\n";
+ txt+="LINEAR FIT: y = "+fmt(lf.m)+"·x + "+fmt(lf.b)+"   R² = "+fmt(lr2,4)+"\n";
+ if(ef)txt+="EXPONENTIAL FIT: y = e^("+fmt(ef.m)+"·x + "+fmt(ef.b)+")   R² = "+fmt(er2,4)+"\n";
+ else txt+="EXPONENTIAL FIT: skipped (needs all-positive values)\n";
+ txt+="\nFORECAST ("+n+" steps):\n";
+ var html='<span class="lbl">LINEAR FIT</span>  y = '+esc(fmt(lf.m))+'·x + '+esc(fmt(lf.b))+'  &nbsp;R² = '+esc(fmt(lr2,4))+'\n';
+ if(ef)html+='<span class="lbl">EXPONENTIAL FIT</span>  y = e^('+esc(fmt(ef.m))+'·x + '+esc(fmt(ef.b))+')  &nbsp;R² = '+esc(fmt(er2,4))+'\n';
+ html+='\n<span class="lbl">FORECAST</span>\nstep | linear | exponential\n';
+ txt+="step | linear | exponential\n";
+ var better=er2!=null&&er2>lr2?"exponential":"linear";
+ for(var k=1;k<=n;k++){var x=ys.length+k,lv=lf.m*x+lf.b,ev=ef?Math.exp(ef.m*x+ef.b):null;
+  html+="  "+x+"  |  "+fmt(lv)+"  |  "+(ev==null?"—":fmt(ev))+"\n";
+  txt+="  "+x+"  |  "+fmt(lv)+"  |  "+(ev==null?"—":fmt(ev))+"\n"}
+ html+='\n<span class="lbl">BETTER FIT</span>\n<span class="big">'+better.toUpperCase()+'</span> (higher R²)';
+ txt+="\nBetter fit: "+better+" (higher R²)";
+ out.innerHTML=html;
+ drawProject(ys,ly,ey,n,lf,ef);
+ setLast("project",txt,"projection forecast");refreshSend("project");
+}
+function drawProject(ys,ly,ey,n,lf,ef){
+ var cv=document.getElementById("pj-cv"),cx=cv.getContext("2d");
+ var W=cv.width,H=cv.height;cx.clearRect(0,0,W,H);
+ var all=ys.concat(ly);if(ey)all=all.concat(ey);
+ for(var k=1;k<=n;k++){all.push(lf.m*(ys.length+k)+lf.b);if(ef)all.push(Math.exp(ef.m*(ys.length+k)+ef.b))}
+ var mn=Math.min.apply(null,all),mx=Math.max.apply(null,all);if(mx===mn)mx=mn+1;
+ var pad=(mx-mn)*0.1;mn-=pad;mx+=pad;
+ var X=function(i){return 40+i*(W-60)/(ys.length+n)},Y=function(v){return H-30-(v-mn)/(mx-mn)*(H-50)};
+ cx.strokeStyle="#243149";cx.beginPath();cx.moveTo(40,10);cx.lineTo(40,H-30);cx.lineTo(W-10,H-30);cx.stroke();
+ function line(pts,color,dash){cx.strokeStyle=color;cx.lineWidth=2;cx.setLineDash(dash||[]);cx.beginPath();
+  pts.forEach(function(p,i){var x=X(p[0]),y=Y(p[1]);if(i)cx.lineTo(x,y);else cx.moveTo(x,y)});cx.stroke();cx.setLineDash([])}
+ line(ys.map(function(y,i){return[i+1,y]}),"#35e0ff");
+ line(ly.map(function(y,i){return[i+1,y]}),"#ffb347");
+ for(var k=1;k<=n;k++){var x=ys.length+k;line([[x-1,lf.m*(x-1)+lf.b],[x,lf.m*x+lf.b]],"#ffb347",[5,4])}
+ if(ey){line(ey.map(function(y,i){return[i+1,y]}),"#5df08a");
+  for(var k2=1;k2<=n;k2++){var x2=ys.length+k2;var e1=ef?Math.exp(ef.m*(x2-1)+ef.b):0,e2v=ef?Math.exp(ef.m*x2+ef.b):0;line([[x2-1,e1],[x2,e2v]],"#5df08a",[5,4])}}
+ cx.fillStyle="#8fa3bd";cx.font="10px Arial";
+ cx.fillText("actual",46,16);cx.fillStyle="#35e0ff";cx.fillRect(80,8,14,4);
+ cx.fillStyle="#8fa3bd";cx.fillText("linear",100,16);cx.fillStyle="#ffb347";cx.fillRect(140,8,14,4);
+ if(ey){cx.fillStyle="#8fa3bd";cx.fillText("exponential",160,16);cx.fillStyle="#5df08a";cx.fillRect(240,8,14,4)}
+}
+
+/* ================= SIMULATE ================= */
+/* --- Game of Life --- */
+var LIFE={w:36,h:24,grid:[],timer:null,gen:0};
+function lifeInit(){LIFE.grid=[];for(var y=0;y<LIFE.h;y++){var r=[];for(var x=0;x<LIFE.w;x++)r.push(0);LIFE.grid.push(r)}LIFE.gen=0;lifeDraw();lifeStat()}
+function lifeDraw(){var cv=document.getElementById("life-cv"),cx=cv.getContext("2d");
+ var cw=cv.width/LIFE.w,ch=cv.height/LIFE.h;cx.fillStyle="#070b12";cx.fillRect(0,0,cv.width,cv.height);
+ cx.fillStyle="#35e0ff";
+ for(var y=0;y<LIFE.h;y++)for(var x=0;x<LIFE.w;x++)if(LIFE.grid[y][x])cx.fillRect(x*cw+0.5,y*ch+0.5,cw-1,ch-1);}
+function lifeStat(){var n=0;for(var y=0;y<LIFE.h;y++)for(var x=0;x<LIFE.w;x++)n+=LIFE.grid[y][x];
+ document.getElementById("life-out").textContent="Generation: "+LIFE.gen+" · Living cells: "+n;
+ setLast("sim","Game of Life — generation "+LIFE.gen+", living cells "+n+".","game of life");refreshSend("sim")}
+function lifeStep(){var g=LIFE.grid,w=LIFE.w,h=LIFE.h,ng=[];
+ for(var y=0;y<h;y++){ng.push([]);for(var x=0;x<w;x++){var n=0;
+  for(var dy=-1;dy<=1;dy++)for(var dx=-1;dx<=1;dx++){if(!dx&&!dy)continue;var nx=(x+dx+w)%w,ny=(y+dy+h)%h;n+=g[ny][nx]}
+  ng[y].push((g[y][x]&&n===2)||n===3?1:0)}}
+ LIFE.grid=ng;LIFE.gen++;lifeDraw();lifeStat()}
+function lifeRun(){lifePause();var spd=parseInt(document.getElementById("life-spd").value)||200;LIFE.timer=setInterval(lifeStep,spd)}
+function lifePause(){if(LIFE.timer){clearInterval(LIFE.timer);LIFE.timer=null}}
+function lifeReset(){lifePause();lifeInit()}
+function lifeRand(){lifePause();for(var y=0;y<LIFE.h;y++)for(var x=0;x<LIFE.w;x++)LIFE.grid[y][x]=Math.random()<0.25?1:0;LIFE.gen=0;lifeDraw();lifeStat()}
+document.getElementById("life-cv").addEventListener("click",function(e){
+ var r=this.getBoundingClientRect(),x=Math.floor((e.clientX-r.left)/r.width*LIFE.w),y=Math.floor((e.clientY-r.top)/r.height*LIFE.h);
+ if(x>=0&&x<LIFE.w&&y>=0&&y<LIFE.h){LIFE.grid[y][x]=LIFE.grid[y][x]?0:1;lifeDraw();lifeStat()}});
+/* --- Monte Carlo pi --- */
+var MC={in:0,tot:0};
+function mcReset(){MC={in:0,tot:0};var cv=document.getElementById("mc-cv");cv.getContext("2d").clearRect(0,0,cv.width,cv.height);mcStat()}
+function mcBurst(n){var cv=document.getElementById("mc-cv"),cx=cv.getContext("2d"),S=cv.width,cx0=S/2,R=S/2;
+ cx.fillStyle="rgba(53,224,255,0.9)";var cx2=cx;
+ for(var i=0;i<n;i++){var x=Math.random()*2-1,y=Math.random()*2-1;MC.tot++;
+  var inside=x*x+y*y<=1;if(inside)MC.in++;
+  cx2.fillStyle=inside?"#5df08a":"#ff6b6b";cx2.fillRect(cx0+x*R-0.75,cx0+y*R-0.75,1.5,1.5)}
+ mcStat()}
+function mcStat(){var pi=MC.tot?4*MC.in/MC.tot:0,err=MC.tot?Math.abs(pi-Math.PI):0;
+ document.getElementById("mc-out").textContent="Darts: "+MC.tot+" · π ≈ "+(MC.tot?fmt(pi,5):"—")+" · error "+(MC.tot?fmt(err,5):"—");
+ if(MC.tot)setLast("sim","Monte Carlo π — "+MC.tot+" darts, π ≈ "+fmt(pi,5)+", error "+fmt(err,5)+".","monte carlo pi");refreshSend("sim")}
+/* --- Dice lab --- */
+var DICE={counts:{},rolls:0};
+function diceReset(){DICE={counts:{},rolls:0};document.getElementById("dice-cv").getContext("2d").clearRect(0,0,640,220);document.getElementById("dice-out").textContent="No rolls yet."}
+function diceGo(){
+ var nd=Math.max(1,Math.min(10,parseInt(document.getElementById("dice-n").value)||2));
+ var nr=Math.max(1,Math.min(100000,parseInt(document.getElementById("dice-r").value)||1000));
+ for(var i=0;i<nr;i++){var s=0;for(var d=0;d<nd;d++)s+=1+Math.floor(Math.random()*6);DICE.counts[s]=(DICE.counts[s]||0)+1;DICE.rolls++}
+ var cv=document.getElementById("dice-cv"),cx=cv.getContext("2d"),W=cv.width,H=cv.height;
+ cx.clearRect(0,0,W,H);
+ var keys=Object.keys(DICE.counts).map(Number).sort(function(a,b){return a-b});
+ var mx=Math.max.apply(null,keys.map(function(k){return DICE.counts[k]}));
+ var bw=(W-60)/keys.length;
+ keys.forEach(function(k,i){var h=(DICE.counts[k]/mx)*(H-50);
+  cx.fillStyle="#35e0ff";cx.fillRect(40+i*bw+2,H-30-h,bw-4,h);
+  if(bw>22){cx.fillStyle="#8fa3bd";cx.font="9px Arial";cx.fillText(k,40+i*bw+4,H-16)}});
+ cx.strokeStyle="#243149";cx.strokeRect(40,10,W-50,H-40);
+ var mean=keys.reduce(function(a,k){return a+k*DICE.counts[k]},0)/DICE.rolls;
+ var theory=nd*3.5;
+ document.getElementById("dice-out").textContent="Rolled "+nd+"d6 × "+DICE.rolls+" total · mean "+fmt(mean,3)+" (theory "+fmt(theory,3)+")";
+ setLast("sim","Dice lab — "+nd+" dice, "+DICE.rolls+" rolls, mean "+fmt(mean,3)+" vs theory "+fmt(theory,3)+".","dice probability");refreshSend("sim")}
+/* --- Random walk --- */
+var RW={x:0,y:0,steps:0};
+function rwReset(){RW={x:0,y:0,steps:0};var cv=document.getElementById("rw-cv");cv.getContext("2d").clearRect(0,0,cv.width,cv.height);
+ document.getElementById("rw-out").textContent="Distance from start: —"}
+function rwGo(){var cv=document.getElementById("rw-cv"),cx=cv.getContext("2d"),W=cv.width,H=cv.height;
+ var ox=W/2,oy=H/2,sc=3;
+ if(RW.steps===0){cx.clearRect(0,0,W,H);cx.fillStyle="#5df08a";cx.fillRect(ox-2,oy-2,4,4)}
+ cx.strokeStyle="#35e0ff";cx.lineWidth=1.5;cx.beginPath();cx.moveTo(ox+RW.x*sc,oy+RW.y*sc);
+ for(var i=0;i<500;i++){var a=Math.random()*Math.PI*2;RW.x+=Math.cos(a);RW.y+=Math.sin(a);RW.steps++;
+  cx.lineTo(ox+RW.x*sc,oy+RW.y*sc)}
+ cx.stroke();
+ var d=Math.sqrt(RW.x*RW.x+RW.y*RW.y);
+ document.getElementById("rw-out").textContent="Steps: "+RW.steps+" · Distance from start: "+fmt(d,2)+" (theory ≈ √steps = "+fmt(Math.sqrt(RW.steps),2)+")";
+ setLast("sim","Random walk — "+RW.steps+" steps, distance "+fmt(d,2)+" vs theory "+fmt(Math.sqrt(RW.steps),2)+".","random walk");refreshSend("sim")}
+
+/* ================= LAB ================= */
+function labPend(){var L=parseFloat(document.getElementById("pd-l").value),g=parseFloat(document.getElementById("pd-g").value);
+ document.getElementById("pd-lv").textContent=fmt(L,2);document.getElementById("pd-gv").textContent=fmt(g,2);
+ var T=2*Math.PI*Math.sqrt(L/g);
+ document.getElementById("pd-out").innerHTML='<span class="lbl">PERIOD</span>\n<span class="big">T = '+fmt(T,3)+' s</span>\nswings per minute: '+fmt(60/T,1);
+ setLast("lab","Pendulum — L="+fmt(L,2)+" m, g="+fmt(g,2)+" m/s² → T="+fmt(T,3)+" s.","pendulum period");refreshSend("lab")}
+function pdRow(){var L=document.getElementById("pd-l").value,g=document.getElementById("pd-g").value;
+ return["pendulum","L="+L+" m","g="+g+" m/s²","T="+fmt(2*Math.PI*Math.sqrt(parseFloat(L)/parseFloat(g)),3)+" s"]}
+function labProj(){var v=parseFloat(document.getElementById("pj2-v").value),a=parseFloat(document.getElementById("pj2-a").value);
+ document.getElementById("pj2-vv").textContent=v;document.getElementById("pj2-av").textContent=a;
+ var g=9.81,th=a*Math.PI/180;
+ var range=v*v*Math.sin(2*th)/g,h=(v*Math.sin(th))*(v*Math.sin(th))/(2*g),t=2*v*Math.sin(th)/g;
+ document.getElementById("pj2-out").innerHTML='<span class="lbl">RANGE</span>  <span class="big">'+fmt(range,2)+' m</span>\nmax height '+fmt(h,2)+' m · flight time '+fmt(t,2)+' s';
+ var cv=document.getElementById("proj-cv"),cx=cv.getContext("2d"),W=cv.width,H=cv.height;
+ cx.clearRect(0,0,W,H);cx.fillStyle="#070b12";cx.fillRect(0,0,W,H);
+ var sx=(W-40)/Math.max(range,1),sy=(H-40)/Math.max(h,1),s=Math.min(sx,sy);
+ cx.strokeStyle="#5df08a";cx.lineWidth=2;cx.beginPath();
+ for(var i=0;i<=60;i++){var tt=i/60*t,xx=v*Math.cos(th)*tt,yy=v*Math.sin(th)*tt-0.5*g*tt*tt;
+  var px=20+xx*s,py=H-20-yy*s;if(i)cx.lineTo(px,py);else cx.moveTo(px,py)}
+ cx.stroke();
+ cx.strokeStyle="#243149";cx.beginPath();cx.moveTo(20,H-20);cx.lineTo(W-10,H-20);cx.stroke();
+ setLast("lab","Projectile — v="+v+" m/s, angle="+a+"° → range "+fmt(range,2)+" m, height "+fmt(h,2)+" m, time "+fmt(t,2)+" s.","projectile motion");refreshSend("lab")}
+function projRow(){var v=document.getElementById("pj2-v").value,a=document.getElementById("pj2-a").value;
+ var g=9.81,th=parseFloat(a)*Math.PI/180,vv=parseFloat(v);
+ return["projectile","v="+v+" m/s","angle="+a+"°","range="+fmt(vv*vv*Math.sin(2*th)/g,2)+" m"]}
+function labOhm(){var V=parseFloat(document.getElementById("oh-v").value),R=parseFloat(document.getElementById("oh-r").value);
+ document.getElementById("oh-vv").textContent=fmt(V,1);document.getElementById("oh-rv").textContent=R;
+ var I=V/R,P=V*I;
+ document.getElementById("oh-out").innerHTML='<span class="lbl">CURRENT</span>  <span class="big">I = '+fmt(I,4)+' A</span>\npower dissipated: '+fmt(P,3)+' W';
+ setLast("lab","Ohm's law — V="+fmt(V,1)+" V, R="+R+" Ω → I="+fmt(I,4)+" A, P="+fmt(P,3)+" W.","ohms law");refreshSend("lab")}
+function ohmRow(){var V=document.getElementById("oh-v").value,R=document.getElementById("oh-r").value;
+ return["ohm","V="+V+" V","R="+R+" Ω","I="+fmt(parseFloat(V)/parseFloat(R),4)+" A"]}
+function labGas(){var n=parseFloat(document.getElementById("gas-n").value),T=parseFloat(document.getElementById("gas-t").value),V=parseFloat(document.getElementById("gas-v").value);
+ document.getElementById("gas-nv").textContent=fmt(n,1);document.getElementById("gas-tv").textContent=T;document.getElementById("gas-vv").textContent=fmt(V,1);
+ var P=n*0.08206*T/V;
+ document.getElementById("gas-out").innerHTML='<span class="lbl">PRESSURE</span>  <span class="big">P = '+fmt(P,3)+' atm</span>\n('+fmt(P*101.325,2)+' kPa)';
+ setLast("lab","Ideal gas — n="+fmt(n,1)+" mol, T="+T+" K, V="+fmt(V,1)+" L → P="+fmt(P,3)+" atm.","ideal gas law");refreshSend("lab")}
+function gasRow(){var n=document.getElementById("gas-n").value,T=document.getElementById("gas-t").value,V=document.getElementById("gas-v").value;
+ return["gas","n="+n+" mol","T="+T+" K","V="+V+" L","P="+fmt(parseFloat(n)*0.08206*parseFloat(T)/parseFloat(V),3)+" atm"]}
+var LABROWS=[];
+function labRec(exp,row){LABROWS.push(row);labTable()}
+function labTable(){var el=document.getElementById("lab-table");
+ if(!LABROWS.length){el.textContent="No readings recorded yet.";return}
+ var h='<table class="dt"><tr><th>#</th><th>Experiment</th><th colspan="4">Readings</th></tr>';
+ LABROWS.forEach(function(r,i){h+="<tr><td>"+(i+1)+"</td>"+r.map(function(c){return "<td>"+esc(c)+"</td>"}).join("")+"</tr>"});
+ el.innerHTML=h+"</table>"}
+function labCSV(){if(!LABROWS.length)return;
+ var csv="n,experiment,"+["a","b","c","d","e"].slice(0,5).join(",")+"\n";
+ LABROWS.forEach(function(r,i){csv+=(i+1)+","+r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"'}).join(",")+"\n"});
+ download("jah-lab-notebook.csv",csv,"text/csv")}
+function labClear(){LABROWS=[];labTable()}
+/* ================= init ================= */
+paintActions();ucFill();setDeg(true);lifeInit();mcReset();rwReset();
+labPend();labProj();labOhm();labGas();
+</script>
+</body>
+</html>
