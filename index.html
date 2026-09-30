@@ -451,7 +451,7 @@ function ttsSpeak(text){
 /* ================= expression parser (hand-written, never eval) ================= */
 var DEGMODE=true;
 function tokenize(s){
- s=String(s).replace(/×/g,"*").replace(/÷/g,"/").replace(/−/g,"-").replace(/π/g,"pi").replace(/√/g,"sqrt");
+ s=String(s).replace(/×/g,"*").replace(/÷/g,"/").replace(/−/g,"-").replace(/π/g,"pi").replace(/√/g,"sqrt(");
  var toks=[],i=0;
  while(i<s.length){var c=s[i];
   if(/\s/.test(c)){i++;continue}
@@ -511,8 +511,9 @@ function evalSteps(raw){
  var final;try{final=parseEval(e)}catch(err){throw err}
  return {steps:steps,result:final};
 }
+function closeParens(x){var o=0;for(var i=0;i<x.length;i++){if(x[i]==="("||x[i]==="√")o++;else if(x[i]===")")o--}while(o-->0)x+=")";return x}
 function basicGo(){
- var raw=document.getElementById("basic-in").value.trim().replace(/=+$/,"");
+ var raw=closeParens(document.getElementById("basic-in").value.trim().replace(/=+$/,""));
  if(!raw)return;
  var out=document.getElementById("basic-out"),txt,term=raw;
  try{
@@ -527,7 +528,7 @@ function basicGo(){
  setLast("basic",txt,term);refreshSend("basic");
 }
 function sciGo(){
- var raw=document.getElementById("sci-in").value.trim().replace(/=+$/,"");
+ var raw=closeParens(document.getElementById("sci-in").value.trim().replace(/=+$/,""));
  if(!raw)return;
  var out=document.getElementById("sci-out"),txt,term=raw;
  try{
@@ -596,10 +597,10 @@ function askGo(){
  if(!q){out.textContent="Ask me something first.";return}
  var txt="",term=q;
  /* 1) pure math anywhere in the input -> compute it */
- var mq=q.match(/(?:calculate|compute|evaluate|solve|what(?:'s| is))\s+([0-9][0-9+\-*/^%().\s]*[0-9)][0-9+\-*/^%().\s]*)/i);
+ var mq=q.match(/(?:calculate|compute|evaluate|solve|what(?:'s| is))\s+([(0-9][0-9+\-*/^%().\s]*[0-9)][0-9+\-*/^%().\s]*)/i);
  var cand=mq?mq[1]:q;
  if(/^[0-9+\-*/^%().\s]+$/.test(cand)&&/[0-9]/.test(cand)&&/[+\-*/^%]/.test(cand)){
-  try{var v=parseEval(cand);LASTNUM=v;
+  try{var v=parseEval(closeParens(cand));LASTNUM=v;
    var h='<span class="lbl">COMPUTED DIRECTLY</span>\n<span class="big">'+esc(cand.trim())+' = '+fmt(v)+'</span>';
    out.innerHTML=h;txt="Question: "+q+"\nComputed: "+cand.trim()+" = "+fmt(v);
    setLast("ask",txt,term);refreshSend("ask");return;
@@ -1001,7 +1002,7 @@ function eqSearch(){
  eqLoadIndex().then(function(ix){
   EQCUR=ix.filter(function(e){
    if(ty&&e.y!==ty)return false;
-   if(q&&(e.t.toLowerCase().indexOf(q)<0&&e.id.toLowerCase().indexOf(q)<0))return false;
+   if(q&&(e.t.toLowerCase().indexOf(q)<0&&e.id.toLowerCase().indexOf(q)<0&&e.y.toLowerCase().indexOf(q)<0))return false;
    return true;
   });
   EQSHOWN=0;
