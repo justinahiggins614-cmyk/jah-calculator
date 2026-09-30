@@ -360,7 +360,9 @@ function showTab(t){TABS.forEach(function(x){document.getElementById("p-"+x).cla
 var LAST={};
 function setLast(tab,text,term){LAST[tab]={text:text,term:term||""}}
 function recGet(){try{return JSON.parse(localStorage.getItem("jah_calc_record")||"[]")}catch(e){return[]}}
+var REC_ARMED=false; // record only real user solves, not page-load defaults
 function recPush(tab,text){
+ if(!REC_ARMED)return;
  text=String(text||"").trim();if(!text)return;
  try{
   var r=recGet();
@@ -1056,6 +1058,7 @@ function eqDl(){var r=eqCurRec();if(r)download(r.id+".txt",eqRecText(r)+"\n")}
 /* ================= init ================= */
 paintActions();ucFill();setDeg(true);lifeInit();mcReset();rwReset();
 labPend();labProj();labOhm();labGas();
+REC_ARMED=true;
 </script>
 </body>
 </html>
