@@ -419,13 +419,27 @@ def save_state(st):
 
 
 def append_index(records, chunk_no):
+    # Single-member gzip, written atomically: appending a new gzip member per
+    # chunk breaks DecompressionStream in browsers ("trailing junk").
     idx_path = os.path.join(IDXDIR, 'eq.idx.json.gz')
-    mode = 'ab' if os.path.exists(idx_path) else 'wb'
-    with gzip.open(idx_path, mode) as f:
-        for rec in records:
-            f.write((json.dumps({'id': rec['id'], 't': rec['title'],
+    lines = []
+    if os.path.exists(idx_path):
+        with gzip.open(idx_path, 'rt', encoding='utf-8') as f:
+            lines = [l for l in f.read().split('\n') if l]
+    seen = set()
+    for l in lines:
+        try: seen.add(json.loads(l)['id'])
+        except Exception: pass
+    for rec in records:
+        if rec['id'] in seen: continue
+        seen.add(rec['id'])
+        lines.append(json.dumps({'id': rec['id'], 't': rec['title'],
                                  'y': rec['type'], 'c': chunk_no},
-                                ensure_ascii=False) + '\n').encode('utf-8'))
+                                ensure_ascii=False))
+    tmp = idx_path + '.tmp'
+    with gzip.open(tmp, 'wt', encoding='utf-8') as f:
+        f.write('\n'.join(lines) + '\n')
+    os.replace(tmp, idx_path)
 
 
 def run(count):
