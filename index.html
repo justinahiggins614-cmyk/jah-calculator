@@ -171,6 +171,7 @@ footer.site a{color:var(--cy)}
   <p class="sub">Ask a question or type math. The JAH system answers with all ten analysis lenses plus a fusion verdict.</p>
   <input type="text" id="ask-in" placeholder="e.g. What is gravity?  — or —  15% of 240  — or —  bridges vs tunnels" autocomplete="off">
   <button class="go" onclick="askGo()">Ask</button>
+  <div style="margin:2px 0 0"><button class="act" onclick="readAsk()">🔊 Read answer aloud</button><button class="act" onclick="ttsStop()">⏹ Stop</button></div>
   <div class="result" id="ask-out">Your answer appears here.</div>
   <div class="actions" data-tab="ask"></div>
 </div>
@@ -395,6 +396,7 @@ function paintActions(){
 }
 function refreshSend(tab){var s=document.getElementById("send-"+tab);if(s&&LAST[tab])s.innerHTML=sendLinks(LAST[tab].term)}
 function readTab(tab){if(LAST[tab])ttsSpeak(LAST[tab].text)}
+function readAsk(){if(LAST['ask'])readTab('ask');else document.getElementById('ask-out').textContent='Ask me something first \u2014 then tap \uD83D\uDD0A Read answer aloud to hear it.'}
 function copyTab(tab,btn){if(LAST[tab])copyText(LAST[tab].text,btn)}
 function dlTab(tab){if(LAST[tab])download("jah-calculator-"+tab+".txt","JAH UNIVERSAL CALCULATOR — "+tab.toUpperCase()+"\n"+"=".repeat(50)+"\n\n"+LAST[tab].text+"\n")}
 /* ================= tiered TTS ================= */
