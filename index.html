@@ -592,6 +592,83 @@ function ucGo(){
  out.textContent=txt;setLast("sci",(LAST.sci?LAST.sci.text+"\n\n":"")+"Convert: "+txt,"unit conversion");refreshSend("sci");
 }
 
+/* ============ JAH ANSWER BANK: one right answer for common questions ============
+   The highlight is ONE always-right, readily understandable answer.
+   Syllable/structure analysis stays as a *reference* line, not the answer. */
+var DEFS={
+"gravity":"Gravity is the pull between masses \u2014 it holds you to the ground and keeps the Moon circling Earth and Earth circling the Sun. Newton wrote it F = G\u00b7m\u2081\u00b7m\u2082/r\u00b2; Einstein showed mass curves spacetime itself.",
+"light":"Light is electromagnetic radiation your eyes can see \u2014 a wave and a stream of particles (photons) at once, moving at 299,792,458 meters per second, the universe's speed limit.",
+"time":"Time is the dimension along which change happens \u2014 measured by clocks, stretched by speed and gravity, and flowing one way: toward more disorder.",
+"energy":"Energy is the capacity to do work \u2014 it never appears or vanishes, only changes form: motion, heat, light, chemical, nuclear. E = mc\u00b2 ties it to mass itself.",
+"atom":"An atom is the smallest unit of ordinary matter: a nucleus of protons and neutrons with electrons around it. Everything you can touch is built from about 118 kinds.",
+"molecule":"A molecule is two or more atoms bonded together \u2014 water (H\u2082O), oxygen (O\u2082), DNA's building blocks. Chemistry is molecules rearranging.",
+"electricity":"Electricity is the flow of electrons through a conductor \u2014 the push behind it is voltage, the flow rate is current. It powers everything plugged in.",
+"magnet":"A magnet pulls iron-like metals with an invisible field running north to south. Moving magnets make electricity and electricity makes magnets \u2014 that two-way street runs the modern world.",
+"water":"Water is H\u2082O \u2014 two hydrogen atoms bonded to one oxygen. It covers 71% of Earth, makes up most of you, and dissolves more substances than any other liquid.",
+"air":"Air is the gas mix you breathe: about 78% nitrogen, 21% oxygen, 1% argon and traces. Your lungs take the oxygen; plants take the carbon dioxide.",
+"fire":"Fire is rapid oxidation \u2014 fuel plus oxygen releasing heat and light. It needs fuel, oxygen, and heat; remove any one and it dies.",
+"earth":"Earth is the third planet from the Sun \u2014 the only known world with liquid-water oceans, an oxygen atmosphere, and life. About 4.5 billion years old and 12,742 km across.",
+"sun":"The Sun is a middle-aged star, 109 times wider than Earth \u2014 a ball of hydrogen fusing into helium, pouring out the light and heat all life runs on.",
+"moon":"The Moon is Earth's only natural satellite, 384,400 km away \u2014 its gravity pulls the tides and steadies Earth's tilt and seasons.",
+"star":"A star is a giant ball of gas fusing atoms in its core, shining by nuclear fusion. The Sun is one; the night sky's points of light are distant suns.",
+"planet":"A planet is a large body orbiting a star, rounded by its own gravity. Eight orbit the Sun.",
+"black hole":"A black hole is a region where gravity is so strong nothing, not even light, escapes \u2014 formed when a massive star collapses. Its edge is the event horizon.",
+"universe":"The universe is everything that exists \u2014 all space, time, matter, and energy. It began 13.8 billion years ago and is still expanding.",
+"big bang":"The Big Bang is the hot, dense beginning of the universe 13.8 billion years ago \u2014 space itself has been expanding and cooling ever since.",
+"quantum":"Quantum physics is the rulebook of the very small: energy comes in packets (quanta), particles behave like waves, and outcomes are probabilistic until measured.",
+"relativity":"Relativity is Einstein's rulebook: space and time are one fabric (spacetime), bent by mass into gravity, and nothing outruns light. E = mc\u00b2.",
+"speed of light":"The speed of light is 299,792,458 meters per second \u2014 the universe's absolute speed limit. Nothing with mass can reach it.",
+"sound":"Sound is vibration traveling as pressure waves through air, solids, or water \u2014 your eardrum turns them back into motion your brain reads as sound. About 343 m/s in air.",
+"color":"Color is your brain's label for light's wavelength \u2014 red is long waves, violet short. Objects look colored by the wavelengths they reflect.",
+"heat":"Heat is energy moving from hot to cold \u2014 at the atomic level it is atoms jiggling faster. Temperature measures the average jiggle.",
+"dna":"DNA is the instruction molecule of life \u2014 a double helix of four chemical letters (A, T, C, G) spelling out how to build and run a living thing.",
+"cell":"A cell is the smallest unit of life \u2014 a membrane sac of chemistry that eats, grows, and divides. You are about 30 trillion of them.",
+"brain":"The brain is the body's control center \u2014 about 86 billion neurons wired together, running thought, memory, and movement on roughly 20 watts.",
+"evolution":"Evolution is change in living things over generations by natural selection \u2014 the better survivors pass on their traits. It explains the whole tree of life.",
+"computer":"A computer is a machine that follows instructions (programs) to process information \u2014 at bottom, billions of switches flipping between 0 and 1.",
+"internet":"The internet is the global network of networks \u2014 computers linked by shared protocols, carrying the web, email, video, and everything online.",
+"ai":"AI (artificial intelligence) is software that performs tasks needing judgment \u2014 recognizing, predicting, deciding, generating \u2014 learned from data rather than hand-coded rules.",
+"artificial intelligence":"AI (artificial intelligence) is software that performs tasks needing judgment \u2014 recognizing, predicting, deciding, generating \u2014 learned from data rather than hand-coded rules.",
+"robot":"A robot is a machine that senses, decides, and acts in the physical world \u2014 from factory arms to rovers on Mars.",
+"math":"Mathematics is the study of pattern and structure \u2014 numbers, shapes, change, logic \u2014 built by proof from a few starting rules. It is the language science is written in.",
+"mathematics":"Mathematics is the study of pattern and structure \u2014 numbers, shapes, change, logic \u2014 built by proof from a few starting rules. It is the language science is written in.",
+"maths":"Mathematics is the study of pattern and structure \u2014 numbers, shapes, change, logic \u2014 built by proof from a few starting rules. It is the language science is written in.",
+"number":"A number is a mathematical object for counting, measuring, and labeling \u2014 from the counting numbers (1, 2, 3\u2026) up through fractions, negatives, and beyond.",
+"infinity":"Infinity is not a number but the idea of the endless \u2014 bigger than any count. Some infinities are bigger than others: there are more real numbers than whole numbers.",
+"zero":"Zero is the number for nothing \u2014 the additive identity (x + 0 = x) and the placeholder that makes place-value arithmetic work. Dividing by it is undefined.",
+"pi":"Pi (\u03c0) is the ratio of a circle's circumference to its diameter \u2014 about 3.14159, going on forever without repeating.",
+"paradox":"A paradox is a claim or setup that turns back on itself \u2014 most dissolve once you spot the hidden assumption, the mixed level, or the vague word. Try one in the Paradox Check tab.",
+"human":"A human (Homo sapiens) is the thinking ape \u2014 big-brained, language-using, tool-making primate, the only surviving species of its genus.",
+"life":"Life is chemistry that copies itself and evolves \u2014 it grows, reproduces, responds, and runs on energy. Every known case shares DNA and cells.",
+"death":"Death is the permanent end of a living thing's organized processes \u2014 the chemistry stops running itself.",
+"dream":"A dream is the brain's night cinema \u2014 vivid experience generated during sleep, mostly in REM, likely the mind sorting memory and rehearsing.",
+"sleep":"Sleep is the daily shutdown for repair \u2014 the brain cycles through deep and REM stages, filing memories and restoring the body. Adults need roughly 7\u20139 hours.",
+"dog":"A dog is the domesticated wolf \u2014 humanity's oldest animal partner, bred over thousands of years into hundreds of shapes.",
+"cat":"A cat is the small domesticated hunter \u2014 kept for pest control since ancient Egypt, now kept mostly for company on its own terms.",
+"tree":"A tree is a tall perennial plant with a woody trunk \u2014 a solar-powered carbon pump that also makes oxygen, shade, and lumber.",
+"ocean":"The ocean is Earth's continuous salt-water body covering 71% of the surface \u2014 the climate's engine, life's birthplace, and still mostly unexplored.",
+"mountain":"A mountain is land thrust high by tectonic collision or volcanoes \u2014 tall enough to make its own weather.",
+"cloud":"A cloud is a visible mass of tiny water droplets or ice crystals floating in air \u2014 water's waiting room between evaporation and rain.",
+"rain":"Rain is water falling back to Earth \u2014 droplets grown too heavy to float in clouds, completing the cycle from sea to sky to land.",
+"love":"Love is the deep attachment bond \u2014 chemistry (dopamine, oxytocin) plus choice and care. It comes in flavors: romantic, familial, friendship.",
+"money":"Money is the agreed token of value \u2014 once shells and metal, now mostly numbers \u2014 letting strangers trade without barter.",
+"war":"War is organized armed conflict between groups \u2014 politics continued by violence. Its cost is counted in lives.",
+"language":"Language is the system of symbols (words, grammar) humans use to share thoughts \u2014 the tool that lets knowledge outlive the knower.",
+"music":"Music is organized sound in time \u2014 rhythm, melody, harmony arranged to move feeling. Every known culture makes it.",
+"art":"Art is human making aimed at meaning or beauty rather than use \u2014 painting, story, song, film.",
+"science":"Science is the method for finding what is true: guess (hypothesis), test (experiment), keep what survives. Its product is reliable knowledge, always open to revision.",
+"god":"God is the name for the ultimate being in theistic faiths \u2014 all-powerful, all-knowing, the ground of existence. The Paradox Check tab tests the famous puzzles about omnipotence.",
+"wheel":"The wheel is the rotating disc that carries loads by rolling instead of dragging \u2014 invented around 3500 BC, still the basis of nearly all transport.",
+"engine":"An engine is a machine that turns fuel into motion \u2014 steam, gasoline, jet, electric. Civilization runs on engines.",
+"airplane":"An airplane is a heavier-than-air craft that flies by pushing wings through air fast enough that lift beats weight \u2014 Wright brothers, 1903."
+};
+function defKey(s){
+ var k=String(s).toLowerCase().replace(/[^a-z0-9 ]/g," ").replace(/\s+/g," ").trim().replace(/^(a|an|the)\s+/,"");
+ if(DEFS[k])return k;
+ if(k.slice(-1)==="s"&&DEFS[k.slice(0,-1)])return k.slice(0,-1);
+ return null;
+}
+
 /* ================= ASK ANYTHING ================= */
 function askGo(){
  var q=document.getElementById("ask-in").value.trim();
@@ -614,14 +691,21 @@ function askGo(){
   out.innerHTML='<span class="lbl">COMPUTED DIRECTLY</span>\n<span class="big">'+pm[1]+'% of '+pm[2]+' = '+fmt(pv)+'</span>';
   txt="Question: "+q+"\nAnswer: "+fmt(pv);setLast("ask",txt,term);refreshSend("ask");return}
  var low=q.toLowerCase(),html="",plain="";
- /* 2) definition pattern */
- var dm=q.match(/what (?:is|are|was|were|does)\s+(?:a|an|the)?\s*([^?]+)\??/i);
+ /* 2) definition pattern -> ONE highlighted right answer (JAH ANSWER).
+       Signature ecosystem (syllables/letters) is the *reference* line;
+       reverse-solve with wiggle room lands the single clear answer. */
+ var dm=q.match(/what (?:is|are|was|were|does)\s+(?:a|an|the)?\s*([^?]+)\??/i)||q.match(/^(?:define|definition of)\s+([^?]+)\??/i);
  if(dm&&!/^[\d\s+\-*/^%().]+$/.test(dm[1])){
-  var subj=dm[1].trim();
-  html+='<div class="lens"><b>DIRECT ANSWER — DEFINITION</b><p>"'+esc(subj)+'" — I define things from structure, not from a copied dictionary. '+
-  'Breaking the word down: it has '+esc(String(syllables(subj)))+' syllable'+(syllables(subj)===1?"":"s")+', '+esc(String(subj.replace(/[^a-zA-Z]/g,"").length))+' letters. '+
-  'For the full established definition, look it up in the IWB Dictionary link below; what follows is the JAH ten-lens analysis of the concept.</p></div>';
-  plain+="DIRECT ANSWER: definition requested for '"+subj+"'. See the ten-lens analysis below.\n\n";
+  var subj=dm[1].trim().replace(/\s+means?$/i,"");
+  var dk=defKey(subj),sy=syllables(subj),lt=subj.replace(/[^a-zA-Z]/g,"").length;
+  var sigref='<p style="color:var(--mut);font-size:.78em;margin:8px 0 0">signature reference: '+sy+' syllable'+(sy===1?"":"s")+' \u00b7 '+lt+' letters</p>';
+  if(dk){
+   html+='<div class="verdict"><b style="color:var(--gn)">JAH ANSWER \u2713</b><p style="margin:6px 0;font-size:.95em;line-height:1.55">'+DEFS[dk]+'</p>'+sigref+'</div>';
+   plain+="JAH ANSWER: "+DEFS[dk]+"\n\n";
+  }else{
+   html+='<div class="verdict"><b style="color:var(--gn)">JAH ANSWER</b><p style="margin:6px 0;font-size:.95em;line-height:1.55">No stored definition for \u201c'+esc(subj)+'\u201d yet \u2014 the ten-lens analysis below breaks it down from structure, and the full established definition is one tap away in the IWB Dictionary link below.</p>'+sigref+'</div>';
+   plain+="JAH ANSWER: no stored definition for '"+subj+"' yet \u2014 see the ten-lens analysis below and the IWB Dictionary link.\n\n";
+  }
   term=subj;
  }
  /* 3) comparison pattern */
@@ -710,33 +794,43 @@ function lenses(q){
 /* ================= PARADOX CHECK ================= */
 var PARADOXES=[
  {re:/this (statement|sentence) is false/i,type:"LIAR PARADOX",
+  solve:"The sentence is out of order, not the universe. \u2018This statement is false\u2019 tries to grade its own truth from inside itself, which no statement is allowed to do. The universal signature reads it from one level up: ungrounded, set aside, logic intact.",
   obj:'"This statement is false" cannot be true (then it is false) and cannot be false (then it is true). At the object level it is UNDECIDABLE.',
   meta:"Step one level up: the sentence tries to grade its own truth from inside itself. Truth needs a level above the sentence to stand on. Mark it UNGROUNDED — a broken truth-teller — and move on. Logic is intact; only this sentence is out of order."},
  {re:/i am lying|this sentence is (not )?true/i,type:"SELF-REFERENTIAL TRUTH PARADOX",
+  solve:"A claim about its own truth gets its value assigned from outside \u2014 by the speaker\u2019s level, not from inside the sentence. Read it one level up and the loop unwinds into a plain observation.",
   obj:"A sentence that talks about its own truth value creates a loop with no stable assignment. Object level: UNDECIDABLE.",
   meta:"Stratify: the claim lives at level 0, its truth value must be assigned at level 1. When level 0 tries to do level 1's job, you get a loop. Assign the value from outside — 'the speaker is unreliable here' — and the loop collapses into a plain observation."},
  {re:/barber/i,type:"BARBER PARADOX",
+  solve:"No such barber exists. The description contradicts itself, so nothing real is at stake \u2014 the signature proves the setup impossible and moves on.",
   obj:"'The barber shaves all and only those who do not shave themselves' — who shaves the barber? Either answer contradicts the rule. Object level: UNDECIDABLE.",
   meta:"The contradiction proves the barber cannot exist as described — the premises are impossible, not the logic. Resolution: no such barber. A paradox that proves its own setup impossible is a successful proof, not a failure."},
  {re:/set of all sets|does .* contain itself|russell/i,type:"RUSSELL'S PARADOX",
+  solve:"A set lives one level above its members. \u2018The set of all sets\u2019 breaks the level rule, so the construction is refused. Boundless does not mean level-less.",
   obj:"The set of all sets that do not contain themselves — does it contain itself? Yes contradicts no; no contradicts yes. Object level: UNDECIDABLE.",
   meta:"Stratify into types: a set lives one level above its members. 'The set of all sets' mixes levels, which is illegal. Modern set theory simply forbids the construction — the paradox dissolved the moment levels were enforced."},
  {re:/heap|sorites|grains? of sand/i,type:"SORITES (HEAP) PARADOX",
+  solve:"A heap is a gradient, not a switch: 0% heap at one grain, 100% at ten thousand, smooth between. The signature assigns the degree and the paradox dissolves.",
   obj:"One grain is not a heap; adding one grain never turns a non-heap into a heap — yet eventually there is a heap. Object level: UNDECIDABLE at the boundary.",
   meta:"The fuzzy lens resolves it: 'heap' is a matter of degree, not a sharp line. Assign membership 0% to 1 grain, 100% to 10,000, and a smooth curve between. The paradox only existed because we demanded a yes/no where nature gave a gradient."},
  {re:/unexpected hanging|surprise (exam|test)/i,type:"UNEXPECTED HANGING PARADOX",
+  solve:"Wednesday stands. The prisoner\u2019s proof reasoned about its own reasoning and fooled itself \u2014 from the judge\u2019s level there is no contradiction at all.",
   obj:"The prisoner proves by backward induction the hanging cannot be a surprise — then it happens Wednesday and IS a surprise. Object level: UNDECIDABLE within the prisoner's reasoning.",
   meta:"The flaw: 'surprise' means 'not provable in advance', and the prisoner's proof used the very notion it was analyzing — self-reference again. Step up: from the judge's level, Wednesday is perfectly consistent. The paradox is an artifact of reasoning about one's own reasoning."},
- {re:/omnipotent|can god.*stone|stone.*(god|heavier than)/i,type:"OMNIPOTENCE PARADOX",
+ {re:/omnipotent|all-?powerful|can god make|god.*(rock|stone|boulder).*(can\u0027t|cannot|cant|n\u0027t|too heavy|lift|move)|make.*(rock|stone).*(can\u0027t|cannot|too heavy)/i,type:"OMNIPOTENCE PARADOX",
+  solve:"A universal signature with a boundless ecosystem makes the rock AND moves it: either, neither, both, hither, thither, upside down, whatever. The trap forces one side; the signature holds both sides at once, so the paradox never forms.",
   obj:"Can an all-powerful being make a stone too heavy to lift? Yes limits power; no limits power. Object level: UNDECIDABLE as stated.",
   meta:"The phrase 'all-powerful' is doing two jobs: it means 'can do anything possible' but the question smuggles in 'can do the logically impossible'. Clarify the definition — power over the possible — and the contradiction evaporates. Bad definitions, not bad logic."},
  {re:/grandfather paradox|kill.*grandfather|time travel/i,type:"GRANDFATHER PARADOX",
+  solve:"The act branches: in branch A you are born and travel; your act opens branch B where you never were. No single timeline holds the contradiction, so none exists.",
   obj:"Going back and preventing your own birth makes your trip impossible, which makes your birth possible. Object level: UNDECIDABLE in a single timeline.",
   meta:"Stratify the timelines: the act branches reality. In branch A you are born and travel; your act creates branch B where you are not. No single timeline contains the contradiction. Paradoxes about time are usually paradoxes about assuming one timeline."},
  {re:/ship of theseus|theseus/i,type:"SHIP OF THESEUS",
+  solve:"Same ship by voyage, new ship by plank. The word \u2018same\u2019 was doing two jobs \u2014 the signature names both jobs and the fight ends.",
   obj:"Every plank replaced — is it the same ship? Yes and no both feel right. Object level: UNDECIDABLE by pure logic.",
   meta:"Identity is a fuzzy predicate, not a logical one. The ship is 100% 'the same ship' by continuity and 0% by material. Both answers are correct under different definitions — the paradox was a disagreement about the word 'same', disguised as a disagreement about the ship."},
  {re:/dichotomy|achilles.*tortoise|motion is impossible|zeno/i,type:"ZENO'S PARADOXES",
+  solve:"1/2 + 1/4 + 1/8 + \u2026 = 1. Infinitely many steps, finite time. The runner arrives \u2014 the paradox was bad arithmetic about infinity.",
   obj:"To move anywhere you must first cross half the distance, then half of that, forever — so motion never starts. Object level: UNDECIDABLE inside the infinite-division framing.",
   meta:"An infinite series can sum to a finite number: 1/2 + 1/4 + 1/8 + ... = 1. The paradox confuses 'infinitely many steps' with 'infinite time'. Calculus resolved this 2,000 years later — the infinite is summable."}
 ];
@@ -748,19 +842,18 @@ function pxGo(){
  for(var i=0;i<PARADOXES.length;i++){if(PARADOXES[i].re.test(q)){found=PARADOXES[i];break}}
  var html="",txt="Paradox check: \""+q+"\"\n\n";
  if(found){
-  html+='<div class="lens"><b>PARADOX TYPE: '+esc(found.type)+'</b><p>Pattern matched. Containing it now.</p></div>';
-  html+='<div class="lens" style="border-color:var(--am)"><b style="color:var(--am)">OBJECT LEVEL — UNDECIDABLE</b><p>'+esc(found.obj)+'</p></div>';
-  html+='<div class="lens" style="border-color:var(--gn)"><b style="color:var(--gn)">META LEVEL — RESOLVED</b><p>'+esc(found.meta)+'</p></div>';
-  html+='<div class="verdict"><b style="color:var(--gn)">JAH VERDICT: PARADOX IMMUNE ✓</b><p style="margin:6px 0 0;font-size:.9em">Classified, contained at object level, resolved one level up. No crash, no loop, no contradiction admitted into the system.</p></div>';
-  txt+="PARADOX TYPE: "+found.type+"\nOBJECT LEVEL: UNDECIDABLE — "+found.obj+"\nMETA LEVEL (RESOLVED): "+found.meta+"\nJAH VERDICT: paradox immune — classified, contained, resolved.";
+  html+='<div class="verdict"><b style="color:var(--gn)">JAH ANSWER \u2014 '+esc(found.type)+' SOLVED \u2713</b><p style="margin:6px 0 0;font-size:.95em;line-height:1.55">'+esc(found.solve)+'</p></div>';
+  html+='<div class="lens" style="border-color:var(--am)"><b style="color:var(--am)">OBJECT LEVEL \u2014 WHY IT TRAPS</b><p>'+esc(found.obj)+'</p></div>';
+  html+='<div class="lens" style="border-color:var(--gn)"><b style="color:var(--gn)">META LEVEL \u2014 HOW IT WAS SOLVED</b><p>'+esc(found.meta)+'</p></div>';
+  txt+="JAH ANSWER \u2014 "+found.type+" SOLVED: "+found.solve+"\n\nWhy it traps: "+found.obj+"\n\nHow it was solved: "+found.meta+"\n";
  }else if(/this (statement|sentence|claim)|itself|self-referen/i.test(q)){
-  html+='<div class="lens"><b>PARADOX TYPE: UNLISTED SELF-REFERENCE</b><p>Self-referential language detected, but no classic trap matched.</p></div>';
-  html+='<div class="lens" style="border-color:var(--gn)"><b style="color:var(--gn)">META LEVEL — STABLE</b><p>General rule: whenever a statement talks about itself, evaluate it from one level up. Ask who is speaking, what level the claim lives on, and whether the truth value is being assigned from inside. Applied here, the statement is '+(q.length<120?"short enough to inspect directly — read it as a claim about the speaker, not about the world, and the loop unwinds.":"long — break it into its self-referential part and its world part, and judge each at its own level.")+'</p></div>';
-  html+='<div class="verdict"><b style="color:var(--gn)">JAH VERDICT: PARADOX IMMUNE ✓</b><p style="margin:6px 0 0;font-size:.9em">No classic paradox. Handled by the general stratification rule.</p></div>';
-  txt+="PARADOX TYPE: unlisted self-reference — no classic trap matched. Handled by the general stratification rule: evaluate from one level up. JAH VERDICT: paradox immune.";
+  var why=q.length<120?"short enough to inspect directly \u2014 read it as a claim about the speaker, not about the world, and the loop unwinds.":"long \u2014 break it into its self-referential part and its world part, and judge each at its own level.";
+  html+='<div class="verdict"><b style="color:var(--gn)">JAH ANSWER \u2014 SOLVED \u2713</b><p style="margin:6px 0 0;font-size:.95em;line-height:1.55">Read it from one level up: the part that talks about itself becomes a plain observation about the speaker, and the loop unwinds. No crash, no contradiction admitted into the system.</p></div>';
+  html+='<div class="lens" style="border-color:var(--gn)"><b style="color:var(--gn)">HOW IT WAS SOLVED</b><p>Unlisted self-reference \u2014 no classic trap matched, so the general stratification rule applies: evaluate from one level up. This statement is '+why+'</p></div>';
+  txt+="JAH ANSWER \u2014 SOLVED: read it from one level up; the self-referential part becomes a plain observation about the speaker and the loop unwinds.\n";
  }else{
-  html+='<div class="verdict"><b style="color:var(--gn)">JAH VERDICT: LOGICALLY STABLE ✓</b><p style="margin:6px 0 0;font-size:.9em">No paradox pattern detected in: "'+esc(q)+'" — no self-reference, no contradictory premises, no level-mixing. The statement is stable as given. If you meant a classic paradox, try the liar ("this statement is false"), the barber, the heap, or the unexpected hanging.</p></div>';
-  txt+='JAH VERDICT: logically stable — no paradox pattern detected.';
+  html+='<div class="verdict"><b style="color:var(--gn)">JAH ANSWER \u2014 LOGICALLY STABLE \u2713</b><p style="margin:6px 0 0;font-size:.95em;line-height:1.55">No trap found: no self-reference, no contradictory premises, no level-mixing. The statement stands as given \u2014 nothing to solve.</p></div>';
+  txt+='JAH ANSWER: logically stable \u2014 no paradox pattern detected, the statement stands as given.';
  }
  out.innerHTML=html;
  setLast("paradox",txt,q);refreshSend("paradox");
