@@ -512,7 +512,7 @@ function evalSteps(raw){
  return {steps:steps,result:final};
 }
 function basicGo(){
- var raw=document.getElementById("basic-in").value.trim();
+ var raw=document.getElementById("basic-in").value.trim().replace(/=+$/,"");
  if(!raw)return;
  var out=document.getElementById("basic-out"),txt,term=raw;
  try{
@@ -527,7 +527,7 @@ function basicGo(){
  setLast("basic",txt,term);refreshSend("basic");
 }
 function sciGo(){
- var raw=document.getElementById("sci-in").value.trim();
+ var raw=document.getElementById("sci-in").value.trim().replace(/=+$/,"");
  if(!raw)return;
  var out=document.getElementById("sci-out"),txt,term=raw;
  try{
