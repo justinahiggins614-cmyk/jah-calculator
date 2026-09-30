@@ -446,20 +446,37 @@ def run(count):
     st = load_state()
     start = st['next_index']
     records = [generate_record(i) for i in range(start, start + count)]
-    # write chunks
-    idx = 0
-    while idx < len(records):
-        block = records[idx:idx + CHUNK]
-        first_n = block[0]['n']
-        chunk_no = (first_n - 1) // CHUNK + 1
+    # Group records by their true chunk so partial chunks from earlier runs
+    # keep holding their records; new records just top up / extend.
+    bychunk = {}
+    for rec in records:
+        bychunk.setdefault((rec['n'] - 1) // CHUNK + 1, []).append(rec)
+    for chunk_no in sorted(bychunk):
         path = os.path.join(EQDIR, f'eq-c{chunk_no:05d}.jsonl.gz')
+        block = bychunk[chunk_no]
+        newlines = [json.dumps(rec, ensure_ascii=False) for rec in block]
         if os.path.exists(path):
-            raise SystemExit(f'chunk exists: {path} (state desync?)')
-        with gzip.open(path, 'wt', encoding='utf-8') as f:
+            # Append to the existing (partial) chunk, atomically.
+            with gzip.open(path, 'rt', encoding='utf-8') as f:
+                existing = [l for l in f.read().split('\n') if l]
+            existing_ns = set()
+            for l in existing:
+                try:
+                    existing_ns.add(json.loads(l)['n'])
+                except Exception:
+                    pass
             for rec in block:
-                f.write(json.dumps(rec, ensure_ascii=False) + '\n')
+                if rec['n'] in existing_ns:
+                    raise SystemExit(f'duplicate record n={rec["n"]} in {path}')
+            lines = existing + newlines
+            tmp = path + '.tmp'
+            with gzip.open(tmp, 'wt', encoding='utf-8') as f:
+                f.write('\n'.join(lines) + '\n')
+            os.replace(tmp, path)
+        else:
+            with gzip.open(path, 'wt', encoding='utf-8') as f:
+                f.write('\n'.join(newlines) + '\n')
         append_index(block, chunk_no)
-        idx += len(block)
     st['next_index'] = start + count
     save_state(st)
     print(f'wrote {count} equations: JAH-EQ-{start:08d}..JAH-EQ-{start+count-1:08d}')
