@@ -605,8 +605,8 @@ function askGo(){
    setLast("ask",txt,term);refreshSend("ask");return;
   }catch(e){}
  }
- /* percent pattern: "15% of 240" */
- var pm=q.match(/(\d+(?:\.\d+)?)\s*%\s*of\s*(\d+(?:\.\d+)?)/i);
+ /* percent pattern: "15% of 240" or "15 percent of 240" */
+ var pm=q.match(/(\d+(?:\.\d+)?)\s*(?:%|percent)\s*of\s*(\d+(?:\.\d+)?)/i);
  if(pm){var pv=parseFloat(pm[1])*parseFloat(pm[2])/100;
   out.innerHTML='<span class="lbl">COMPUTED DIRECTLY</span>\n<span class="big">'+pm[1]+'% of '+pm[2]+' = '+fmt(pv)+'</span>';
   txt="Question: "+q+"\nAnswer: "+fmt(pv);setLast("ask",txt,term);refreshSend("ask");return}
