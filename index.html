@@ -422,7 +422,8 @@ function ttsUrlTier(chunks,tier){
  a.onended=function(){fin(true)};a.onerror=function(){fin(false)};
  var to=setTimeout(function(){fin(false)},14000);
  var _fin=fin;fin=function(ok){clearTimeout(to);_fin(ok)};
- a.src=TTS_URLS[tier](chunks[0]);var p=a.play();if(p&&p.catch)p.catch(function(){fin(false)});
+ var src;try{src=TTS_URLS[tier](chunks[0])}catch(e){ttsStop();return}
+ a.src=src;var p=a.play();if(p&&p.catch)p.catch(function(){fin(false)});
 }
 function ttsSpeak(text){
  ttsStop();var chunks=ttsChunks(text);if(!chunks.length)return;TTS.stopped=false;
@@ -694,9 +695,11 @@ function askGo(){
  /* 2) definition pattern -> ONE highlighted right answer (JAH ANSWER).
        Signature ecosystem (syllables/letters) is the *reference* line;
        reverse-solve with wiggle room lands the single clear answer. */
- var dm=q.match(/what (?:is|are|was|were|does)\s+(?:a|an|the)?\s*([^?]+)\??/i)||q.match(/^(?:define|definition of)\s+([^?]+)\??/i);
- if(dm&&!/^[\d\s+\-*/^%().]+$/.test(dm[1])){
-  var subj=dm[1].trim().replace(/\s+means?$/i,"");
+ var dm=q.match(/what(?:'s| is| are| was| were| does)\s+(?:(?:a|an|the)\s+)?([^?]+)\??/i)||q.match(/^(?:define|definition of)\s+([^?]+)\??/i);
+ var dsubj=dm?dm[1]:"";
+ if(!dsubj){var bq=q.replace(/\?+$/,"").trim();if(bq&&bq.split(/\s+/).length<=4&&defKey(bq))dsubj=bq}
+ if(dsubj&&!/^[\d\s+\-*/^%().]+$/.test(dsubj)){
+  var subj=dsubj.trim().replace(/\s+means?$/i,"");
   var dk=defKey(subj),sy=syllables(subj),lt=subj.replace(/[^a-zA-Z]/g,"").length;
   var sigref='<p style="color:var(--mut);font-size:.78em;margin:8px 0 0">signature reference: '+sy+' syllable'+(sy===1?"":"s")+' \u00b7 '+lt+' letters</p>';
   if(dk){
