@@ -56,6 +56,28 @@ footer.site a{color:var(--cy)}
 .fnrow{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
 .fnrow button{background:#1c2940;border:1px solid var(--line);color:var(--cy);border-radius:5px;padding:7px 10px;font-family:Consolas,monospace;cursor:pointer;font-size:.85em}
 .note{font-size:.8em;color:var(--mut);margin-top:10px}
+
+/* equations + record */
+.eqtools{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.eqtools input{flex:1;min-width:170px;width:auto}
+.eqtools select{width:auto;padding:10px}
+.eqcount{color:var(--mut);font-size:.9em;margin:6px 0}
+.eqitem{border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin:8px 0;cursor:pointer;background:var(--panel2)}
+.eqitem:hover{border-color:var(--cy)}
+.eqitem .eid{font-size:.78em;color:var(--mut)}
+.eqitem .et{font-weight:bold;color:var(--txt)}
+.eqoverlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:200;display:flex;align-items:center;justify-content:center;padding:16px}
+.eqoverlay[hidden]{display:none}
+.eqcard{background:var(--panel);color:var(--txt);border-radius:12px;max-width:640px;width:100%;max-height:88vh;overflow:auto;padding:20px;position:relative;border:2px solid var(--cy)}
+.eqclose{position:absolute;top:8px;right:8px}
+.eqsteps{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:.92em}
+.eqsteps div{padding:3px 0;border-bottom:1px dotted var(--line)}
+.eqsteps div:last-child{border-bottom:none}
+.eqsol{font-size:1.25em;font-weight:bold;color:var(--cy);margin:10px 0}
+.eid{font-size:.78em;color:var(--mut)}
+.stamp{font-size:.78em;color:var(--mut);border-top:1px solid var(--line);margin-top:12px;padding-top:8px}
+.recitem{border-bottom:1px solid var(--line);padding:8px 4px;font-size:.9em}
+.recitem .rt{color:var(--mut);font-size:.78em}
 </style>
 </head>
 <body>
@@ -77,7 +99,7 @@ footer.site a{color:var(--cy)}
   <button data-t="paradox">Paradox Check</button>
   <button data-t="project">Project</button>
   <button data-t="sim">Simulate</button>
-  <button data-t="lab">Lab</button>
+  <button data-t="lab">Lab</button><button data-t="eq">Equations</button><button data-t="rec">Record</button>
 </div>
 <div class="wrap">
 
@@ -265,6 +287,42 @@ footer.site a{color:var(--cy)}
   <div class="actions" data-tab="lab"></div>
 </div>
 
+<!-- ============ EQUATIONS ============ -->
+<div class="panel" id="p-eq">
+  <h2>THE OFFICIAL EQUATION ARCHIVE</h2>
+  <p class="sub">Every equation solved <b>once</b>, published officially as a <b>JAH-EQ</b> record — then just <b>retrieved</b>, never solved again. Marching to <b>1,000,000</b>.</p>
+  <div class="eqtools">
+    <input type="text" id="eq-q" placeholder="Search: try 'quadratic', 'pyramid', 'JAH-EQ-00000001'…" autocomplete="off">
+    <select id="eq-type">
+      <option value="">All types</option><option value="linear">Linear</option><option value="quadratic">Quadratic</option><option value="system2">Systems</option><option value="trig">Trigonometry</option><option value="power">Powers &amp; roots</option><option value="log">Logarithms</option><option value="exp">Exponentials</option><option value="evaluate">Evaluate</option><option value="percent">Percent</option><option value="derivative">Derivatives</option><option value="integral">Integrals</option><option value="geometry">Geometry</option>
+    </select>
+    <button class="go" onclick="eqSearch()">Search</button>
+  </div>
+  <div class="eqcount" id="eq-count">Loading archive…</div>
+  <div id="eq-list"></div>
+  <div id="eq-more" style="text-align:center;margin:10px 0"></div>
+</div>
+
+<!-- ============ RECORD ============ -->
+<div class="panel" id="p-rec">
+  <h2>SOLVE RECORD</h2>
+  <p class="sub">Everything you solve on this calculator is recorded here — retrieve it any time, no need to solve twice.</p>
+  <div class="row" style="margin-bottom:10px">
+    <button class="act" onclick="recRead()">&#128266; Read aloud</button>
+    <button class="act" onclick="recCopy(this)">&#10697; Copy record</button>
+    <button class="act" onclick="recDownload()">&#10515; Download .txt</button>
+    <button class="act" onclick="recClear()">&#128465; Clear</button>
+  </div>
+  <div id="rec-list"></div>
+</div>
+
+<div id="eq-overlay" class="eqoverlay" hidden>
+  <div class="eqcard">
+    <button class="act eqclose" onclick="eqClose()">&#10005;</button>
+    <div id="eq-body"></div>
+  </div>
+</div>
+
 </div><!-- /wrap -->
 <footer class="site">
   <b style="color:var(--gold)">JAH Universal Calculator</b> — the sixth JAH site. Solves anything, paradox immune, powered by the JAH deterministic system.<br>
@@ -292,15 +350,27 @@ function lastNum(){return LASTNUM||0}
 var LASTNUM=0;
 function ins(id,t){var e=document.getElementById(id);var s=e.selectionStart||e.value.length;e.value=e.value.slice(0,s)+t+e.value.slice(e.selectionEnd||s);e.focus();}
 /* tabs */
-var TABS=["basic","sci","ask","paradox","project","sim","lab"];
+var TABS=["basic","sci","ask","paradox","project","sim","lab","eq","rec"];
 document.getElementById("tabbar").addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;showTab(b.getAttribute("data-t"))});
 function showTab(t){TABS.forEach(function(x){document.getElementById("p-"+x).classList.toggle("on",x===t)});
  var bs=document.querySelectorAll("#tabbar button");for(var i=0;i<bs.length;i++)bs[i].classList.toggle("on",bs[i].getAttribute("data-t")===t);
- try{history.replaceState(null,"","?tab="+t)}catch(e){}}
-(function(){var m=/[?&]tab=([a-z]+)/.exec(location.search);if(m&&TABS.indexOf(m[1])>=0)showTab(m[1])})();
+ try{history.replaceState(null,"","?tab="+t)}catch(e){};if(t==="rec"&&window.recRender)recRender();if(t==="eq"&&window.eqInit)eqInit();}
+(function(){var m=/[?&]tab=([a-z]+)/.exec(location.search);if(m&&TABS.indexOf(m[1])>=0)showTab(m[1]);var q2=/[?&]eq=(JAH-EQ-[0-9]+)/i.exec(location.search);if(q2)showTab("eq")})();
 /* per-tab last-result text + action rows */
 var LAST={};
 function setLast(tab,text,term){LAST[tab]={text:text,term:term||""}}
+function recGet(){try{return JSON.parse(localStorage.getItem("jah_calc_record")||"[]")}catch(e){return[]}}
+function recPush(tab,text){
+ text=String(text||"").trim();if(!text)return;
+ try{
+  var r=recGet();
+  if(r.length&&r[0].text===text&&r[0].tab===tab)return;
+  r.unshift({t:new Date().toISOString(),tab:tab,text:text.slice(0,1500)});
+  if(r.length>500)r.length=500;
+  localStorage.setItem("jah_calc_record",JSON.stringify(r));
+ }catch(e){}
+}
+var _setLast=setLast;setLast=function(tab,text,term){_setLast(tab,text,term);recPush(tab,text)};
 function sendLinks(term){
  term=String(term||"").trim().split(/\s+/).slice(0,3).join(" ");
  if(!term)return "";
@@ -872,6 +942,117 @@ function labCSV(){if(!LABROWS.length)return;
  LABROWS.forEach(function(r,i){csv+=(i+1)+","+r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"'}).join(",")+"\n"});
  download("jah-lab-notebook.csv",csv,"text/csv")}
 function labClear(){LABROWS=[];labTable()}
+/* ================= solve record ================= */
+function recRender(){
+ var r=recGet(),el=document.getElementById("rec-list");
+ if(!r.length){el.innerHTML='<p class="sub">Nothing recorded yet — solve something on any tab and it lands here.</p>';return;}
+ el.innerHTML=r.map(function(o){
+  var d;try{d=new Date(o.t).toLocaleString()}catch(e){d=o.t}
+  return '<div class="recitem"><div class="rt">'+esc(d)+' · '+esc(o.tab)+'</div><div>'+esc(o.text).split("\n").join("<br>")+'</div></div>';
+ }).join("");
+}
+function recText(){return recGet().map(function(o){return "["+o.t+" · "+o.tab+"]\n"+o.text}).join("\n\n")}
+function recRead(){var t=recText();if(t)ttsSpeak(t)}
+function recCopy(btn){var t=recText();if(t)copyText(t,btn)}
+function recDownload(){var t=recText();if(t)download("jah-calculator-record.txt","JAH CALCULATOR — SOLVE RECORD\n"+"=".repeat(50)+"\n\n"+t+"\n")}
+function recClear(){try{localStorage.removeItem("jah_calc_record")}catch(e){}recRender()}
+
+/* ================= official equation archive ================= */
+var EQIDX=null,EQCHUNKS={},EQSHOWN=0,EQCUR=[];
+function eqGunzip(ab){
+ var ds;try{ds=new DecompressionStream("gzip")}catch(e){return Promise.reject(new Error("gzip unsupported"))}
+ return new Response(new Blob([ab]).stream().pipeThrough(ds)).arrayBuffer()
+  .then(function(b2){return new TextDecoder().decode(b2)});
+}
+function eqLoadIndex(){
+ if(EQIDX)return Promise.resolve(EQIDX);
+ return fetch("data/index/eq.idx.json.gz").then(function(r){
+  if(!r.ok)throw new Error("index missing");return r.arrayBuffer();
+ }).then(eqGunzip).then(function(txt){
+  EQIDX=txt.split("\n").filter(Boolean).map(function(l){return JSON.parse(l)});
+  return EQIDX;
+ });
+}
+function eqChunk(c){
+ if(EQCHUNKS[c])return Promise.resolve(EQCHUNKS[c]);
+ var cn=String(c);while(cn.length<5)cn="0"+cn;
+ return fetch("data/equations/eq-c"+cn+".jsonl.gz").then(function(r){
+  if(!r.ok)throw new Error("chunk missing");return r.arrayBuffer();
+ }).then(eqGunzip).then(function(txt){
+  var m={};txt.split("\n").filter(Boolean).forEach(function(l){var o=JSON.parse(l);m[o.id]=o});
+  EQCHUNKS[c]=m;return m;
+ });
+}
+function eqInit(){
+ var el=document.getElementById("eq-count");
+ var q=document.getElementById("eq-q");
+ if(q&&!q._eqwired){q._eqwired=1;q.addEventListener("keydown",function(e){if(e.key==="Enter")eqSearch()})}
+ eqLoadIndex().then(function(ix){
+  el.textContent=ix.length+" official equations published — solved once, retrieved thereafter.";
+  var m=/[?&]eq=(JAH-EQ-[0-9]+)/i.exec(location.search);
+  if(m)eqOpen(m[1].toUpperCase());
+ }).catch(function(){el.textContent="Archive index not reachable."});
+}
+function eqSearch(){
+ var q=document.getElementById("eq-q").value.trim().toLowerCase();
+ var ty=document.getElementById("eq-type").value;
+ eqLoadIndex().then(function(ix){
+  EQCUR=ix.filter(function(e){
+   if(ty&&e.y!==ty)return false;
+   if(q&&(e.t.toLowerCase().indexOf(q)<0&&e.id.toLowerCase().indexOf(q)<0))return false;
+   return true;
+  });
+  EQSHOWN=0;
+  document.getElementById("eq-count").textContent=EQCUR.length+" of "+ix.length+" equations"+(q||ty?" match":"")+".";
+  document.getElementById("eq-list").innerHTML="";
+  eqMore();
+ });
+}
+function eqMore(){
+ var list=document.getElementById("eq-list");
+ var next=EQCUR.slice(EQSHOWN,EQSHOWN+50);
+ next.forEach(function(e){
+  var d=document.createElement("div");d.className="eqitem";
+  d.innerHTML='<div class="eid">'+esc(e.id)+' · '+esc(e.y)+'</div><div class="et">'+esc(e.t)+'</div>';
+  d.onclick=function(){eqOpen(e.id)};
+  list.appendChild(d);
+ });
+ EQSHOWN+=next.length;
+ document.getElementById("eq-more").innerHTML=
+  EQSHOWN<EQCUR.length?'<button class="act" onclick="eqMore()">Show more ('+(EQCUR.length-EQSHOWN)+' left)</button>':"";
+}
+function eqOpen(id){
+ eqLoadIndex().then(function(ix){
+  var hit=null;for(var i=0;i<ix.length;i++)if(ix[i].id===id){hit=ix[i];break}
+  if(!hit)throw new Error("not found");
+  return eqChunk(hit.c).then(function(m){return m[id]});
+ }).then(function(rec){
+  if(!rec)throw new Error("not found");
+  var b=document.getElementById("eq-body");
+  b.innerHTML='<div class="eid">'+esc(rec.id)+' · '+esc(rec.type)+'</div>'+
+   '<h3 style="margin:.3em 0">'+esc(rec.title)+'</h3>'+
+   '<div class="eqsteps">'+rec.steps.map(function(x){return '<div>'+esc(x)+'</div>'}).join("")+'</div>'+
+   '<div class="eqsol">'+esc(rec.solution)+'</div>'+
+   '<div>'+esc(rec.check)+'</div>'+
+   '<div class="row" style="margin-top:10px">'+
+   '<button class="act" onclick="eqSpeak()">&#128266; Read aloud</button>'+
+   '<button class="act" onclick="eqCopy(this)">&#10697; Copy</button>'+
+   '<button class="act" onclick="eqDl()">&#10515; Download .txt</button></div>'+
+   '<div class="stamp">'+esc(rec.stamp)+'</div>';
+  b.dataset.recid=rec.id;
+  document.getElementById("eq-overlay").hidden=false;
+  try{history.replaceState(null,"","?tab=eq&eq="+rec.id)}catch(e){}
+ }).catch(function(){
+  document.getElementById("eq-count").textContent="Could not open "+id+".";
+ });
+}
+function eqClose(){document.getElementById("eq-overlay").hidden=true;try{history.replaceState(null,"","?tab=eq")}catch(e){}}
+function eqCurRec(){var id=document.getElementById("eq-body").dataset.recid;for(var k in EQCHUNKS)if(EQCHUNKS[k][id])return EQCHUNKS[k][id];return null}
+function eqRecText(r){return r.id+"\n"+r.title+"\n"+"\nSTEPS\n"+r.steps.join("\n")+"\n\n"+r.solution+"\n"+r.check+"\n\n"+r.stamp}
+function eqSpeak(){var r=eqCurRec();if(r)ttsSpeak(eqRecText(r))}
+function eqCopy(btn){var r=eqCurRec();if(r)copyText(eqRecText(r),btn)}
+function eqDl(){var r=eqCurRec();if(r)download(r.id+".txt",eqRecText(r)+"\n")}
+
 /* ================= init ================= */
 paintActions();ucFill();setDeg(true);lifeInit();mcReset();rwReset();
 labPend();labProj();labOhm();labGas();
