@@ -9,7 +9,8 @@ Deterministic: record i is a pure function of i (seeded RNG), so any range
 can be (re)generated identically. Chunks of 150 -> data/equations/eq-cNNNNN.jsonl.gz
 Index -> data/index/eq.idx.json.gz (JSONL: id, title, type, chunk).
 """
-import gzip, json, math, os, random, sys
+import gzip, hashlib, json, math, os, random, sys
+from datetime import datetime, timezone
 from fractions import Fraction
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -395,6 +396,15 @@ GENS = {'linear': gen_linear, 'quadratic': gen_quadratic, 'system2': gen_system2
 STAMP = 'Official JAH Equation Archive \u2014 solved once, published officially, retrieved thereafter.'
 
 
+def canonical_form(eq):
+    """Normalize an equation string for identity comparison.
+    Two inputs are the same record only if their canonical forms match."""
+    s = str(eq or '').lower()
+    s = ''.join(s.split())
+    s = s.replace('*', '').replace('\u00d7', 'x').replace('\u2212', '-')
+    return s
+
+
 def generate_record(i):
     r = random.Random(1000003 + i * 7919)
     t = TYPES[(i - 1) % len(TYPES)]
@@ -405,6 +415,13 @@ def generate_record(i):
     rec['id'] = f'JAH-EQ-{i:08d}'
     rec['n'] = i
     rec['stamp'] = STAMP
+    # provenance: every new record carries its solver identity and canonical form
+    rec['solver_version'] = 'jah-eq-solver-1.0'
+    rec['canonical'] = canonical_form(rec.get('equation'))
+    rec['canonical_hash'] = hashlib.sha256(rec['canonical'].encode('utf-8')).hexdigest()[:16]
+    rec['method'] = 'deterministic solve at generation'
+    rec['precision'] = 'as published'
+    rec['ts'] = datetime.now(timezone.utc).isoformat(timespec='seconds')
     return rec
 
 
