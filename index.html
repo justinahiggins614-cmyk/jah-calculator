@@ -56,6 +56,9 @@ footer.site a{color:var(--cy)}
 .fnrow{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
 .fnrow button{background:#1c2940;border:1px solid var(--line);color:var(--cy);border-radius:5px;padding:7px 10px;font-family:Consolas,monospace;cursor:pointer;font-size:.85em}
 .note{font-size:.8em;color:var(--mut);margin-top:10px}
+.statusline{font-size:.78em;color:var(--mut);margin-top:8px;letter-spacing:.4px}
+.statusline b{color:var(--gn);font-weight:normal}
+.statusline .bad{color:var(--rd)}
 
 /* equations + record */
 .eqtools{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
@@ -83,6 +86,7 @@ footer.site a{color:var(--cy)}
 <body>
 <header class="top">
   <div class="brand">SIGNATURE UNIVERSAL PARADOX IMMUNE CALCULATOR<small>SOLVES ANYTHING &middot; PARADOX IMMUNE &middot; JAH DETERMINISTIC</small></div>
+  <div class="statusline" id="jah-status" role="status" aria-live="polite">engine self-test running&hellip;</div>
   <div class="jahnet"><b>THE JAH NETWORK:</b><br>
     <a href="https://justinahiggins614-cmyk.github.io/cyber-patent-catalog/" target="_blank" rel="noopener">Globally Rejustered Patent Catalog</a>
     <a href="https://justinahiggins614-cmyk.github.io/signature-one-archive/specs.html" target="_blank" rel="noopener">Signature Spec Catalog Pending Patents</a>
@@ -224,6 +228,7 @@ footer.site a{color:var(--cy)}
   <button class="act" onclick="mcBurst(1000)">Throw 1,000 darts</button><button class="act" onclick="mcBurst(20000)">Throw 20,000</button>
   <button class="act" onclick="mcReset()">Reset</button>
   <div class="result" id="mc-out" style="font-size:.85em">Darts: 0 · π ≈ — · error —</div>
+  <p class="note">Assumptions: darts land uniformly at random; the &pi; estimate converges roughly like 1/&radic;N, so bigger bursts give tighter estimates. Each throw is independent.</p>
 
   <h2 style="font-size:1em;margin-top:14px">DICE PROBABILITY LAB <span style="color:var(--mut);font-weight:normal;font-size:.8em">— statistics</span></h2>
   <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
@@ -233,11 +238,13 @@ footer.site a{color:var(--cy)}
   </div>
   <canvas class="board" id="dice-cv" width="640" height="220" style="margin-top:8px"></canvas>
   <div class="result" id="dice-out" style="font-size:.85em">No rolls yet.</div>
+  <p class="note">Assumptions: fair six-sided dice, independent rolls. The mean settles toward n &times; 3.5 as the number of rolls grows.</p>
 
   <h2 style="font-size:1em;margin-top:14px">RANDOM WALK <span style="color:var(--mut);font-weight:normal;font-size:.8em">— stochastic motion</span></h2>
   <canvas class="board" id="rw-cv" width="360" height="240"></canvas><br>
   <label style="font-size:.85em;color:var(--mut)">Seed:</label><input type="text" id="rw-seed" value="7" style="width:70px" title="Same seed gives the same walk"><button class="act" onclick="rwGo()">Walk 500 steps</button><button class="act" onclick="rwReset()">Reset</button>
   <div class="result" id="rw-out" style="font-size:.85em">Distance from start: —</div>
+  <p class="note">Assumptions: unit steps in random directions (uniform angle). The seed fixes the walk &mdash; the same seed gives the same walk, so runs are reproducible.</p>
 
   <div class="actions" data-tab="sim"></div>
 </div>
@@ -374,15 +381,32 @@ function showTab(t){TABS.forEach(function(x){document.getElementById("p-"+x).cla
 /* per-tab last-result text + action rows */
 var LAST={};
 function setLast(tab,text,term){LAST[tab]={text:text,term:term||""}}
-function recGet(){try{return JSON.parse(localStorage.getItem("jah_calc_record")||"[]")}catch(e){return[]}}
+function recGet(){
+ try{
+  var r=JSON.parse(localStorage.getItem("jah_calc_record")||"[]"),chg=false;
+  for(var i=0;i<r.length;i++){
+   if(!r[i].id){r[i].id=solveId(r[i].tab,r[i].text,r[i].t);chg=true}
+   if(r[i].input==null){r[i].input="";chg=true}
+  }
+  if(chg)localStorage.setItem("jah_calc_record",JSON.stringify(r));
+  return r;
+ }catch(e){return[]}
+}
+/* stable reproducible solve ID: deterministic hash of the record's own fields.
+   The same solve always produces the same ID, on any device. */
+function solveId(tab,text,t){
+ var h=hashStr(String(tab)+"|"+String(text)+"|"+String(t)),s=String(h);
+ while(s.length<10)s="0"+s;
+ return "JAH-SOLVE-"+s;
+}
 var REC_ARMED=false; // record only real user solves, not page-load defaults
-function recPush(tab,text){
+function recPush(tab,text,term){
  if(!REC_ARMED)return;
  text=String(text||"").trim();if(!text)return;
  try{
-  var r=recGet();
+  var r=recGet(),now=new Date().toISOString();
   if(r.length&&r[0].text===text&&r[0].tab===tab)return;
-  r.unshift({t:new Date().toISOString(),tab:tab,text:text.slice(0,1500)});
+  r.unshift({id:solveId(tab,text,now),t:now,tab:tab,input:String(term||""),text:text.slice(0,1500)});
   if(r.length>500)r.length=500;
   localStorage.setItem("jah_calc_record",JSON.stringify(r));
  }catch(e){recRender();recQuota()}
@@ -391,7 +415,7 @@ function recQuota(){
  var m=document.getElementById("rec-meter");
  if(m)m.innerHTML='<span style="color:var(--rd)">\u26a0 Storage full \u2014 the solve record could not be saved. Export or clear the record to free space.</span>';
 }
-var _setLast=setLast;setLast=function(tab,text,term){_setLast(tab,text,term);recPush(tab,text)};
+var _setLast=setLast;setLast=function(tab,text,term){_setLast(tab,text,term);recPush(tab,text,term)};
 function sendLinks(term){
  term=String(term||"").trim().split(/\s+/).slice(0,3).join(" ");
  if(!term)return "";
@@ -416,7 +440,7 @@ function refreshSend(tab){var s=document.getElementById("send-"+tab);if(s&&LAST[
 function readTab(tab){if(LAST[tab])ttsSpeak(LAST[tab].text)}
 function readAsk(){if(LAST['ask'])readTab('ask');else document.getElementById('ask-out').textContent='Ask me something first \u2014 then tap \uD83D\uDD0A Read answer aloud to hear it.'}
 function copyTab(tab,btn){if(LAST[tab])copyText(LAST[tab].text,btn)}
-function dlTab(tab){if(LAST[tab])download("jah-calculator-"+tab+".txt","JAH UNIVERSAL CALCULATOR — "+tab.toUpperCase()+"\n"+"=".repeat(50)+"\n\n"+LAST[tab].text+"\n")}
+function dlTab(tab){if(LAST[tab])download("jah-calculator-"+tab+".txt",dlFooter("JAH UNIVERSAL CALCULATOR — "+tab.toUpperCase()+" RESULT",1,LAST[tab].text))}
 /* ================= tiered TTS ================= */
 var TTS={audio:null,synth:null,queue:[],stopped:true,speed:1,utter:null};
 var TTS_URLS=[
@@ -749,8 +773,10 @@ function askGo(){
  /* 1) pure math anywhere in the input -> compute it */
  var mq=q.match(/(?:calculate|compute|evaluate|solve|what(?:'s| is))\s+([(0-9][0-9+\-*/^%().\s]*[0-9)][0-9+\-*/^%().\s]*)/i);
  var cand=mq?mq[1]:q;
- if(/^[0-9+\-*/^%().\s]+$/.test(cand)&&/[0-9]/.test(cand)&&/[+\-*/^%]/.test(cand)){
+ if(/^[0-9a-z+\-*/^%().\s]+$/i.test(cand)&&/[0-9]/.test(cand)&&/[+\-*/^%]/.test(cand)){
   try{var v=parseEval(closeParens(cand));LASTNUM=v;
+   var ce=checkCalc(v,cand);
+   if(ce){out.innerHTML=ce;txt="Question: "+q+"\nError evaluating "+cand.trim()+" (see error state).";modeTag="CALCULATION ERROR";setLast("ask","ANSWER MODE: "+modeTag+"\n"+txt,term);refreshSend("ask");return}
    var h='<div style="font-size:.78em;color:var(--mut);letter-spacing:.06em;margin-bottom:8px">ANSWER MODE: CALCULATION</div><span class="lbl">COMPUTED DIRECTLY</span>\n<span class="big">'+esc(cand.trim())+' = '+fmt(v)+'</span>';
    modeTag="CALCULATION";out.innerHTML=h;txt="Question: "+q+"\nComputed: "+cand.trim()+" = "+fmt(v);
    setLast("ask","ANSWER MODE: "+modeTag+"\n"+txt,term);refreshSend("ask");return;
@@ -1137,7 +1163,7 @@ function recRender(){
  if(!r.length){el.innerHTML='<p class="sub">Nothing recorded yet — solve something on any tab and it lands here.</p>';return;}
  el.innerHTML=r.map(function(o){
   var d;try{d=new Date(o.t).toLocaleString()}catch(e){d=o.t}
-  return '<div class="recitem"><div class="rt">'+esc(d)+' · '+esc(o.tab)+'</div><div>'+esc(o.text).split("\n").join("<br>")+'</div></div>';
+  return '<div class="recitem"><div class="rt">'+esc(d)+' · '+esc(o.tab)+' · '+esc(o.id||"no id")+'</div><div>'+esc(o.text).split("\n").join("<br>")+'</div></div>';
  }).join("");
 }
 function recMeter(r){
@@ -1145,10 +1171,19 @@ function recMeter(r){
  var kb=0;try{kb=Math.max(1,Math.round(JSON.stringify(r).length/1024))}catch(e){}
  m.textContent=r.length+" records · ~"+kb+" KB · stored locally in this browser only";
 }
-function recText(){return recGet().map(function(o){return "["+o.t+" · "+o.tab+"]\n"+o.text}).join("\n\n")}
+function recText(){return recGet().map(function(o){return "["+o.t+" · "+o.tab+" · "+o.id+"]\ninput: "+(o.input||"")+"\n"+o.text}).join("\n\n")}
 function recRead(){var t=recText();if(t)ttsSpeak(t)}
 function recCopy(btn){var t=recText();if(t)copyText(t,btn)}
-function recDownload(){var t=recText();if(t)download("jah-calculator-record.txt","JAH CALCULATOR — SOLVE RECORD\n"+"=".repeat(50)+"\n\n"+t+"\n")}
+/* labeled export footer: what / build / when / size / status — derived at save time */
+var JAHBUILD="JAH-CALC inline single-file build · 2026-10-01";
+function dlFooter(kind,n,extra,src){
+ var head=kind+"\n"+"=".repeat(50)+"\n\n"+(extra||"");
+ var tail="\n---\nexported: "+new Date().toISOString()+"\nbuild: "+JAHBUILD+"\nrecords: "+n+"\nstatus: OK\nsource: "+(src||"this browser session (localStorage) — not the official equation archive.")+"\n";
+ var size=0,prev=-1; /* stabilize the digit count of the final size line */
+ while(size!==prev){prev=size;size=(head+tail+"size: "+size+" bytes\n").length}
+ return head+tail+"size: "+size+" bytes\n";
+}
+function recDownload(){var t=recText();if(t)download("jah-calculator-solve-record.txt",dlFooter("JAH CALCULATOR — SOLVE RECORD",recGet().length,t))}
 function recClear(){try{localStorage.removeItem("jah_calc_record")}catch(e){}recRender()}
 
 /* ================= official equation archive ================= */
@@ -1257,7 +1292,8 @@ function eqOpen(id){
   document.getElementById("eq-overlay").hidden=false;
   try{history.replaceState(null,"","?tab=eq&eq="+rec.id)}catch(e){}
  }).catch(function(){
-  document.getElementById("eq-count").textContent="Could not open "+id+".";
+  var n=EQIDX?EQIDX.length:"the archive";
+  document.getElementById("eq-count").textContent="NOT FOUND: no record with ID "+id+" in "+n+" official equations. Check the ID or search the archive above.";
  });
 }
 function eqClose(){document.getElementById("eq-overlay").hidden=true;try{history.replaceState(null,"","?tab=eq")}catch(e){}}
@@ -1265,12 +1301,34 @@ function eqCurRec(){var id=document.getElementById("eq-body").dataset.recid;for(
 function eqRecText(r){return r.id+"\n"+r.title+"\n"+"\nSTEPS\n"+r.steps.join("\n")+"\n\n"+r.solution+"\n"+r.check+"\n\nRECORD PROVENANCE\nsolver_version: "+(r.solver_version||"JAH-EQ solver v1 (client)")+"\ncanonical: "+(r.canonical||eqCanon(r.equation||r.title||""))+"\ncanonical_hash: "+(r.canonical_hash||"not yet assigned")+"\nmethod: "+(r.method||"archive retrieval \u2014 solved once at publication")+"\nprecision: "+(r.precision||"as published")+"\nresult: "+(r.solution||"")+"\ntimestamp: "+(r.ts||"not yet stamped")+"\nhash: "+(r.hash||"not yet stamped")+"\nJAH-EQ ID is the permanent serial of this record.\n\n"+r.stamp}
 function eqSpeak(){var r=eqCurRec();if(r)ttsSpeak(eqRecText(r))}
 function eqCopy(btn){var r=eqCurRec();if(r)copyText(eqRecText(r),btn)}
-function eqDl(){var r=eqCurRec();if(r)download(r.id+".txt",eqRecText(r)+"\n")}
+function eqDl(){var r=eqCurRec();if(r)download(r.id+".txt",dlFooter("OFFICIAL JAH-EQ RECORD — "+r.id,1,eqRecText(r),"the official equation archive (retrieved, solved once at publication)"))}
+
+/* ================= engine self-test (capability/status line) =================
+   Runs at load. Every figure is derived live from the code/data — nothing hardcoded.
+   Shows what the engine can actually do next to the "SOLVES ANYTHING" line. */
+function jahSelfTest(){
+ var el=document.getElementById("jah-status");if(!el)return;
+ var parserOk=false;
+ try{parserOk=(parseEval("2+2*3")===8&&Math.abs(parseEval("sin(30)")-0.5)<1e-9)}catch(e){}
+ var nd=0;try{nd=Object.keys(DEFS).length}catch(e){}
+ var eqN=null,recOk=true;
+ try{localStorage.setItem("__jah_t","1");localStorage.removeItem("__jah_t")}catch(e){recOk=false}
+ function paint(){
+  var s="ENGINE STATUS · PARSER "+(parserOk?"<b>READY</b>":"<span class='bad'>ERROR</span>");
+  s+=" · DEFINITIONS <b>"+nd+"</b>";
+  s+=" · EQ ARCHIVE <b>"+(eqN==null?"loading…":eqN.toLocaleString()+" records")+"</b>";
+  s+=" · SOLVE RECORD "+(recOk?"<b>LOCAL</b>":"<span class='bad'>UNAVAILABLE</span>");
+  el.innerHTML=s;
+ }
+ paint();
+ if(typeof eqLoadIndex==="function")eqLoadIndex().then(function(ix){eqN=ix.length;paint()}).catch(function(){paint()});
+}
 
 /* ================= init ================= */
 paintActions();ucFill();setDeg(true);lifeInit();mcReset();rwReset();
 labPend();labProj();labOhm();labGas();
 REC_ARMED=true;
+jahSelfTest();
 </script>
 </body>
 </html>
