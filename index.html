@@ -405,6 +405,7 @@ footer.site a{color:var(--cy)}
   <a href="data.html">Data &amp; methodology</a> · <a href="data/exports/equations.csv" download>Equation catalog (CSV)</a> · <a href="sitemap-index.xml">Sitemap</a>
 </footer>
 
+<script src="js/jah-talk-fallback.js"></script>
 <script>
 "use strict";
 /* global error boundary: a stray JS exception shows a safe message, never a dead page */
@@ -835,6 +836,23 @@ function defKey(s){
 
 /* ================= ASK ANYTHING ================= */
 /* result classification: every Ask answer is labeled Calculated / Known / Unsupported / Cannot determine */
+/* ---- JAHtalk shared talk module: human voice + duties, stat-dump guard ----
+   The Ask Anything engine answers in structured modes; JAHtalk handles the
+   social layer (greetings, "what are your duties?") and guards every final
+   reply text against terse machine dumps. Never a canon AI — a site helper. */
+var ASK_PROFILE={name:"Ask Anything",id:"",
+ description:"The calculator's answer engine. I work out math, definitions, comparisons, and ten-lens analysis from your words — and I talk like a human, not a printout.",
+ domain:"calculation and analysis",kind:"domain"};
+function askSocial(q){
+ if(typeof JAHtalk==="undefined")return null;
+ var t=String(q||"").toLowerCase();
+ var social=/^(hi|hii+|hey|hello|yo|howdy|good\s?(morning|afternoon|evening|day)|greetings|sup|hiya)\b/.test(t)||
+  /\b(what are your duties|what is your duty|what do you do|what can you do|your duties|your job|your role|your abilities|explain your duties|who are you|your name|introduce yourself|how are you|thank|bye|goodbye)\b/.test(t);
+ return social?JAHtalk.reply(ASK_PROFILE,q):null;
+}
+function askGuard(s){
+ return (typeof JAHtalk==="undefined")?s:JAHtalk.guard(s,ASK_PROFILE);
+}
 function askClassify(tag){
  if(tag==="CALCULATION")return "Calculated";
  if(tag==="FACTUAL EXPLANATION")return "Known";
@@ -846,6 +864,12 @@ function askGo(){
  var q=document.getElementById("ask-in").value.trim();
  var out=document.getElementById("ask-out");
  if(!q){out.textContent="Ask me something first.";return}
+ /* social layer first: greetings + "what are your duties?" get a human answer */
+ var soc=askSocial(q);
+ if(soc!==null){
+  out.innerHTML='<div class="verdict"><b style="color:var(--gn)">ASK ANYTHING</b><p style="margin:6px 0;font-size:.95em;line-height:1.55">'+esc(soc)+'</p></div>';
+  setLast("ask",askGuard("ASK ANYTHING\n"+soc),q);refreshSend("ask");return;
+ }
  var txt="",term=q,modeTag="LOGICAL ANALYSIS";
  /* 1) pure math anywhere in the input -> compute it */
  var mq=q.match(/(?:calculate|compute|evaluate|solve|what(?:'s| is))\s+([(0-9][0-9+\-*/^%().\s]*[0-9)][0-9+\-*/^%().\s]*)/i);
@@ -853,17 +877,17 @@ function askGo(){
  if(/^[0-9a-z+\-*/^%().\s]+$/i.test(cand)&&/[0-9]/.test(cand)&&/[+\-*/^%]/.test(cand)){
   try{var v=parseEval(closeParens(cand));LASTNUM=v;
    var ce=checkCalc(v,cand);
-   if(ce){out.innerHTML=askClassHTML("CALCULATION ERROR")+ce.html;txt="Question: "+q+"\nError evaluating "+cand.trim()+" (see error state).";modeTag="CALCULATION ERROR";setLast("ask","ANSWER MODE: "+modeTag+"\nRESULT CLASSIFICATION: "+askClassify(modeTag)+"\n"+txt,term);refreshSend("ask");return}
+   if(ce){out.innerHTML=askClassHTML("CALCULATION ERROR")+ce.html;txt="Question: "+q+"\nError evaluating "+cand.trim()+" (see error state).";modeTag="CALCULATION ERROR";setLast("ask",askGuard("ANSWER MODE: "+modeTag+"\nRESULT CLASSIFICATION: "+askClassify(modeTag)+"\n"+txt),term);refreshSend("ask");return}
    var h='<div style="font-size:.78em;color:var(--mut);letter-spacing:.06em;margin-bottom:8px">ANSWER MODE: CALCULATION</div>'+askClassHTML("CALCULATION")+'<span class="lbl">COMPUTED DIRECTLY</span>\n<span class="big">'+esc(cand.trim())+' = '+fmt(v)+'</span>';
    modeTag="CALCULATION";out.innerHTML=h;txt="Question: "+q+"\nComputed: "+cand.trim()+" = "+fmt(v);
-   setLast("ask","ANSWER MODE: "+modeTag+"\n"+txt,term);refreshSend("ask");return;
+   setLast("ask",askGuard("ANSWER MODE: "+modeTag+"\n"+txt),term);refreshSend("ask");return;
   }catch(e){}
  }
  /* percent pattern: "15% of 240" or "15 percent of 240" */
  var pm=q.match(/(\d+(?:\.\d+)?)\s*(?:%|percent)\s*of\s*(\d+(?:\.\d+)?)/i);
  if(pm){var pv=parseFloat(pm[1])*parseFloat(pm[2])/100;
   out.innerHTML='<div style="font-size:.78em;color:var(--mut);letter-spacing:.06em;margin-bottom:8px">ANSWER MODE: CALCULATION</div>'+askClassHTML("CALCULATION")+'<span class="lbl">COMPUTED DIRECTLY</span>\n<span class="big">'+pm[1]+'% of '+pm[2]+' = '+fmt(pv)+'</span>';
-  txt="Question: "+q+"\nAnswer: "+fmt(pv);modeTag="CALCULATION";setLast("ask","ANSWER MODE: "+modeTag+"\n"+txt,term);refreshSend("ask");return}
+  txt="Question: "+q+"\nAnswer: "+fmt(pv);modeTag="CALCULATION";setLast("ask",askGuard("ANSWER MODE: "+modeTag+"\n"+txt),term);refreshSend("ask");return}
  var low=q.toLowerCase(),html="",plain="";
  /* 2) definition pattern -> ONE highlighted right answer (JAH ANSWER).
        Signature ecosystem (syllables/letters) is the *reference* line;
@@ -909,7 +933,7 @@ function askGo(){
  html+='<p class="note">I compute from your words — I don\'t browse the web.</p>';
  html='<div style="font-size:.78em;color:var(--mut);letter-spacing:.06em;margin-bottom:8px">ANSWER MODE: '+esc(modeTag)+'</div>'+askClassHTML(modeTag)+html;
  out.innerHTML=html;
- setLast("ask","ANSWER MODE: "+modeTag+"\nRESULT CLASSIFICATION: "+askClassify(modeTag)+"\n"+txt+plain,term);refreshSend("ask");
+ setLast("ask",askGuard("ANSWER MODE: "+modeTag+"\nRESULT CLASSIFICATION: "+askClassify(modeTag)+"\n"+txt+plain),term);refreshSend("ask");
 }
 function syllables(w){w=String(w).toLowerCase().replace(/[^a-z]/g,"");if(!w)return 1;if(w.length<=3)return 1;var m=w.replace(/(?:[^laeiouy]e|ed|es)$/,"").match(/[aeiouy]{1,2}/g);return Math.max(1,m?m.length:1)}
 function lensHTML(t,b){return '<div class="lens"><b>'+esc(t)+'</b><p>'+b+'</p></div>'}
