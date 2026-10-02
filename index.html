@@ -15,6 +15,7 @@ header.top{background:linear-gradient(180deg,#101827,#0a0e14);border-bottom:2px 
 .jahnet b{color:var(--gold);letter-spacing:1px}
 .jahnet a{color:var(--cy);text-decoration:none;margin:0 6px;white-space:nowrap}
 .jahnet a.me{color:#fff;font-weight:bold;border:1px solid var(--cy);border-radius:4px;padding:1px 7px}
+.jahnet .youarehere{color:var(--gold);letter-spacing:.08em;font-weight:bold;margin-left:6px}
 .tabs{display:flex;gap:6px;overflow-x:auto;padding:10px 12px;background:var(--panel2);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
 .tabs button{flex:0 0 auto;background:var(--panel);color:var(--txt);border:1px solid var(--line);border-radius:6px;padding:9px 14px;font-size:.92em;cursor:pointer}
 .tabs button.on{background:var(--cy);color:#04121a;font-weight:bold;border-color:var(--cy)}
@@ -56,6 +57,7 @@ footer.site a{color:var(--cy)}
 .fnrow{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
 .fnrow button{background:#1c2940;border:1px solid var(--line);color:var(--cy);border-radius:5px;padding:7px 10px;font-family:Consolas,monospace;cursor:pointer;font-size:.85em}
 .note{font-size:.8em;color:var(--mut);margin-top:10px}
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:#0c1a12;border:2px solid var(--gn);color:var(--gn);border-radius:8px;padding:10px 18px;font-size:.9em;z-index:1000;box-shadow:0 4px 18px rgba(0,0,0,.5)}
 .statusline{font-size:.78em;color:var(--mut);margin-top:8px;letter-spacing:.4px}
 .statusline b{color:var(--gn);font-weight:normal}
 .statusline .bad{color:var(--rd)}
@@ -88,12 +90,14 @@ footer.site a{color:var(--cy)}
   <div class="brand">SIGNATURE UNIVERSAL PARADOX IMMUNE CALCULATOR<small>SOLVES ANYTHING &middot; PARADOX IMMUNE &middot; JAH DETERMINISTIC</small></div>
   <div class="statusline" id="jah-status" role="status" aria-live="polite">engine self-test running&hellip;</div>
   <div class="jahnet"><b>THE JAH NETWORK:</b><br>
-    <a href="https://justinahiggins614-cmyk.github.io/cyber-patent-catalog/" target="_blank" rel="noopener">Globally Rejustered Patent Catalog</a>
-    <a href="https://justinahiggins614-cmyk.github.io/signature-one-archive/specs.html" target="_blank" rel="noopener">Signature Spec Catalog Pending Patents</a>
+    <a href="https://justinahiggins614-cmyk.github.io/jah-ai-models/" target="_blank" rel="noopener">The Signature AI Telephone Book</a>
+    <a class="me" href="https://justinahiggins614-cmyk.github.io/jah-calculator/">Signature Universal Paradox Immune Calculator</a><span class="youarehere">YOU ARE HERE: SIGNATURE UNIVERSAL PARADOX IMMUNE CALCULATOR</span>
     <a href="https://justinahiggins614-cmyk.github.io/jah-dictionary/" target="_blank" rel="noopener">The Signature Dictionary</a>
     <a href="https://justinahiggins614-cmyk.github.io/jah-wiki/" target="_blank" rel="noopener">JAH Wiki</a>
     <a href="https://justinahiggins614-cmyk.github.io/jah-n-wiki-leaks/" target="_blank" rel="noopener">JAH-N Wiki</a>
-    <a class="me" href="https://justinahiggins614-cmyk.github.io/jah-calculator/">Signature Universal Paradox Immune Calculator</a><a href="https://justinahiggins614-cmyk.github.io/jah-ai-models/">The Signature AI Telephone Book</a>
+    <a href="https://justinahiggins614-cmyk.github.io/cyber-patent-catalog/" target="_blank" rel="noopener">Globally Rejustered Patent Catalog</a>
+    <a href="https://justinahiggins614-cmyk.github.io/signature-one-archive/specs.html" target="_blank" rel="noopener">Signature Spec Catalog Pending Patents</a>
+    <a href="https://justinahiggins614-cmyk.github.io/signature-llama/" target="_blank" rel="noopener">Signature Llama</a>
     <a href="https://justinahiggins614-cmyk.github.io/jah-computer-systems/" target="_blank" rel="noopener">The Signature PC System Depository</a>
   </div>
 </header>
@@ -225,8 +229,8 @@ footer.site a{color:var(--cy)}
   <h2 style="font-size:1em;margin-top:14px">MONTE CARLO π <span style="color:var(--mut);font-weight:normal;font-size:.8em">— probabilistic</span></h2>
   <p class="sub">Random darts in a square. Fraction inside the circle × 4 approaches π.</p>
   <canvas class="board" id="mc-cv" width="300" height="300"></canvas><br>
-  <button class="act" onclick="mcBurst(1000)">Throw 1,000 darts</button><button class="act" onclick="mcBurst(20000)">Throw 20,000</button>
-  <button class="act" onclick="mcReset()">Reset</button>
+  <label style="font-size:.85em;color:var(--mut)">Seed:</label><input type="text" id="mc-seed" value="7" style="width:70px" title="Same seed gives the same darts"><button class="act" onclick="mcBurst(1000)">Throw 1,000 darts</button><button class="act" onclick="mcBurst(20000)">Throw 20,000</button>
+  <button class="act" onclick="mcReset()">Reset</button><button class="act" onclick="mcRepro()">Reproduce</button>
   <div class="result" id="mc-out" style="font-size:.85em">Darts: 0 · π ≈ — · error —</div>
   <p class="note">Assumptions: darts land uniformly at random; the &pi; estimate converges roughly like 1/&radic;N, so bigger bursts give tighter estimates. Each throw is independent.</p>
 
@@ -234,7 +238,8 @@ footer.site a{color:var(--cy)}
   <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
     <label style="font-size:.85em;color:var(--mut)">Dice:</label><input type="text" id="dice-n" value="2" style="width:60px">
     <label style="font-size:.85em;color:var(--mut)">Rolls:</label><input type="text" id="dice-r" value="1000" style="width:80px">
-    <button class="act" onclick="diceGo()">Roll</button><button class="act" onclick="diceReset()">Reset</button>
+    <label style="font-size:.85em;color:var(--mut)">Seed:</label><input type="text" id="dice-seed" value="7" style="width:70px" title="Same seed gives the same rolls">
+    <button class="act" onclick="diceGo()">Roll</button><button class="act" onclick="diceReset()">Reset</button><button class="act" onclick="diceRepro()">Reproduce</button>
   </div>
   <canvas class="board" id="dice-cv" width="640" height="220" style="margin-top:8px"></canvas>
   <div class="result" id="dice-out" style="font-size:.85em">No rolls yet.</div>
@@ -312,6 +317,7 @@ footer.site a{color:var(--cy)}
     <button class="go" onclick="eqSearch()">Search</button>
   </div>
   <div class="eqcount" id="eq-count">Loading archive…</div>
+  <div class="note" id="eq-updated" style="margin-top:2px">Site updated: —</div>
   <div id="eq-list"></div>
   <div id="eq-more" style="text-align:center;margin:10px 0"></div>
 </div>
@@ -340,11 +346,15 @@ footer.site a{color:var(--cy)}
 </div><!-- /wrap -->
 <footer class="site">
   <b style="color:var(--gold)">JAH Universal Calculator</b> — is a JAH site. Solves anything, paradox immune, powered by the JAH deterministic system.<br>
-  Partner of <a href="https://justinahiggins614-cmyk.github.io/cyber-patent-catalog/">Globally Rejustered Patent Catalog</a> ·
-  <a href="https://justinahiggins614-cmyk.github.io/signature-one-archive/specs.html">Signature Spec Catalog Pending Patents</a> ·
-  <a href="https://justinahiggins614-cmyk.github.io/jah-dictionary/">The Signature Dictionary</a> ·
-  <a href="https://justinahiggins614-cmyk.github.io/jah-wiki/">JAH Wiki</a> ·
-  <a href="https://justinahiggins614-cmyk.github.io/jah-n-wiki-leaks/">JAH-N Wiki</a>
+  Partner of <a href="https://justinahiggins614-cmyk.github.io/jah-ai-models/" target="_blank" rel="noopener">The Signature AI Telephone Book</a> ·
+  <a href="https://justinahiggins614-cmyk.github.io/jah-calculator/">Signature Universal Paradox Immune Calculator</a> ·
+  <a href="https://justinahiggins614-cmyk.github.io/jah-dictionary/" target="_blank" rel="noopener">The Signature Dictionary</a> ·
+  <a href="https://justinahiggins614-cmyk.github.io/jah-wiki/" target="_blank" rel="noopener">JAH Wiki</a> ·
+  <a href="https://justinahiggins614-cmyk.github.io/jah-n-wiki-leaks/" target="_blank" rel="noopener">JAH-N Wiki</a> ·
+  <a href="https://justinahiggins614-cmyk.github.io/cyber-patent-catalog/" target="_blank" rel="noopener">Globally Rejustered Patent Catalog</a> ·
+  <a href="https://justinahiggins614-cmyk.github.io/signature-one-archive/specs.html" target="_blank" rel="noopener">Signature Spec Catalog Pending Patents</a> ·
+  <a href="https://justinahiggins614-cmyk.github.io/signature-llama/" target="_blank" rel="noopener">Signature Llama</a> ·
+  <a href="https://justinahiggins614-cmyk.github.io/jah-computer-systems/" target="_blank" rel="noopener">The Signature PC System Depository</a>
 </footer>
 
 <script>
@@ -365,6 +375,7 @@ function download(name,content,mime){var b=new Blob([content],{type:mime||"text/
 function copyText(t,btn){function done(){if(btn){var o=btn.innerHTML;btn.innerHTML="Copied!";setTimeout(function(){btn.innerHTML=o},1400)}}
  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(done).catch(function(){fb()})}else fb();
  function fb(){var ta=document.createElement("textarea");ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand("copy");done()}catch(e){}ta.remove()}}
+function flashNote(t){var e=document.getElementById("jah-toast");if(!e){e=document.createElement("div");e.id="jah-toast";e.className="toast";document.body.appendChild(e)}e.textContent=t;e.style.display="block";clearTimeout(e._t);e._t=setTimeout(function(){e.style.display="none"},2600)}
 function fmt(n,d){if(!isFinite(n))return "undefined";if(n!==0&&Math.abs(n)<1e-6||Math.abs(n)>=1e12)return n.toExponential(4);var r=Number(n.toFixed(d==null?6:d));return String(r)}
 var MEM={basic:0};
 function mem(tab,op){if(op==="+")MEM[tab]+=lastNum(tab);else if(op==="-")MEM[tab]-=lastNum(tab);else if(op==="r"){var i=document.getElementById(tab==="basic"?"basic-in":"sci-in");i.value+=fmt(MEM[tab]);}else if(op==="c")MEM[tab]=0;}
@@ -440,7 +451,7 @@ function refreshSend(tab){var s=document.getElementById("send-"+tab);if(s&&LAST[
 function readTab(tab){if(LAST[tab])ttsSpeak(LAST[tab].text)}
 function readAsk(){if(LAST['ask'])readTab('ask');else document.getElementById('ask-out').textContent='Ask me something first \u2014 then tap \uD83D\uDD0A Read answer aloud to hear it.'}
 function copyTab(tab,btn){if(LAST[tab])copyText(LAST[tab].text,btn)}
-function dlTab(tab){if(LAST[tab])download("jah-calculator-"+tab+".txt",dlFooter("JAH UNIVERSAL CALCULATOR — "+tab.toUpperCase()+" RESULT",1,LAST[tab].text))}
+function dlTab(tab){if(LAST[tab]){download("jah-calculator-"+tab+".txt",dlFooter("JAH UNIVERSAL CALCULATOR — "+tab.toUpperCase()+" RESULT",1,LAST[tab].text));flashNote("Export complete \u2014 jah-calculator-"+tab+".txt")}}
 /* ================= tiered TTS ================= */
 var TTS={audio:null,synth:null,queue:[],stopped:true,speed:1,utter:null};
 var TTS_URLS=[
@@ -568,19 +579,29 @@ function calcErrHTML(e){
   return errHTML("INVALID FACTORIAL","Factorial needs a whole number from 0 to 170.","fact(5)","Use 0 \u2264 n \u2264 170, whole numbers.");
  return errHTML("CALCULATION ERROR",m||"the result is not a number.","2+2*3","Simplify the expression and try again.");
 }
+/* returns {html,title} so result-state wrappers can label STATUS; null = OK */
 function checkCalc(v,raw){
+ function E(t,h){return {html:h,title:t}}
  if(isNaN(v)){
-  if(/0+\s*\/\s*0+(?![0-9.])/.test(raw))return errHTML("UNDEFINED: 0/0","Zero divided by zero has no defined value.","0/1","Make the numerator and denominator different.");
-  if(/sqrt\(\s*-|log\(\s*-|ln\(\s*-/.test(raw))return errHTML("NOT A REAL NUMBER","This calculator works in real numbers: square roots of negatives and logs of non-positive numbers have no real result.","sqrt(4)","Use a non-negative value inside sqrt, a positive value inside log/ln.");
-  return errHTML("UNDEFINED RESULT","The expression evaluates to NaN (not a number).","2+2*3","Check for 0/0, sqrt of a negative, or log of zero.");
+  if(/0+\s*\/\s*0+(?![0-9.])/.test(raw))return E("UNDEFINED: 0/0",errHTML("UNDEFINED: 0/0","Zero divided by zero has no defined value.","0/1","Make the numerator and denominator different."));
+  if(/sqrt\(\s*-|log\(\s*-|ln\(\s*-/.test(raw))return E("NOT A REAL NUMBER",errHTML("NOT A REAL NUMBER","This calculator works in real numbers: square roots of negatives and logs of non-positive numbers have no real result.","sqrt(4)","Use a non-negative value inside sqrt, a positive value inside log/ln."));
+  return E("UNDEFINED RESULT",errHTML("UNDEFINED RESULT","The expression evaluates to NaN (not a number).","2+2*3","Check for 0/0, sqrt of a negative, or log of zero."));
  }
  if(!isFinite(v)){
-  if(/\/\s*0(?![0-9.])/.test(raw))return errHTML("DIVISION BY ZERO","Division by zero has no defined value.","5/2","Check that the denominator is not zero.");
-  if(/log\(\s*0|ln\(\s*0/.test(raw))return errHTML("LOG OF ZERO","log(0) heads to negative infinity \u2014 not representable.","log(10)","Use a positive value inside log/ln.");
-  return errHTML("OVERFLOW","The result is too large to represent (Infinity).","10^400 \u2192 break it down","Break the calculation into smaller steps.");
+  if(/\/\s*0(?![0-9.])/.test(raw))return E("DIVISION BY ZERO",errHTML("DIVISION BY ZERO","Division by zero has no defined value.","5/2","Check that the denominator is not zero."));
+  if(/log\(\s*0|ln\(\s*0/.test(raw))return E("LOG OF ZERO",errHTML("LOG OF ZERO","log(0) heads to negative infinity \u2014 not representable.","log(10)","Use a positive value inside log/ln."));
+  return E("OVERFLOW",errHTML("OVERFLOW","The result is too large to represent (Infinity).","10^400 \u2192 break it down","Break the calculation into smaller steps."));
  }
  return null;
 }
+/* visible result-state wrapper: INPUT / METHOD / OUTPUT / STATUS */
+function stateHTML(input,method,outputHTML,status){
+ return '<span class="lbl">INPUT</span>\n'+esc(input)+'\n\n'+
+  '<span class="lbl">METHOD</span>\n'+esc(method)+'\n\n'+
+  '<span class="lbl">OUTPUT</span>\n'+outputHTML+'\n\n'+
+  '<span class="lbl">STATUS</span>\n'+esc(status);
+}
+var METHOD_PARSER="Hand-written expression parser \u2014 parentheses first, then ^, then \u00d7 \u00f7 %, then + \u2212. No eval, no black box.";
 function closeParens(x){var o=0;for(var i=0;i<x.length;i++){if(x[i]==="("||x[i]==="√")o++;else if(x[i]===")")o--}while(o-->0)x+=")";return x}
 function basicGo(){
  var raw=closeParens(document.getElementById("basic-in").value.trim().replace(/=+$/,""));
@@ -590,33 +611,33 @@ function basicGo(){
   var r=evalSteps(raw);
   LASTNUM=r.result;
   var ce=checkCalc(r.result,raw);
-  if(ce){out.innerHTML=ce;txt="Error evaluating "+raw+" (see error state)."}
+  if(ce){out.innerHTML=stateHTML(raw,METHOD_PARSER,ce.html,"ERROR \u2014 "+ce.title);txt="Error evaluating "+raw+" (see error state)."}
   else{
-   var h='<span class="lbl">EXPRESSION</span>\n'+esc(raw)+'\n';
-   if(r.steps.length)h+='\n<span class="lbl">STEPS</span>\n'+r.steps.map(esc).join("\n")+'\n';
-   h+='\n<span class="big">= '+fmt(r.result)+'</span>';
-   out.innerHTML=h;
+   var body='<span class="lbl">EXPRESSION</span>\n'+esc(raw)+'\n';
+   if(r.steps.length)body+='\n<span class="lbl">STEPS</span>\n'+r.steps.map(esc).join("\n")+'\n';
+   body+='\n<span class="big">= '+fmt(r.result)+'</span>';
+   out.innerHTML=stateHTML(raw,METHOD_PARSER,body,"OK \u2014 solved deterministically");
    txt="Expression: "+raw+"\n"+(r.steps.length?"Steps:\n"+r.steps.join("\n")+"\n":"")+"Result: "+fmt(r.result);
   }
- }catch(err){out.innerHTML=calcErrHTML(err);txt="Error evaluating "+raw+": "+err.message}
+ }catch(err){out.innerHTML=stateHTML(raw,METHOD_PARSER,calcErrHTML(err),"ERROR \u2014 see above");txt="Error evaluating "+raw+": "+err.message}
  setLast("basic",txt,term);refreshSend("basic");
 }
 function sciGo(){
  var raw=closeParens(document.getElementById("sci-in").value.trim().replace(/=+$/,""));
  if(!raw)return;
- var out=document.getElementById("sci-out"),txt,term=raw;
+ var out=document.getElementById("sci-out"),txt,term=raw,method=METHOD_PARSER+" ("+(DEGMODE?"degrees":"radians")+")";
  try{
   var r=evalSteps(raw);LASTNUM=r.result;
   var ce=checkCalc(r.result,raw);
-  if(ce){out.innerHTML=ce;txt="Error evaluating "+raw+" (see error state)."}
+  if(ce){out.innerHTML=stateHTML(raw,method,ce.html,"ERROR \u2014 "+ce.title);txt="Error evaluating "+raw+" (see error state)."}
   else{
-   var h='<span class="lbl">EXPRESSION ('+(DEGMODE?"degrees":"radians")+')</span>\n'+esc(raw)+'\n';
-   if(r.steps.length)h+='\n<span class="lbl">STEPS</span>\n'+r.steps.map(esc).join("\n")+'\n';
-   h+='\n<span class="big">= '+fmt(r.result)+'</span>';
-   out.innerHTML=h;
-   txt="Expression ("+(DEGMODE?"degrees":"radians")+"): "+raw+"\n"+(r.steps.length?"Steps:\n"+r.steps.join("\n")+"\n":"")+"Result: "+fmt(r.result);
+   var body='<span class="lbl">EXPRESSION ('+(DEGMODE?"degrees":"radians")+')</span>\n'+esc(raw)+'\n';
+   if(r.steps.length)body+='\n<span class="lbl">STEPS</span>\n'+r.steps.map(esc).join("\n")+'\n';
+   body+='\n<span class="big">= '+fmt(r.result)+'</span>';
+   out.innerHTML=stateHTML(raw,method,body,"OK \u2014 solved deterministically");
+   txt="Expression ("+(DEGMODE?"degrees":"radians")+")"+": "+raw+"\n"+(r.steps.length?"Steps:\n"+r.steps.join("\n")+"\n":"")+"Result: "+fmt(r.result);
   }
- }catch(err){out.innerHTML=calcErrHTML(err);txt="Error evaluating "+raw+": "+err.message}
+ }catch(err){out.innerHTML=stateHTML(raw,method,calcErrHTML(err),"ERROR \u2014 see above");txt="Error evaluating "+raw+": "+err.message}
  setLast("sci",txt,term);refreshSend("sci");
 }
 function setDeg(d){DEGMODE=d;document.getElementById("degbtn").style.borderColor=d?"var(--cy)":"";document.getElementById("radbtn").style.borderColor=d?"":"var(--cy)";var m=document.getElementById("degmode");if(m)m.textContent="Angle mode: "+(d?"DEG":"RAD")}
@@ -630,29 +651,29 @@ function quadSolveText(a,b,c){
 function solveQuad(){
  var a=parseFloat(document.getElementById("qa").value),b=parseFloat(document.getElementById("qb").value),c=parseFloat(document.getElementById("qc").value);
  var out=document.getElementById("solver-out"),txt2;
- if([a,b,c].some(isNaN)){out.innerHTML=errHTML("MISSING COEFFICIENTS","a, b, and c must all be numbers.","a=1, b=-3, c=2","Fill in all three coefficient fields.");return}
+ if([a,b,c].some(isNaN)){out.innerHTML=stateHTML("quadratic coefficients (incomplete)",METHOD_QUAD,errHTML("MISSING COEFFICIENTS","a, b, and c must all be numbers.","a=1, b=-3, c=2","Fill in all three coefficient fields."),"ERROR \u2014 MISSING COEFFICIENTS");return}
  if(a===0){
   if(b===0){
    txt2="With a=0 and b=0 this is not even linear.\n"+(c===0?"Every number is a solution (the equation is 0 = 0).":"No solution \u2014 the equation is a contradiction ("+c+" = 0).");
   }else{
    txt2="a=0, so this is LINEAR (degree 1), not quadratic: "+b+"x + "+c+" = 0\nSolution: x = "+fmt(-c/b);
   }
-  out.textContent=txt2;setLast("sci",(LAST.sci?LAST.sci.text+"\n\n":"")+txt2,"quadratic equation");refreshSend("sci");return;
+  out.innerHTML=stateHTML("a="+a+", b="+b+", c="+c,METHOD_QUAD,esc(txt2),"OK \u2014 solved deterministically");setLast("sci",(LAST.sci?LAST.sci.text+"\n\n":"")+txt2,"quadratic equation");refreshSend("sci");return;
  }
  txt2=quadSolveText(a,b,c);
- out.textContent=txt2;setLast("sci",(LAST.sci?LAST.sci.text+"\n\n":"")+txt2,"quadratic equation");refreshSend("sci");
+ out.innerHTML=stateHTML("a="+a+", b="+b+", c="+c,METHOD_QUAD,esc(txt2),"OK \u2014 solved deterministically");setLast("sci",(LAST.sci?LAST.sci.text+"\n\n":"")+txt2,"quadratic equation");refreshSend("sci");
 }
 function solveCubic(){
  var a=parseFloat(document.getElementById("ca").value),b=parseFloat(document.getElementById("cb").value),c=parseFloat(document.getElementById("cc").value),d=parseFloat(document.getElementById("cd").value);
  var out=document.getElementById("solver-out");
- if([a,b,c,d].some(isNaN)){out.innerHTML=errHTML("MISSING COEFFICIENTS","a, b, c, and d must all be numbers.","a=1, b=0, c=-3, d=2","Fill in all four coefficient fields.");return}
+ if([a,b,c,d].some(isNaN)){out.innerHTML=stateHTML("cubic coefficients (incomplete)",METHOD_CUBIC,errHTML("MISSING COEFFICIENTS","a, b, c, and d must all be numbers.","a=1, b=0, c=-3, d=2","Fill in all four coefficient fields."),"ERROR \u2014 MISSING COEFFICIENTS");return}
  if(a===0){
   var dtxt;
   if(b!==0){dtxt="a=0, so this is QUADRATIC (degree 2), not cubic:\n"+quadSolveText(b,c,d)}
   else if(c!==0){dtxt="a=0 and b=0, so this is LINEAR (degree 1): "+c+"x + "+d+" = 0\nSolution: x = "+fmt(-d/c)}
   else if(d===0){dtxt="All coefficients are zero \u2014 every number is a solution (the equation is 0 = 0)."}
   else{dtxt="a, b, c are all zero and d="+d+" \u2014 no solution (contradiction: "+d+" = 0)."}
-  out.textContent=dtxt;setLast("sci",(LAST.sci?LAST.sci.text+"\n\n":"")+dtxt,"cubic equation");refreshSend("sci");return;
+  out.innerHTML=stateHTML("a="+a+", b="+b+", c="+c+", d="+d,METHOD_CUBIC,esc(dtxt),"OK \u2014 solved deterministically");setLast("sci",(LAST.sci?LAST.sci.text+"\n\n":"")+dtxt,"cubic equation");refreshSend("sci");return;
  }
  var B=b/a,C=c/a,D=d/a;
  var p=(3*C-B*B)/3,q=(2*B*B*B-9*B*C+27*D)/27,disc=(q/2)*(q/2)+(p/3)*(p/3)*(p/3);
@@ -662,7 +683,7 @@ function solveCubic(){
  else{var r=Math.sqrt(-(p/3)*(p/3)*(p/3)),th=Math.acos(Math.max(-1,Math.min(1,-q/(2*r))));
   for(var k=0;k<3;k++)roots.push(2*cbrt(r)*Math.cos((th+2*Math.PI*k)/3)-B/3)}
  var txt="Cubic: "+a+"x³ + "+b+"x² + "+c+"x + "+d+" = 0\nRoots: "+roots.map(function(x){return fmt(x)}).join(", ");
- out.textContent=txt;setLast("sci",(LAST.sci?LAST.sci.text+"\n\n":"")+txt,"cubic equation");refreshSend("sci");
+ out.innerHTML=stateHTML("a="+a+", b="+b+", c="+c+", d="+d,METHOD_CUBIC,esc(txt),"OK \u2014 solved deterministically");setLast("sci",(LAST.sci?LAST.sci.text+"\n\n":"")+txt,"cubic equation");refreshSend("sci");
 }
 var UNITS={
  length:{m:1,km:1000,cm:0.01,mm:0.001,mi:1609.344,ft:0.3048,in:0.0254,yd:0.9144},
@@ -681,10 +702,10 @@ function ucGo(){
  var c=document.getElementById("uc-cat").value,v=parseFloat(document.getElementById("uc-v").value);
  var f=document.getElementById("uc-from").value,t=document.getElementById("uc-to").value;
  var out=document.getElementById("uc-out");
- if(isNaN(v)){out.innerHTML=errHTML("MISSING VALUE","The value to convert must be a number.","5","Type a number in the Value field.");return}
+ if(isNaN(v)){out.innerHTML=stateHTML("conversion value (missing)","Unit conversion via base-unit factors",errHTML("MISSING VALUE","The value to convert must be a number.","5","Type a number in the Value field."),"ERROR \u2014 MISSING VALUE");return}
  var r=fromBase(c,toBase(c,v,f),t);
  var txt=v+" "+f+" = "+fmt(r)+" "+t;
- out.textContent=txt;setLast("sci",(LAST.sci?LAST.sci.text+"\n\n":"")+"Convert: "+txt,"unit conversion");refreshSend("sci");
+ out.innerHTML=stateHTML(v+" "+f+" \u2192 "+t,"Unit conversion via base-unit factors",esc(txt),"OK \u2014 converted");setLast("sci",(LAST.sci?LAST.sci.text+"\n\n":"")+"Convert: "+txt,"unit conversion");refreshSend("sci");
 }
 
 /* ============ JAH ANSWER BANK: one right answer for common questions ============
@@ -765,6 +786,14 @@ function defKey(s){
 }
 
 /* ================= ASK ANYTHING ================= */
+/* result classification: every Ask answer is labeled Calculated / Known / Unsupported / Cannot determine */
+function askClassify(tag){
+ if(tag==="CALCULATION")return "Calculated";
+ if(tag==="FACTUAL EXPLANATION")return "Known";
+ if(tag==="UNSUPPORTED")return "Unsupported";
+ return "Cannot determine";
+}
+function askClassHTML(tag){return '<div style="font-size:.78em;color:var(--mut);letter-spacing:.06em;margin-bottom:8px">RESULT CLASSIFICATION: <b style="color:var(--cy)">'+askClassify(tag).toUpperCase()+'</b></div>'}
 function askGo(){
  var q=document.getElementById("ask-in").value.trim();
  var out=document.getElementById("ask-out");
@@ -776,8 +805,8 @@ function askGo(){
  if(/^[0-9a-z+\-*/^%().\s]+$/i.test(cand)&&/[0-9]/.test(cand)&&/[+\-*/^%]/.test(cand)){
   try{var v=parseEval(closeParens(cand));LASTNUM=v;
    var ce=checkCalc(v,cand);
-   if(ce){out.innerHTML=ce;txt="Question: "+q+"\nError evaluating "+cand.trim()+" (see error state).";modeTag="CALCULATION ERROR";setLast("ask","ANSWER MODE: "+modeTag+"\n"+txt,term);refreshSend("ask");return}
-   var h='<div style="font-size:.78em;color:var(--mut);letter-spacing:.06em;margin-bottom:8px">ANSWER MODE: CALCULATION</div><span class="lbl">COMPUTED DIRECTLY</span>\n<span class="big">'+esc(cand.trim())+' = '+fmt(v)+'</span>';
+   if(ce){out.innerHTML=askClassHTML("CALCULATION ERROR")+ce.html;txt="Question: "+q+"\nError evaluating "+cand.trim()+" (see error state).";modeTag="CALCULATION ERROR";setLast("ask","ANSWER MODE: "+modeTag+"\nRESULT CLASSIFICATION: "+askClassify(modeTag)+"\n"+txt,term);refreshSend("ask");return}
+   var h='<div style="font-size:.78em;color:var(--mut);letter-spacing:.06em;margin-bottom:8px">ANSWER MODE: CALCULATION</div>'+askClassHTML("CALCULATION")+'<span class="lbl">COMPUTED DIRECTLY</span>\n<span class="big">'+esc(cand.trim())+' = '+fmt(v)+'</span>';
    modeTag="CALCULATION";out.innerHTML=h;txt="Question: "+q+"\nComputed: "+cand.trim()+" = "+fmt(v);
    setLast("ask","ANSWER MODE: "+modeTag+"\n"+txt,term);refreshSend("ask");return;
   }catch(e){}
@@ -785,7 +814,7 @@ function askGo(){
  /* percent pattern: "15% of 240" or "15 percent of 240" */
  var pm=q.match(/(\d+(?:\.\d+)?)\s*(?:%|percent)\s*of\s*(\d+(?:\.\d+)?)/i);
  if(pm){var pv=parseFloat(pm[1])*parseFloat(pm[2])/100;
-  out.innerHTML='<div style="font-size:.78em;color:var(--mut);letter-spacing:.06em;margin-bottom:8px">ANSWER MODE: CALCULATION</div><span class="lbl">COMPUTED DIRECTLY</span>\n<span class="big">'+pm[1]+'% of '+pm[2]+' = '+fmt(pv)+'</span>';
+  out.innerHTML='<div style="font-size:.78em;color:var(--mut);letter-spacing:.06em;margin-bottom:8px">ANSWER MODE: CALCULATION</div>'+askClassHTML("CALCULATION")+'<span class="lbl">COMPUTED DIRECTLY</span>\n<span class="big">'+pm[1]+'% of '+pm[2]+' = '+fmt(pv)+'</span>';
   txt="Question: "+q+"\nAnswer: "+fmt(pv);modeTag="CALCULATION";setLast("ask","ANSWER MODE: "+modeTag+"\n"+txt,term);refreshSend("ask");return}
  var low=q.toLowerCase(),html="",plain="";
  /* 2) definition pattern -> ONE highlighted right answer (JAH ANSWER).
@@ -830,9 +859,9 @@ function askGo(){
  plain+="\nHYBRID FUSION VERDICT: "+L.verdict+"\n";
  plain+="\nI compute from your words — I don't browse the web.";
  html+='<p class="note">I compute from your words — I don\'t browse the web.</p>';
- html='<div style="font-size:.78em;color:var(--mut);letter-spacing:.06em;margin-bottom:8px">ANSWER MODE: '+esc(modeTag)+'</div>'+html;
+ html='<div style="font-size:.78em;color:var(--mut);letter-spacing:.06em;margin-bottom:8px">ANSWER MODE: '+esc(modeTag)+'</div>'+askClassHTML(modeTag)+html;
  out.innerHTML=html;
- setLast("ask","ANSWER MODE: "+modeTag+"\n"+txt+plain,term);refreshSend("ask");
+ setLast("ask","ANSWER MODE: "+modeTag+"\nRESULT CLASSIFICATION: "+askClassify(modeTag)+"\n"+txt+plain,term);refreshSend("ask");
 }
 function syllables(w){w=String(w).toLowerCase().replace(/[^a-z]/g,"");if(!w)return 1;if(w.length<=3)return 1;var m=w.replace(/(?:[^laeiouy]e|ed|es)$/,"").match(/[aeiouy]{1,2}/g);return Math.max(1,m?m.length:1)}
 function lensHTML(t,b){return '<div class="lens"><b>'+esc(t)+'</b><p>'+b+'</p></div>'}
@@ -940,21 +969,26 @@ function pxGo(){
  if(!q){out.textContent="Give me a statement to check.";return}
  var found=null;
  for(var i=0;i<PARADOXES.length;i++){if(PARADOXES[i].re.test(q)){found=PARADOXES[i];break}}
- var html="",txt="Paradox check: \""+q+"\"\n\n";
+ var html="",cond,reason,resol;
  if(found){
-  html+='<div class="verdict"><b style="color:var(--gn)">JAH ANSWER \u2014 '+esc(found.type)+' SOLVED \u2713</b><p style="margin:6px 0 0;font-size:.95em;line-height:1.55">'+esc(found.solve)+'</p></div>';
-  html+='<div class="lens" style="border-color:var(--am)"><b style="color:var(--am)">OBJECT LEVEL \u2014 WHY IT TRAPS</b><p>'+esc(found.obj)+'</p></div>';
-  html+='<div class="lens" style="border-color:var(--gn)"><b style="color:var(--gn)">META LEVEL \u2014 HOW IT WAS SOLVED</b><p>'+esc(found.meta)+'</p></div>';
-  txt+="JAH ANSWER \u2014 "+found.type+" SOLVED: "+found.solve+"\n\nWhy it traps: "+found.obj+"\n\nHow it was solved: "+found.meta+"\n";
+  cond=found.type+" \u2014 DETECTED, classified, contained, SOLVED \u2713";
+  reason=found.obj;
+  resol=found.solve+" "+found.meta;
  }else if(/this (statement|sentence|claim)|itself|self-referen/i.test(q)){
   var why=q.length<120?"short enough to inspect directly \u2014 read it as a claim about the speaker, not about the world, and the loop unwinds.":"long \u2014 break it into its self-referential part and its world part, and judge each at its own level.";
-  html+='<div class="verdict"><b style="color:var(--gn)">JAH ANSWER \u2014 SOLVED \u2713</b><p style="margin:6px 0 0;font-size:.95em;line-height:1.55">Read it from one level up: the part that talks about itself becomes a plain observation about the speaker, and the loop unwinds. No crash, no contradiction admitted into the system.</p></div>';
-  html+='<div class="lens" style="border-color:var(--gn)"><b style="color:var(--gn)">HOW IT WAS SOLVED</b><p>Unlisted self-reference \u2014 no classic trap matched, so the general stratification rule applies: evaluate from one level up. This statement is '+why+'</p></div>';
-  txt+="JAH ANSWER \u2014 SOLVED: read it from one level up; the self-referential part becomes a plain observation about the speaker and the loop unwinds.\n";
+  cond="UNLISTED SELF-REFERENCE \u2014 DETECTED, SOLVED \u2713";
+  reason="No classic trap matched, so the general stratification rule applies: evaluate from one level up. This statement is "+why;
+  resol="Read it from one level up: the part that talks about itself becomes a plain observation about the speaker, and the loop unwinds. No crash, no contradiction admitted into the system.";
  }else{
-  html+='<div class="verdict"><b style="color:var(--gn)">JAH ANSWER \u2014 LOGICALLY STABLE \u2713</b><p style="margin:6px 0 0;font-size:.95em;line-height:1.55">No trap found: no self-reference, no contradictory premises, no level-mixing. The statement stands as given \u2014 nothing to solve.</p></div>';
-  txt+='JAH ANSWER: logically stable \u2014 no paradox pattern detected, the statement stands as given.';
+  cond="none \u2014 LOGICALLY STABLE \u2713";
+  reason="No self-reference, no contradictory premises, no level-mixing.";
+  resol="The statement stands as given \u2014 nothing to solve.";
  }
+ html+='<span class="lbl">INPUT</span>\n'+esc(q)+'\n\n';
+ html+='<span class="lbl">DETECTED CONDITION</span>\n'+esc(cond)+'\n\n';
+ html+='<div class="lens" style="border-color:var(--am)"><b style="color:var(--am)">REASON</b><p>'+esc(reason)+'</p></div>';
+ html+='<div class="verdict"><b style="color:var(--gn)">RESOLUTION</b><p style="margin:6px 0 0;font-size:.95em;line-height:1.55">'+esc(resol)+'</p></div>';
+ var txt="Paradox check\n\nINPUT:\n"+q+"\n\nDETECTED CONDITION:\n"+cond+"\n\nREASON:\n"+reason+"\n\nRESOLUTION:\n"+resol+"\n";
  out.innerHTML=html;
  setLast("paradox",txt,q);refreshSend("paradox");
 }
@@ -963,9 +997,10 @@ function pjGo(){
  var raw=document.getElementById("pj-in").value.trim().split("\n");
  var ys=raw.map(function(x){return parseFloat(x.trim())}).filter(function(x){return!isNaN(x)});
  var out=document.getElementById("pj-out");
- if(ys.length<3){out.innerHTML=errHTML("NOT ENOUGH DATA","Projection needs at least 3 numbers, one per line.","12\n15\n19\n24","Paste 3 or more numbers.");return}
+ var PJMETHOD="Least-squares linear fit + exponential fit on log(data) \u2014 R\u00b2 comparison, forecast extrapolates the better fit.";
+ if(ys.length<3){out.innerHTML=stateHTML("number series (incomplete)",PJMETHOD,errHTML("NOT ENOUGH DATA","Projection needs at least 3 numbers, one per line.","12\n15\n19\n24","Paste 3 or more numbers."),"ERROR \u2014 NOT ENOUGH DATA");return}
  var n=parseInt(document.getElementById("pj-n").value);
- if(isNaN(n)||n<1||n>50){out.innerHTML=errHTML("BAD FORECAST STEPS","Forecast steps must be a whole number from 1 to 50.","5","Type a number between 1 and 50.");return}
+ if(isNaN(n)||n<1||n>50){out.innerHTML=stateHTML("series: "+ys.join(", ")+" \u00b7 steps: "+document.getElementById("pj-n").value,PJMETHOD,errHTML("BAD FORECAST STEPS","Forecast steps must be a whole number from 1 to 50.","5","Type a number between 1 and 50."),"ERROR \u2014 BAD FORECAST STEPS");return}
  var xs=ys.map(function(_,i){return i+1});
  function linFit(x,y){var N=x.length,sx=0,sy=0,sxx=0,sxy=0;
   for(var i=0;i<N;i++){sx+=x[i];sy+=y[i];sxx+=x[i]*x[i];sxy+=x[i]*y[i]}
@@ -1006,7 +1041,7 @@ function pjGo(){
   txt+="  "+x+"  |  "+fmt(lv)+"  |  "+(ev==null?"\u2014":fmt(ev))+"\n"}
  html+='\n<span class="lbl">BETTER FIT</span>\n<span class="big">'+better.toUpperCase()+'</span> (higher R\u00b2)';
  txt+="\nBetter fit: "+better+" (higher R\u00b2)";
- out.innerHTML=html;
+ out.innerHTML=stateHTML("series: "+ys.join(", ")+" \u00b7 forecast steps: "+n,PJMETHOD,html,"OK \u2014 projection computed; forecasts extrapolate the fitted curve and are not predictions");
  drawProject(ys,ly,ey,n,lf,ef);
  setLast("project",txt,"projection forecast");refreshSend("project");
 }
@@ -1056,24 +1091,27 @@ document.getElementById("life-cv").addEventListener("click",function(e){
  var r=this.getBoundingClientRect(),x=Math.floor((e.clientX-r.left)/r.width*LIFE.w),y=Math.floor((e.clientY-r.top)/r.height*LIFE.h);
  if(x>=0&&x<LIFE.w&&y>=0&&y<LIFE.h){LIFE.grid[y][x]=LIFE.grid[y][x]?0:1;lifeDraw();lifeStat()}});
 /* --- Monte Carlo pi --- */
-var MC={in:0,tot:0};
-function mcReset(){MC={in:0,tot:0};var cv=document.getElementById("mc-cv");cv.getContext("2d").clearRect(0,0,cv.width,cv.height);mcStat()}
+var MC={in:0,tot:0,seed:7,rnd:prng(7)};
+function mcSeed(){var sd=parseInt(document.getElementById("mc-seed").value);if(isNaN(sd))sd=7;return sd}
+function mcReset(){var sd=mcSeed();MC={in:0,tot:0,seed:sd,rnd:prng(sd>>>0)};var cv=document.getElementById("mc-cv");cv.getContext("2d").clearRect(0,0,cv.width,cv.height);mcStat()}
 function mcBurst(n){var cv=document.getElementById("mc-cv"),cx=cv.getContext("2d"),S=cv.width,cx0=S/2,R=S/2;
  cx.fillStyle="rgba(53,224,255,0.9)";var cx2=cx;
- for(var i=0;i<n;i++){var x=Math.random()*2-1,y=Math.random()*2-1;MC.tot++;
+ for(var i=0;i<n;i++){var x=MC.rnd()*2-1,y=MC.rnd()*2-1;MC.tot++;
   var inside=x*x+y*y<=1;if(inside)MC.in++;
   cx2.fillStyle=inside?"#5df08a":"#ff6b6b";cx2.fillRect(cx0+x*R-0.75,cx0+y*R-0.75,1.5,1.5)}
  mcStat()}
 function mcStat(){var pi=MC.tot?4*MC.in/MC.tot:0,err=MC.tot?Math.abs(pi-Math.PI):0;
- document.getElementById("mc-out").textContent="Darts: "+MC.tot+" · π ≈ "+(MC.tot?fmt(pi,5):"—")+" · error "+(MC.tot?fmt(err,5):"—");
- if(MC.tot)setLast("sim","Monte Carlo π — "+MC.tot+" darts, π ≈ "+fmt(pi,5)+", error "+fmt(err,5)+".","monte carlo pi");refreshSend("sim")}
+ document.getElementById("mc-out").textContent="Darts: "+MC.tot+" · π ≈ "+(MC.tot?fmt(pi,5):"—")+" · error "+(MC.tot?fmt(err,5):"—")+" · seed "+MC.seed+" (same seed → same darts)";
+ if(MC.tot)setLast("sim","Monte Carlo π — "+MC.tot+" darts, π ≈ "+fmt(pi,5)+", error "+fmt(err,5)+", seed "+MC.seed+".","monte carlo pi");refreshSend("sim")}
+function mcRepro(){mcReset();mcBurst(1000)}
 /* --- Dice lab --- */
-var DICE={counts:{},rolls:0};
-function diceReset(){DICE={counts:{},rolls:0};document.getElementById("dice-cv").getContext("2d").clearRect(0,0,640,220);document.getElementById("dice-out").textContent="No rolls yet."}
+var DICE={counts:{},rolls:0,seed:7,rnd:prng(7)};
+function diceSeed(){var sd=parseInt(document.getElementById("dice-seed").value);if(isNaN(sd))sd=7;return sd}
+function diceReset(){var sd=diceSeed();DICE={counts:{},rolls:0,seed:sd,rnd:prng(sd>>>0)};document.getElementById("dice-cv").getContext("2d").clearRect(0,0,640,220);document.getElementById("dice-out").textContent="No rolls yet."}
 function diceGo(){
  var nd=Math.max(1,Math.min(10,parseInt(document.getElementById("dice-n").value)||2));
  var nr=Math.max(1,Math.min(100000,parseInt(document.getElementById("dice-r").value)||1000));
- for(var i=0;i<nr;i++){var s=0;for(var d=0;d<nd;d++)s+=1+Math.floor(Math.random()*6);DICE.counts[s]=(DICE.counts[s]||0)+1;DICE.rolls++}
+ for(var i=0;i<nr;i++){var s=0;for(var d=0;d<nd;d++)s+=1+Math.floor(DICE.rnd()*6);DICE.counts[s]=(DICE.counts[s]||0)+1;DICE.rolls++}
  var cv=document.getElementById("dice-cv"),cx=cv.getContext("2d"),W=cv.width,H=cv.height;
  cx.clearRect(0,0,W,H);
  var keys=Object.keys(DICE.counts).map(Number).sort(function(a,b){return a-b});
@@ -1085,8 +1123,9 @@ function diceGo(){
  cx.strokeStyle="#243149";cx.strokeRect(40,10,W-50,H-40);
  var mean=keys.reduce(function(a,k){return a+k*DICE.counts[k]},0)/DICE.rolls;
  var theory=nd*3.5;
- document.getElementById("dice-out").textContent="Rolled "+nd+"d6 × "+DICE.rolls+" total · mean "+fmt(mean,3)+" (theory "+fmt(theory,3)+")";
- setLast("sim","Dice lab — "+nd+" dice, "+DICE.rolls+" rolls, mean "+fmt(mean,3)+" vs theory "+fmt(theory,3)+".","dice probability");refreshSend("sim")}
+ document.getElementById("dice-out").textContent="Rolled "+nd+"d6 × "+DICE.rolls+" total · mean "+fmt(mean,3)+" (theory "+fmt(theory,3)+") · seed "+DICE.seed+" (same seed → same rolls)";
+ setLast("sim","Dice lab — "+nd+" dice, "+DICE.rolls+" rolls, mean "+fmt(mean,3)+" vs theory "+fmt(theory,3)+", seed "+DICE.seed+".","dice probability");refreshSend("sim")}
+function diceRepro(){diceReset();diceGo()}
 /* --- Random walk --- */
 var RW={x:0,y:0,steps:0};
 function rwReset(){RW={x:0,y:0,steps:0};var cv=document.getElementById("rw-cv");cv.getContext("2d").clearRect(0,0,cv.width,cv.height);
@@ -1154,7 +1193,7 @@ function labTable(){var el=document.getElementById("lab-table");
 function labCSV(){if(!LABROWS.length)return;
  var csv=LABCSV_HEAD.join(",")+"\n";
  LABROWS.forEach(function(r){csv+=LABCSV_HEAD.map(function(k){return '"'+String(r[k]==null?"":r[k]).replace(/"/g,'""')+'"'}).join(",")+"\n"});
- download("jah-lab-notebook.csv",csv,"text/csv")}
+ download("jah-lab-notebook.csv",csv,"text/csv");flashNote("Export complete \u2014 jah-lab-notebook.csv ("+LABROWS.length+" readings)")}
 function labClear(){LABROWS=[];labTable()}
 /* ================= solve record ================= */
 function recRender(){
@@ -1183,11 +1222,11 @@ function dlFooter(kind,n,extra,src){
  while(size!==prev){prev=size;size=(head+tail+"size: "+size+" bytes\n").length}
  return head+tail+"size: "+size+" bytes\n";
 }
-function recDownload(){var t=recText();if(t)download("jah-calculator-solve-record.txt",dlFooter("JAH CALCULATOR — SOLVE RECORD",recGet().length,t))}
+function recDownload(){var t=recText();if(t){download("jah-calculator-solve-record.txt",dlFooter("JAH CALCULATOR — SOLVE RECORD",recGet().length,t));flashNote("Export complete \u2014 jah-calculator-solve-record.txt")}}
 function recClear(){try{localStorage.removeItem("jah_calc_record")}catch(e){}recRender()}
 
 /* ================= official equation archive ================= */
-var EQIDX=null,EQCHUNKS={},EQSHOWN=0,EQCUR=[];
+var EQIDX=null,EQCHUNKS={},EQSHOWN=0,EQCUR=[],EQLASTMOD="";
 function eqGunzip(ab){
  var ds;try{ds=new DecompressionStream("gzip")}catch(e){return Promise.reject(new Error("gzip unsupported"))}
  return new Response(new Blob([ab]).stream().pipeThrough(ds)).arrayBuffer()
@@ -1196,11 +1235,18 @@ function eqGunzip(ab){
 function eqLoadIndex(){
  if(EQIDX)return Promise.resolve(EQIDX);
  return fetch("data/index/eq.idx.json.gz").then(function(r){
-  if(!r.ok)throw new Error("index missing");return r.arrayBuffer();
+  if(!r.ok)throw new Error("index missing");
+  try{EQLASTMOD=r.headers.get("last-modified")||""}catch(e){EQLASTMOD=""}
+  return r.arrayBuffer();
  }).then(eqGunzip).then(function(txt){
   EQIDX=txt.split("\n").filter(Boolean).map(function(l){return JSON.parse(l)});
   return EQIDX;
  });
+}
+function eqUpdatedLine(){
+ var el=document.getElementById("eq-updated");if(!el)return;
+ var d=EQLASTMOD?new Date(EQLASTMOD):null;
+ el.textContent="Site updated: "+(d&&!isNaN(d)?d.toLocaleDateString("en-US",{year:"numeric",month:"short",day:"numeric"}):"—");
 }
 function eqChunk(c){
  if(EQCHUNKS[c])return Promise.resolve(EQCHUNKS[c]);
@@ -1217,14 +1263,18 @@ function eqInit(){
  var q=document.getElementById("eq-q");
  if(q&&!q._eqwired){q._eqwired=1;q.addEventListener("keydown",function(e){if(e.key==="Enter")eqSearch()})}
  eqLoadIndex().then(function(ix){
-  el.textContent=ix.length+" official equations published — solved once, retrieved thereafter.";
+  el.textContent="Equations indexed: "+ix.length+" — solved once, retrieved thereafter.";
+  eqUpdatedLine();
   var m=/[?&]eq=(JAH-EQ-[0-9]+)/i.exec(location.search);
   if(m)eqOpen(m[1].toUpperCase());
  }).catch(function(){el.textContent="Archive index not reachable."});
 }
 function eqSearch(){
- var q=document.getElementById("eq-q").value.trim().toLowerCase();
+ var raw=document.getElementById("eq-q").value.trim();
+ var q=raw.toLowerCase();
  var ty=document.getElementById("eq-type").value;
+ /* ID-aware: a bare JAH-EQ-######## jumps straight to that record */
+ if(/^jah-eq-\d+$/i.test(raw)){eqOpen(raw.toUpperCase());return}
  eqLoadIndex().then(function(ix){
   EQCUR=ix.filter(function(e){
    if(ty&&e.y!==ty)return false;
@@ -1301,7 +1351,7 @@ function eqCurRec(){var id=document.getElementById("eq-body").dataset.recid;for(
 function eqRecText(r){return r.id+"\n"+r.title+"\n"+"\nSTEPS\n"+r.steps.join("\n")+"\n\n"+r.solution+"\n"+r.check+"\n\nRECORD PROVENANCE\nsolver_version: "+(r.solver_version||"JAH-EQ solver v1 (client)")+"\ncanonical: "+(r.canonical||eqCanon(r.equation||r.title||""))+"\ncanonical_hash: "+(r.canonical_hash||"not yet assigned")+"\nmethod: "+(r.method||"archive retrieval \u2014 solved once at publication")+"\nprecision: "+(r.precision||"as published")+"\nresult: "+(r.solution||"")+"\ntimestamp: "+(r.ts||"not yet stamped")+"\nhash: "+(r.hash||"not yet stamped")+"\nJAH-EQ ID is the permanent serial of this record.\n\n"+r.stamp}
 function eqSpeak(){var r=eqCurRec();if(r)ttsSpeak(eqRecText(r))}
 function eqCopy(btn){var r=eqCurRec();if(r)copyText(eqRecText(r),btn)}
-function eqDl(){var r=eqCurRec();if(r)download(r.id+".txt",dlFooter("OFFICIAL JAH-EQ RECORD — "+r.id,1,eqRecText(r),"the official equation archive (retrieved, solved once at publication)"))}
+function eqDl(){var r=eqCurRec();if(r){download(r.id+".txt",dlFooter("OFFICIAL JAH-EQ RECORD — "+r.id,1,eqRecText(r),"the official equation archive (retrieved, solved once at publication)"));flashNote("Export complete \u2014 "+r.id+".txt")}}
 
 /* ================= engine self-test (capability/status line) =================
    Runs at load. Every figure is derived live from the code/data — nothing hardcoded.
