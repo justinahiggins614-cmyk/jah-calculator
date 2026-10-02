@@ -89,6 +89,23 @@ footer.site a{color:var(--cy)}
 .stamp{font-size:.78em;color:var(--mut);border-top:1px solid var(--line);margin-top:12px;padding-top:8px}
 .recitem{border-bottom:1px solid var(--line);padding:8px 4px;font-size:.9em}
 .recitem .rt{color:var(--mut);font-size:.78em}
+
+/* Finder AI + record helper (additive) */
+.finderbar{background:var(--panel);border:1px solid var(--cy);border-radius:8px;padding:12px 14px;margin:10px 0}
+.finder-kicker{color:var(--cy);font-weight:bold;letter-spacing:1px;font-size:.85em}
+.finder-sub{font-size:.88em;color:var(--mut);margin:4px 0 8px}
+.finder-row{display:flex;gap:8px;flex-wrap:wrap}
+#finder-q{flex:1;min-width:170px;background:var(--panel2);border:1px solid var(--line);color:var(--txt);padding:10px 12px;border-radius:6px;font-size:1em}
+.finder-card{background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:10px 12px;margin:8px 0}
+.finder-card b{color:var(--cy)}
+.finder-card span{display:block;color:var(--mut);font-size:.85em;margin:2px 0 6px}
+.finder-card a{color:var(--cy);font-weight:bold;text-decoration:none}
+.finder-none{color:var(--mut);font-size:.9em;margin:8px 0}
+.finder-help{background:var(--panel);border:1px solid var(--cy);border-radius:8px;padding:12px 14px;margin:14px 0}
+.fh-k{color:var(--cy);font-weight:bold;letter-spacing:1px;font-size:.82em;margin-bottom:8px}
+.fh-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+.fh-row button{background:var(--panel2);border:1px solid var(--cy);color:var(--cy);border-radius:6px;padding:8px 12px;cursor:pointer;font-size:.88em}
+.fh-a{font-size:.92em;color:var(--txt);background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-height:1.4em}
 </style>
 </head>
 <body>
@@ -315,6 +332,12 @@ footer.site a{color:var(--cy)}
 <div class="panel" id="p-eq">
   <h2>THE OFFICIAL EQUATION ARCHIVE</h2>
   <p class="sub">Every equation solved <b>once</b>, published officially as a <b>JAH-EQ</b> record — then just <b>retrieved</b>, never solved again. Marching to <b>1,000,000</b>.<br>Identity rule: input → normalized canonical form → hash → archive record. Syntactically different but mathematically equivalent inputs get their own record unless canonically identical. "Official JAH-EQ record" means a canonical record generated and stored by this calculator.</p>
+<div class="finderbar" id="finderbar">
+<div class="finder-kicker">FINDER &mdash; describe it in plain words</div>
+<p class="finder-sub">Tell the Finder what kind of equation you need &mdash; it reads every <b>JAH-EQ</b> record in the archive and brings you the five closest.</p>
+<div class="finder-row"><input type="text" id="finder-q" placeholder="Describe what you're looking for&hellip;" aria-label="Describe the equation you are looking for" autocomplete="off"><button type="button" id="finder-go" class="go">Find it</button></div>
+<div id="finder-res" aria-live="polite"></div>
+</div>
   <div class="eqtools">
     <input type="text" id="eq-q" aria-label="Search the equation archive" placeholder="Search: try 'quadratic', 'pyramid', 'JAH-EQ-00000001'…" autocomplete="off">
     <select id="eq-type" aria-label="Filter equations by type">
@@ -1278,6 +1301,52 @@ function eqInit(){
   if(m)eqOpen(m[1].toUpperCase());
  }).catch(function(){el.textContent="Archive index not reachable."});
 }
+/* ============ FINDER AI: describe it in plain words ============ */
+var FINDER_STOP={the:1,a:1,an:1,and:1,or:1,of:1,to:1,in:1,for:1,on:1,with:1,is:1,are:1,was:1,were:1,be:1,by:1,as:1,at:1,from:1,that:1,this:1,it:1,its:1,you:1,your:1,i:1,me:1,my:1,we:1,our:1,they:1,them:1,their:1,he:1,she:1,his:1,her:1,not:1,no:1,yes:1,do:1,does:1,did:1,can:1,could:1,will:1,would:1,should:1,what:1,which:1,who:1,whom:1,when:1,where:1,why:1,how:1,all:1,any:1,both:1,each:1,few:1,more:1,most:1,other:1,some:1,such:1,than:1,then:1,there:1,these:1,those:1,over:1,under:1,between:1,into:1,through:1,about:1,after:1,before:1,also:1,just:1,very:1,only:1,own:1,same:1,so:1,but:1,if:1,because:1,while:1,up:1,out:1,down:1,off:1,again:1,once:1,here:1,need:1,want:1,looking:1,find:1,get:1,show:1,give:1,tell:1,like:1,please:1};
+function finderKeywords(t){
+ return String(t==null?"":t).toLowerCase().replace(/[^a-z0-9\s]/g," ").split(/\s+/).filter(function(w){return w.length>=3&&!FINDER_STOP[w]});
+}
+function wireFinder(){
+ var inp=document.getElementById("finder-q"),btn=document.getElementById("finder-go"),res=document.getElementById("finder-res");
+ if(!inp||!btn||!res||inp._fwired)return;inp._fwired=1;
+ function run(){
+  var kw=finderKeywords(inp.value);
+  if(!kw.length){res.innerHTML='<p class="finder-none">Tell me a little more \u2014 a word or two about the equation you need.</p>';return}
+  res.innerHTML='<p class="finder-none">Reading the archive\u2026</p>';
+  eqLoadIndex().then(function(ix){
+   var cands=[],i,k,s;
+   for(i=0;i<ix.length;i++){var e=ix[i];var hay=(e.id+" "+e.t+" "+e.y).toLowerCase();s=0;for(k=0;k<kw.length;k++)if(hay.indexOf(kw[k])>=0)s++;if(s>0)cands.push({s:s,e:e})}
+   cands.sort(function(a,b){return b.s-a.s||(a.e.t<b.e.t?-1:1)});
+   var top=cands.slice(0,5);
+   if(!top.length){res.innerHTML='<p class="finder-none">No record matched \u2014 try a type like \u201cquadratic\u201d or an ID like JAH-EQ-00000001.</p>';return}
+   res.innerHTML='<p class="finder-sub" style="margin:8px 0 2px">Five closest records:</p>'+top.map(function(c){
+    var e=c.e;
+    return '<div class="finder-card"><b>'+esc(e.t)+'</b><span>'+esc(e.id)+' \u00b7 '+esc(e.y)+'</span><a href="?tab=eq&eq='+encodeURIComponent(e.id)+'" data-feq="'+esc(e.id)+'">Take me there &rarr;</a></div>';
+   }).join("");
+   var links=res.querySelectorAll("[data-feq]");
+   for(var li=0;li<links.length;li++)(function(a){a.addEventListener("click",function(ev){ev.preventDefault();eqOpen(a.getAttribute("data-feq"))})})(links[li]);
+  }).catch(function(){res.innerHTML='<p class="finder-none">The archive could not be read right now. Check your connection and try again.</p>'});
+ }
+ btn.onclick=run;
+ inp.addEventListener("keydown",function(e){if(e.key==="Enter")run()});
+}
+/* compact record helper: data-grounded answers, never invents */
+function eqHelperBubble(rec){
+ var qs=[
+  ["What is this record?","Official equation record "+rec.id+" \u2014 type \u201c"+rec.type+"\u201d. "+rec.title],
+  ["What was the answer?",rec.solution?("The recorded solution: "+rec.solution):"This record does not state a solution."],
+  ["How was it solved?",(rec.steps&&rec.steps.length)?(rec.steps.length+" recorded step"+(rec.steps.length===1?"":"s")+" \u2014 first: "+rec.steps[0]):"The record does not list solution steps."],
+  ["How do I check it?",rec.check?("Check line from the record: "+rec.check):"This record does not carry a check line."]
+ ];
+ var box=document.createElement("div");box.className="finder-help";
+ box.innerHTML='<div class="fh-k">ASK THIS RECORD \u2014 quick answers, straight from the record</div><div class="fh-row">'+
+  qs.map(function(x,i){return '<button type="button" data-fhi="'+i+'">'+esc(x[0])+'</button>'}).join("")+
+  '</div><div class="fh-a" aria-live="polite">Tap a question above.</div>';
+ var ans=box.querySelector(".fh-a");
+ var bs=box.querySelectorAll("[data-fhi]");
+ for(var bi=0;bi<bs.length;bi++)(function(b){b.onclick=function(){ans.textContent=qs[+b.getAttribute("data-fhi")][1]}})(bs[bi]);
+ return box;
+}
 function eqSearch(){
  var raw=document.getElementById("eq-q").value.trim();
  var q=raw.toLowerCase();
@@ -1354,6 +1423,7 @@ function eqOpen(id){
    '<button class="act" onclick="eqCopy(this)">&#10697; Copy</button>'+
    '<button class="act" onclick="eqDl()">&#10515; Download .txt</button></div>'+
    '<div class="stamp">'+esc(rec.stamp)+'</div>'+eqProvHTML(rec);
+  b.appendChild(eqHelperBubble(rec));
   b.dataset.recid=rec.id;
   document.getElementById("eq-overlay").hidden=false;
   try{history.replaceState(null,"","?tab=eq&eq="+rec.id)}catch(e){}
@@ -1394,6 +1464,7 @@ function jahSelfTest(){
 paintActions();ucFill();setDeg(true);lifeInit();mcReset();rwReset();
 labPend();labProj();labOhm();labGas();
 REC_ARMED=true;
+wireFinder();
 jahSelfTest();
 </script>
 </body>
