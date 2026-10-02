@@ -1,4 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://justinahiggins614-cmyk.github.io/jah-calculator/index.html</loc><changefreq>daily</changefreq></url>
+  <url><loc>https://justinahiggins614-cmyk.github.io/jah-calculator/data.html</loc><changefreq>weekly</changefreq></url>
+  <url><loc>https://justinahiggins614-cmyk.github.io/jah-calculator/index.html?tab=basic</loc><changefreq>monthly</changefreq></url>
+  <url><loc>https://justinahiggins614-cmyk.github.io/jah-calculator/index.html?tab=sci</loc><changefreq>monthly</changefreq></url>
+  <url><loc>https://justinahiggins614-cmyk.github.io/jah-calculator/index.html?tab=ask</loc><changefreq>monthly</changefreq></url>
+  <url><loc>https://justinahiggins614-cmyk.github.io/jah-calculator/index.html?tab=paradox</loc><changefreq>monthly</changefreq></url>
+  <url><loc>https://justinahiggins614-cmyk.github.io/jah-calculator/index.html?tab=project</loc><changefreq>monthly</changefreq></url>
+  <url><loc>https://justinahiggins614-cmyk.github.io/jah-calculator/index.html?tab=sim</loc><changefreq>monthly</changefreq></url>
+  <url><loc>https://justinahiggins614-cmyk.github.io/jah-calculator/index.html?tab=lab</loc><changefreq>monthly</changefreq></url>
+  <url><loc>https://justinahiggins614-cmyk.github.io/jah-calculator/index.html?tab=eq</loc><changefreq>daily</changefreq></url>
+  <url><loc>https://justinahiggins614-cmyk.github.io/jah-calculator/index.html?tab=rec</loc><changefreq>monthly</changefreq></url>
 </urlset>

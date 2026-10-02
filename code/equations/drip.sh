@@ -6,6 +6,8 @@ SZ=$(du -sm data 2>/dev/null | cut -f1)
 if [ "${SZ:-0}" -gt 700 ]; then echo "GUARD: data/equations over 700MB, skipping"; exit 1; fi
 python3 code/equations/generator.py 2000
 python3 code/equations/sitemap.py
+python3 code/equations/stamp_count.py
+python3 code/equations/build_csv.py
 python3 -c "
 import json
 st=json.load(open('code/equations/state.json'))

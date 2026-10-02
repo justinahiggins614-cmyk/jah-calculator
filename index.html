@@ -4,6 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Signature Universal Paradox Immune Calculator</title>
+<meta name="description" content="Signature Universal Paradox Immune Calculator — basic and scientific calculator, equation solver, unit converter, paradox checker, projection engine, simulations, lab bench, and the official JAH-EQ solved-equation archive.">
+<link rel="canonical" href="https://justinahiggins614-cmyk.github.io/jah-calculator/">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"Signature Universal Paradox Immune Calculator","url":"https://justinahiggins614-cmyk.github.io/jah-calculator/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","isAccessibleForFree":true,"description":"Basic and scientific calculator with equation solver, unit converter, paradox checker, projection engine, simulation deck, virtual lab bench, and the official JAH-EQ solved-equation archive.","offers":{"@type":"Offer","price":"0"}}
+</script>
 <style>
 :root{--bg:#0a0e14;--panel:#131b29;--panel2:#0f1520;--line:#243149;--txt:#dbe7f5;--mut:#8fa3bd;--cy:#35e0ff;--am:#ffb347;--gn:#5df08a;--rd:#ff6b6b;--gold:#e8d98a}
 *{box-sizing:border-box}
@@ -17,8 +22,9 @@ header.top{background:linear-gradient(180deg,#101827,#0a0e14);border-bottom:2px 
 .jahnet a.me{color:#fff;font-weight:bold;border:1px solid var(--cy);border-radius:4px;padding:1px 7px}
 .jahnet .youarehere{color:var(--gold);letter-spacing:.08em;font-weight:bold;margin-left:6px}
 .tabs{display:flex;gap:6px;overflow-x:auto;padding:10px 12px;background:var(--panel2);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
-.tabs button{flex:0 0 auto;background:var(--panel);color:var(--txt);border:1px solid var(--line);border-radius:6px;padding:9px 14px;font-size:.92em;cursor:pointer}
-.tabs button.on{background:var(--cy);color:#04121a;font-weight:bold;border-color:var(--cy)}
+.tabs button,.tabs a.tablink{flex:0 0 auto;background:var(--panel);color:var(--txt);border:1px solid var(--line);border-radius:6px;padding:9px 14px;font-size:.92em;cursor:pointer;text-decoration:none;font-family:Arial,Helvetica,sans-serif}
+.tabs button.on,.tabs a.tablink.on{background:var(--cy);color:#04121a;font-weight:bold;border-color:var(--cy)}
+h1.brand{margin:0}
 .wrap{max-width:960px;margin:0 auto;padding:14px}
 .panel{display:none;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
 .panel.on{display:block}
@@ -87,7 +93,7 @@ footer.site a{color:var(--cy)}
 </head>
 <body>
 <header class="top">
-  <div class="brand">SIGNATURE UNIVERSAL PARADOX IMMUNE CALCULATOR<small>SOLVES ANYTHING &middot; PARADOX IMMUNE &middot; JAH DETERMINISTIC</small></div>
+  <h1 class="brand">SIGNATURE UNIVERSAL PARADOX IMMUNE CALCULATOR<small>SOLVES ANYTHING &middot; PARADOX IMMUNE &middot; JAH DETERMINISTIC</small></h1>
   <div class="statusline" id="jah-status" role="status" aria-live="polite">engine self-test running&hellip;</div>
   <div class="jahnet"><b>THE JAH NETWORK:</b><br>
     <a href="https://justinahiggins614-cmyk.github.io/jah-ai-models/" target="_blank" rel="noopener">The Signature AI Telephone Book</a>
@@ -101,22 +107,22 @@ footer.site a{color:var(--cy)}
     <a href="https://justinahiggins614-cmyk.github.io/jah-computer-systems/" target="_blank" rel="noopener">The Signature PC System Depository</a>
   </div>
 </header>
-<div class="tabs" id="tabbar">
-  <button data-t="basic" class="on">Basic</button>
-  <button data-t="sci">Scientific</button>
-  <button data-t="ask">Ask Anything</button>
-  <button data-t="paradox">Paradox Check</button>
-  <button data-t="project">Project</button>
-  <button data-t="sim">Simulate</button>
-  <button data-t="lab">Lab</button><button data-t="eq">Equations</button><button data-t="rec">Record</button>
-</div>
+<nav class="tabs" id="tabbar" aria-label="Calculator modes">
+  <a class="tablink on" href="?tab=basic" data-t="basic">Basic</a>
+  <a class="tablink" href="?tab=sci" data-t="sci">Scientific</a>
+  <a class="tablink" href="?tab=ask" data-t="ask">Ask Anything</a>
+  <a class="tablink" href="?tab=paradox" data-t="paradox">Paradox Check</a>
+  <a class="tablink" href="?tab=project" data-t="project">Project</a>
+  <a class="tablink" href="?tab=sim" data-t="sim">Simulate</a>
+  <a class="tablink" href="?tab=lab" data-t="lab">Lab</a><a class="tablink" href="?tab=eq" data-t="eq">Equations</a><a class="tablink" href="?tab=rec" data-t="rec">Record</a>
+</nav>
 <div class="wrap">
 
 <!-- ============ BASIC ============ -->
 <div class="panel on" id="p-basic">
   <h2>BASIC CALCULATOR</h2>
   <p class="sub">Type any expression. Parsed by a hand-written parser — step by step, no black box.</p>
-  <input type="text" id="basic-in" placeholder="e.g. (12 + 8) * 3 / 4 - 2^3" autocomplete="off">
+  <input type="text" id="basic-in" aria-label="Basic calculation input" placeholder="e.g. (12 + 8) * 3 / 4 - 2^3" autocomplete="off">
   <div class="fnrow">
     <button onclick="ins('basic-in','(')">(</button><button onclick="ins('basic-in',')')">)</button>
     <button onclick="ins('basic-in','+')">+</button><button onclick="ins('basic-in','-')">−</button>
@@ -135,7 +141,7 @@ footer.site a{color:var(--cy)}
 <div class="panel" id="p-sci">
   <h2>SCIENTIFIC</h2>
   <p class="sub">Trig, logs, powers, constants, equation solver, unit converter.</p>
-  <input type="text" id="sci-in" placeholder="e.g. sin(30) + log(1000) + 2^10" autocomplete="off">
+  <input type="text" id="sci-in" aria-label="Scientific calculation input" placeholder="e.g. sin(30) + log(1000) + 2^10" autocomplete="off">
   <div style="margin:8px 0"><label style="font-size:.85em;color:var(--mut)">Angle mode:</label>
     <button class="act" id="degbtn" onclick="setDeg(true)">DEG</button><button class="act" id="radbtn" onclick="setDeg(false)">RAD</button>
     <span id="degmode" style="margin-left:8px;font-size:.85em;color:var(--cy)">Angle mode: DEG</span>
@@ -155,10 +161,10 @@ footer.site a{color:var(--cy)}
     <div>
       <h2 style="font-size:1em">EQUATION SOLVER</h2>
       <label class="f">Quadratic: ax² + bx + c = 0</label>
-      <div style="display:flex;gap:6px"><input type="text" id="qa" placeholder="a"><input type="text" id="qb" placeholder="b"><input type="text" id="qc" placeholder="c"></div>
+      <div style="display:flex;gap:6px"><input type="text" id="qa" aria-label="Quadratic coefficient a" placeholder="a"><input type="text" id="qb" aria-label="Quadratic coefficient b" placeholder="b"><input type="text" id="qc" aria-label="Quadratic coefficient c" placeholder="c"></div>
       <button class="act" onclick="solveQuad()">Solve quadratic</button>
       <label class="f">Cubic: ax³ + bx² + cx + d = 0</label>
-      <div style="display:flex;gap:6px"><input type="text" id="ca" placeholder="a"><input type="text" id="cb" placeholder="b"><input type="text" id="cc" placeholder="c"><input type="text" id="cd" placeholder="d"></div>
+      <div style="display:flex;gap:6px"><input type="text" id="ca" aria-label="Cubic coefficient a" placeholder="a"><input type="text" id="cb" aria-label="Cubic coefficient b" placeholder="b"><input type="text" id="cc" aria-label="Cubic coefficient c" placeholder="c"><input type="text" id="cd" aria-label="Cubic coefficient d" placeholder="d"></div>
       <button class="act" onclick="solveCubic()">Solve cubic</button>
       <div class="result" id="solver-out" style="font-size:.85em">Solutions appear here.</div>
       <p class="note">Solver: real &amp; complex roots — complex roots are shown as a ± bi (e.g. x²+1 = 0 → x = ±i).</p>
@@ -180,7 +186,7 @@ footer.site a{color:var(--cy)}
 <div class="panel" id="p-ask">
   <h2>ASK ANYTHING</h2>
   <p class="sub">Ask a question or type math. The JAH system answers with all ten analysis lenses plus a fusion verdict.<br>Covers mathematical calculation, logical analysis, structured comparison, and deterministic computation. Questions outside the system's stored knowledge get an explicit <b>FACT NOT AVAILABLE / INSUFFICIENT DATA</b> answer — never a fabricated one.</p>
-  <input type="text" id="ask-in" placeholder="e.g. What is gravity?  — or —  15% of 240  — or —  bridges vs tunnels" autocomplete="off">
+  <input type="text" id="ask-in" aria-label="Ask anything input" placeholder="e.g. What is gravity?  — or —  15% of 240  — or —  bridges vs tunnels" autocomplete="off">
   <button class="go" onclick="askGo()">Ask</button>
   <div style="margin:2px 0 0"><button class="act" onclick="readAsk()">🔊 Read answer aloud</button><button class="act" onclick="ttsStop()">⏹ Stop</button></div>
   <div class="result" id="ask-out">Your answer appears here.</div>
@@ -191,7 +197,7 @@ footer.site a{color:var(--cy)}
 <div class="panel" id="p-paradox">
   <h2>PARADOX CHECK</h2>
   <p class="sub">Paradox immune: every self-referential trap gets classified, contained at object level, and resolved one level up. Known self-reference traps are classified and contained instead of being allowed to crash the solver.</p>
-  <input type="text" id="px-in" placeholder='e.g. "This statement is false" — or — the barber paradox' autocomplete="off">
+  <input type="text" id="px-in" aria-label="Paradox statement input" placeholder='e.g. "This statement is false" — or — the barber paradox' autocomplete="off">
   <button class="go" onclick="pxGo()">Check for paradox</button>
   <div class="result" id="px-out">Verdict appears here.</div>
   <div class="actions" data-tab="paradox"></div>
@@ -201,13 +207,13 @@ footer.site a{color:var(--cy)}
 <div class="panel" id="p-project">
   <h2>PROJECTION ENGINE</h2>
   <p class="sub">Paste a number series (one per line). Get linear and exponential fits, R², and a forecast.</p>
-  <textarea id="pj-in" placeholder="12&#10;15&#10;19&#10;24&#10;30"></textarea>
+  <textarea id="pj-in" aria-label="Projection data, one number per line" placeholder="12&#10;15&#10;19&#10;24&#10;30"></textarea>
   <div style="display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap">
     <label style="font-size:.85em;color:var(--mut)">Forecast steps:</label>
-    <input type="text" id="pj-n" value="5" style="width:70px">
+    <input type="text" id="pj-n" aria-label="Projection periods" value="5" style="width:70px">
     <button class="go" onclick="pjGo()" style="margin:0">Run projection</button>
   </div>
-  <canvas class="board" id="pj-cv" width="640" height="300" style="margin-top:10px"></canvas>
+  <canvas class="board" id="pj-cv" role="img" aria-label="Projection chart" width="640" height="300" style="margin-top:10px"></canvas>
   <div class="result" id="pj-out">Projection appears here.</div>
   <div class="actions" data-tab="project"></div>
 </div>
@@ -220,7 +226,7 @@ footer.site a{color:var(--cy)}
   <h2 style="font-size:1em;margin-top:14px">GAME OF LIFE <span style="color:var(--mut);font-weight:normal;font-size:.8em">— cellular automata</span></h2>
   <p class="sub">Tap cells to seed, then run.</p>
   <p class="note">Rules: 36×24 grid · wrap-around (toroidal) edges · standard Conway B3/S23 · all cells update simultaneously and deterministically · tap a cell to toggle it.</p>
-  <canvas class="board" id="life-cv" width="360" height="240"></canvas><br>
+  <canvas class="board" id="life-cv" role="img" aria-label="Game of Life grid" width="360" height="240"></canvas><br>
   <button class="act" onclick="lifeRun()">▶ Run</button><button class="act" onclick="lifePause()">⏸ Pause</button>
   <button class="act" onclick="lifeReset()">Reset</button><button class="act" onclick="lifeRand()">Random seed</button>
   <label class="f">Speed (ms per generation)</label><input type="range" id="life-spd" min="40" max="800" value="200">
@@ -228,7 +234,7 @@ footer.site a{color:var(--cy)}
 
   <h2 style="font-size:1em;margin-top:14px">MONTE CARLO π <span style="color:var(--mut);font-weight:normal;font-size:.8em">— probabilistic</span></h2>
   <p class="sub">Random darts in a square. Fraction inside the circle × 4 approaches π.</p>
-  <canvas class="board" id="mc-cv" width="300" height="300"></canvas><br>
+  <canvas class="board" id="mc-cv" role="img" aria-label="Monte Carlo pi dart board" width="300" height="300"></canvas><br>
   <label style="font-size:.85em;color:var(--mut)">Seed:</label><input type="text" id="mc-seed" value="7" style="width:70px" title="Same seed gives the same darts"><button class="act" onclick="mcBurst(1000)">Throw 1,000 darts</button><button class="act" onclick="mcBurst(20000)">Throw 20,000</button>
   <button class="act" onclick="mcReset()">Reset</button><button class="act" onclick="mcRepro()">Reproduce</button>
   <div class="result" id="mc-out" style="font-size:.85em">Darts: 0 · π ≈ — · error —</div>
@@ -241,12 +247,12 @@ footer.site a{color:var(--cy)}
     <label style="font-size:.85em;color:var(--mut)">Seed:</label><input type="text" id="dice-seed" value="7" style="width:70px" title="Same seed gives the same rolls">
     <button class="act" onclick="diceGo()">Roll</button><button class="act" onclick="diceReset()">Reset</button><button class="act" onclick="diceRepro()">Reproduce</button>
   </div>
-  <canvas class="board" id="dice-cv" width="640" height="220" style="margin-top:8px"></canvas>
+  <canvas class="board" id="dice-cv" role="img" aria-label="Dice probability histogram" width="640" height="220" style="margin-top:8px"></canvas>
   <div class="result" id="dice-out" style="font-size:.85em">No rolls yet.</div>
   <p class="note">Assumptions: fair six-sided dice, independent rolls. The mean settles toward n &times; 3.5 as the number of rolls grows.</p>
 
   <h2 style="font-size:1em;margin-top:14px">RANDOM WALK <span style="color:var(--mut);font-weight:normal;font-size:.8em">— stochastic motion</span></h2>
-  <canvas class="board" id="rw-cv" width="360" height="240"></canvas><br>
+  <canvas class="board" id="rw-cv" role="img" aria-label="Random walk path" width="360" height="240"></canvas><br>
   <label style="font-size:.85em;color:var(--mut)">Seed:</label><input type="text" id="rw-seed" value="7" style="width:70px" title="Same seed gives the same walk"><button class="act" onclick="rwGo()">Walk 500 steps</button><button class="act" onclick="rwReset()">Reset</button>
   <div class="result" id="rw-out" style="font-size:.85em">Distance from start: —</div>
   <p class="note">Assumptions: unit steps in random directions (uniform angle). The seed fixes the walk &mdash; the same seed gives the same walk, so runs are reproducible.</p>
@@ -272,7 +278,7 @@ footer.site a{color:var(--cy)}
     <p class="sub" style="margin:0 0 6px">Formulas: range = v²·sin(2θ)/g · height = (v·sinθ)²/2g · time = 2v·sinθ/g</p>
     <label class="f">Speed v: <span id="pj2-vv">25</span> m/s</label><input type="range" id="pj2-v" min="1" max="100" step="1" value="25" oninput="labProj()">
     <label class="f">Angle θ: <span id="pj2-av">45</span>°</label><input type="range" id="pj2-a" min="5" max="85" step="1" value="45" oninput="labProj()">
-    <canvas class="board" id="proj-cv" width="640" height="220" style="margin-top:8px"></canvas>
+    <canvas class="board" id="proj-cv" role="img" aria-label="Projectile motion chart" width="640" height="220" style="margin-top:8px"></canvas>
     <div class="result" id="pj2-out" style="font-size:.9em"></div>
     <p class="note">What this proves: with no air resistance, uniform gravity, and equal launch/landing height, 45° maximizes range; the trajectory is a parabola under those conditions.</p>
     <button class="act" onclick="labRec('projectile',projRow())">Record reading</button>
@@ -310,16 +316,18 @@ footer.site a{color:var(--cy)}
   <h2>THE OFFICIAL EQUATION ARCHIVE</h2>
   <p class="sub">Every equation solved <b>once</b>, published officially as a <b>JAH-EQ</b> record — then just <b>retrieved</b>, never solved again. Marching to <b>1,000,000</b>.<br>Identity rule: input → normalized canonical form → hash → archive record. Syntactically different but mathematically equivalent inputs get their own record unless canonically identical. "Official JAH-EQ record" means a canonical record generated and stored by this calculator.</p>
   <div class="eqtools">
-    <input type="text" id="eq-q" placeholder="Search: try 'quadratic', 'pyramid', 'JAH-EQ-00000001'…" autocomplete="off">
-    <select id="eq-type">
+    <input type="text" id="eq-q" aria-label="Search the equation archive" placeholder="Search: try 'quadratic', 'pyramid', 'JAH-EQ-00000001'…" autocomplete="off">
+    <select id="eq-type" aria-label="Filter equations by type">
       <option value="">All types</option><option value="linear">Linear</option><option value="quadratic">Quadratic</option><option value="system2">Systems</option><option value="trig">Trigonometry</option><option value="power">Powers &amp; roots</option><option value="log">Logarithms</option><option value="exp">Exponentials</option><option value="evaluate">Evaluate</option><option value="percent">Percent</option><option value="derivative">Derivatives</option><option value="integral">Integrals</option><option value="geometry">Geometry</option>
     </select>
     <button class="go" onclick="eqSearch()">Search</button>
   </div>
   <div class="eqcount" id="eq-count">Loading archive…</div>
+  <p class="eqcount" id="eq-count-static"><span id="eq-count-num">48,300</span> solved equation records in the official archive as of <span id="eq-count-date">2026-10-02</span>.</p>
   <div class="note" id="eq-updated" style="margin-top:2px">Site updated: —</div>
   <div id="eq-list"></div>
   <div id="eq-more" style="text-align:center;margin:10px 0"></div>
+  <div class="note" id="eq-data">Archive data: <a href="data/exports/equations.csv" download>download the full equation catalog (CSV)</a> · <a href="data.html">data &amp; methodology</a></div>
 </div>
 
 <!-- ============ RECORD ============ -->
@@ -354,7 +362,8 @@ footer.site a{color:var(--cy)}
   <a href="https://justinahiggins614-cmyk.github.io/cyber-patent-catalog/" target="_blank" rel="noopener">Globally Rejustered Patent Catalog</a> ·
   <a href="https://justinahiggins614-cmyk.github.io/signature-one-archive/specs.html" target="_blank" rel="noopener">Signature Spec Catalog Pending Patents</a> ·
   <a href="https://justinahiggins614-cmyk.github.io/signature-llama/" target="_blank" rel="noopener">Signature Llama</a> ·
-  <a href="https://justinahiggins614-cmyk.github.io/jah-computer-systems/" target="_blank" rel="noopener">The Signature PC System Depository</a>
+  <a href="https://justinahiggins614-cmyk.github.io/jah-computer-systems/" target="_blank" rel="noopener">The Signature PC System Depository</a><br>
+  <a href="data.html">Data &amp; methodology</a> · <a href="data/exports/equations.csv" download>Equation catalog (CSV)</a> · <a href="sitemap-index.xml">Sitemap</a>
 </footer>
 
 <script>
@@ -384,9 +393,9 @@ var LASTNUM=0;
 function ins(id,t){var e=document.getElementById(id);var s=e.selectionStart||e.value.length;e.value=e.value.slice(0,s)+t+e.value.slice(e.selectionEnd||s);e.focus();}
 /* tabs */
 var TABS=["basic","sci","ask","paradox","project","sim","lab","eq","rec"];
-document.getElementById("tabbar").addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;showTab(b.getAttribute("data-t"))});
+document.getElementById("tabbar").addEventListener("click",function(e){var b=e.target.closest("a[data-t]");if(!b)return;e.preventDefault();showTab(b.getAttribute("data-t"))});
 function showTab(t){TABS.forEach(function(x){document.getElementById("p-"+x).classList.toggle("on",x===t)});
- var bs=document.querySelectorAll("#tabbar button");for(var i=0;i<bs.length;i++)bs[i].classList.toggle("on",bs[i].getAttribute("data-t")===t);
+ var bs=document.querySelectorAll("#tabbar a[data-t]");for(var i=0;i<bs.length;i++)bs[i].classList.toggle("on",bs[i].getAttribute("data-t")===t);
  try{history.replaceState(null,"","?tab="+t)}catch(e){};if(t==="rec"&&window.recRender)recRender();if(t==="eq"&&window.eqInit)eqInit();}
 (function(){var m=/[?&]tab=([a-z]+)/.exec(location.search);if(m&&TABS.indexOf(m[1])>=0)showTab(m[1]);var q2=/[?&]eq=(JAH-EQ-[0-9]+)/i.exec(location.search);if(q2)showTab("eq")})();
 /* per-tab last-result text + action rows */

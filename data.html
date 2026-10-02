@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Data &amp; Methodology — Signature Universal Paradox Immune Calculator</title>
+<meta name="description" content="Methodology of the official JAH-EQ solved-equation archive: the JAH-EQ ID scheme, solved-at-generation with numeric verification, record versioning, and data exports.">
+<link rel="canonical" href="https://justinahiggins614-cmyk.github.io/jah-calculator/data.html">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","name":"Data & Methodology — Signature Universal Paradox Immune Calculator","url":"https://justinahiggins614-cmyk.github.io/jah-calculator/data.html","description":"Methodology of the official JAH-EQ solved-equation archive.","isPartOf":{"@type":"WebSite","name":"Signature Universal Paradox Immune Calculator","url":"https://justinahiggins614-cmyk.github.io/jah-calculator/"}}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Dataset","name":"Official JAH-EQ Solved-Equation Archive","description":"Solved equation records published by the Signature Universal Paradox Immune Calculator. Each record is solved once at generation, numerically verified, and then retrieved — never solved again.","url":"https://justinahiggins614-cmyk.github.io/jah-calculator/data/exports/equations.csv","distribution":{"@type":"DataDownload","encodingFormat":"text/csv","contentUrl":"https://justinahiggins614-cmyk.github.io/jah-calculator/data/exports/equations.csv"}}
+</script>
+<style>
+:root{--bg:#0a0e14;--panel:#131b29;--line:#243149;--txt:#dbe7f5;--mut:#8fa3bd;--cy:#35e0ff;--gold:#e8d98a}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:Arial,Helvetica,sans-serif}
+.wrap{max-width:860px;margin:0 auto;padding:20px 16px}
+h1{font-size:1.5em;letter-spacing:1px;color:#fff}
+h2{font-size:1.1em;color:var(--cy);letter-spacing:1px;margin-top:28px}
+p,li{line-height:1.65;font-size:.95em}
+a{color:var(--cy)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;margin:14px 0}
+code{background:#0b111c;padding:2px 6px;border-radius:4px;font-size:.9em}
+table{border-collapse:collapse;width:100%;font-size:.85em;margin-top:8px}
+td,th{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+th{color:var(--gold);font-weight:normal}
+.top a{color:var(--cy);text-decoration:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+<p class="top"><a href="index.html">&larr; Back to the Signature Universal Paradox Immune Calculator</a></p>
+<h1>DATA &amp; METHODOLOGY</h1>
+<p class="card"><span id="eq-count-num">48,300</span> solved equation records in the official archive as of <span id="eq-count-date">2026-10-02</span>. This page documents how the archive is built, identified, verified, and versioned.</p>
+
+<h2>WHAT THE EQUATION ARCHIVE IS</h2>
+<p>Every equation is solved <b>once</b> by this calculator, published officially as a <b>JAH-EQ</b> record — then just <b>retrieved</b>, never solved again. The archive is the calculator's permanent solved-once memory, marching to <b>1,000,000</b> records. "Official JAH-EQ record" means a canonical record generated and stored by this calculator.</p>
+
+<h2>THE JAH-EQ ID SCHEME</h2>
+<p>Each record carries a permanent serial ID of the form <code>JAH-EQ-########</code> — the prefix <code>JAH-EQ-</code> followed by an 8-digit zero-padded number assigned in publication order (record <code>JAH-EQ-00000001</code> is the first ever published). IDs are never reused and never reassigned; a record's ID is its permanent address, e.g. <a href="index.html?tab=eq&amp;eq=JAH-EQ-00000001">index.html?tab=eq&amp;eq=JAH-EQ-00000001</a>.</p>
+
+<h2>SOLVED-AT-GENERATION + NUMERICALLY VERIFIED</h2>
+<p>Each record is solved at the moment it is generated, and the solution is then checked numerically — the <code>check</code> field of every record carries the verification (e.g. substituting the solution back into the equation). Records are published only after the check passes, and each record stores:</p>
+<table>
+<tr><th>Field</th><th>Meaning</th></tr>
+<tr><td><code>id</code></td><td>Permanent JAH-EQ serial (e.g. <code>JAH-EQ-00000001</code>)</td></tr>
+<tr><td><code>n</code></td><td>Publication sequence number (1, 2, 3, …)</td></tr>
+<tr><td><code>type</code></td><td>Equation family: linear, quadratic, system2, trig, power, log, exp, evaluate, percent, derivative, integral, geometry</td></tr>
+<tr><td><code>title</code> / <code>equation</code></td><td>Human-readable title and the canonical equation text</td></tr>
+<tr><td><code>steps</code></td><td>The solution steps, in order</td></tr>
+<tr><td><code>solution</code></td><td>The solved result</td></tr>
+<tr><td><code>check</code></td><td>Numeric verification of the solution</td></tr>
+<tr><td><code>canonical</code> / <code>canonical_hash</code></td><td>Normalized canonical form of the equation and its hash — the identity rule: input → normalized canonical form → hash → archive record</td></tr>
+<tr><td><code>solver_version</code></td><td>Which solver build produced the record</td></tr>
+<tr><td><code>stamp</code></td><td>Deterministic record stamp</td></tr>
+</table>
+
+<h2>VERSIONING</h2>
+<p>Records are immutable once published: an existing JAH-EQ record is never edited in place. If the solver improves, new records carry the new <code>solver_version</code>; old records keep theirs, so the archive stays a faithful history of what was solved and when. Identity is by canonical form — syntactically different but mathematically equivalent inputs get their own record unless canonically identical.</p>
+
+<h2>GROWTH &amp; EXPORTS</h2>
+<ul>
+<li>The archive grows by <b>+2,000 records every 2 hours</b> toward 1,000,000.</li>
+<li><b>CSV export:</b> <a href="data/exports/equations.csv" download>the full equation catalog as CSV</a> (id, n, type, title, equation, steps, solution, check, solver_version, canonical_hash).</li>
+<li><b>Machine index:</b> <a href="data/index/eq.idx.json.gz">eq.idx.json.gz</a> (one JSON object per line: id, title, type, chunk) and <a href="api.json">api.json</a>.</li>
+<li><b>Sitemap:</b> <a href="sitemap-index.xml">sitemap index</a> lists every record URL (<code>index.html?tab=eq&amp;eq=JAH-EQ-########</code>).</li>
+</ul>
+<p><a href="index.html">&larr; Back to the calculator</a></p>
+</div>
+</body>
+</html>
