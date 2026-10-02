@@ -1331,13 +1331,20 @@ function eqProvHTML(rec){
 }
 function eqOpen(id){
  eqLoadIndex().then(function(ix){
-  var hit=null;for(var i=0;i<ix.length;i++)if(ix[i].id===id){hit=ix[i];break}
+  var hit=null,pos=-1;for(var i=0;i<ix.length;i++)if(ix[i].id===id){hit=ix[i];pos=i;break}
   if(!hit)throw new Error("not found");
-  return eqChunk(hit.c).then(function(m){return m[id]});
- }).then(function(rec){
+  var prev=pos>0?ix[pos-1]:null,next=pos>=0&&pos<ix.length-1?ix[pos+1]:null;
+  return eqChunk(hit.c).then(function(m){return {rec:m[id],prev:prev,next:next}});
+ }).then(function(o){
+  var rec=o.rec;
   if(!rec)throw new Error("not found");
   var b=document.getElementById("eq-body");
-  b.innerHTML='<div class="eid">'+esc(rec.id)+' · '+esc(rec.type)+'</div>'+
+  var nav='<div class="eqnav" style="margin:10px 0;font-size:.9em" role="navigation" aria-label="Browse equation records">';
+  if(o.prev)nav+='<a href="?tab=eq&eq='+o.prev.id+'">&larr; '+esc(o.prev.id)+'</a>';
+  if(o.prev&&o.next)nav+=' &nbsp;&middot;&nbsp; ';
+  if(o.next)nav+='<a href="?tab=eq&eq='+o.next.id+'">'+esc(o.next.id)+' &rarr;</a>';
+  nav+='</div>';
+  b.innerHTML='<div class="eid">'+esc(rec.id)+' · '+esc(rec.type)+'</div>'+nav+
    '<h3 style="margin:.3em 0">'+esc(rec.title)+'</h3>'+
    '<div class="eqsteps">'+rec.steps.map(function(x){return '<div>'+esc(x)+'</div>'}).join("")+'</div>'+
    '<div class="eqsol">'+esc(rec.solution)+'</div>'+
