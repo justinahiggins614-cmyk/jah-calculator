@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Signature Universal Paradox Immune Calculator</title>
-<meta name="description" content="Signature Universal Paradox Immune Calculator — basic and scientific calculator, equation solver, unit converter, paradox checker, projection engine, simulations, lab bench, and the official JAH-EQ solved-equation archive.">
+<meta name="description" content="Signature Universal Paradox Immune Calculator — basic and scientific calculator, equation solver, unit converter, paradox checker, projection engine, simulations, lab bench, and the JAH-EQ solved-equation archive (official within the Signature/JAH system).">
 <link rel="canonical" href="https://justinahiggins614-cmyk.github.io/jah-calculator/">
 <script type="application/ld+json">
-{"@context": "https://schema.org", "@graph": [{"@type": "WebApplication", "name": "Signature Universal Paradox Immune Calculator", "url": "https://justinahiggins614-cmyk.github.io/jah-calculator/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any", "isAccessibleForFree": true, "description": "Basic and scientific calculator with equation solver, unit converter, paradox checker, projection engine, simulation deck, virtual lab bench, and the official JAH-EQ solved-equation archive.", "offers": {"@type": "Offer", "price": "0"}}, {"@type": "SoftwareApplication", "name": "Signature Universal Paradox Immune Calculator", "url": "https://justinahiggins614-cmyk.github.io/jah-calculator/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any", "isAccessibleForFree": true, "description": "Deterministic mathematical solver: hand-written expression parser (no eval), quadratic and cubic equation solvers, unit converter, paradox checker, projection engine, Monte Carlo simulations, virtual lab bench, and retrieval from the official JAH-EQ solved-equation archive.", "featureList": "Basic arithmetic; scientific functions; quadratic solver; cubic solver; unit conversion; paradox checking; projections; Monte Carlo simulation; virtual lab bench; JAH-EQ solved-equation archive", "inputRequirements": "Mathematical expression string, e.g. (12 + 8) * 3 / 4 - 2^3; solver coefficients; or a plain-words question"}, {"@type": "Dataset", "name": "Signature Universal Paradox Immune Calculator", "creator": {"@type": "Person", "name": "Justin Addam Higgins"}, "description": "Official JAH-EQ solved-equation records: every equation solved once, published as a permanent record, then retrieved — marching to 1,000,000."}]}
+{"@context": "https://schema.org", "@graph": [{"@type": "WebApplication", "name": "Signature Universal Paradox Immune Calculator", "url": "https://justinahiggins614-cmyk.github.io/jah-calculator/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any", "isAccessibleForFree": true, "description": "Basic and scientific calculator with equation solver, unit converter, paradox checker, projection engine, simulation deck, virtual lab bench, and the JAH-EQ solved-equation archive (official within the Signature/JAH system).", "offers": {"@type": "Offer", "price": "0"}}, {"@type": "SoftwareApplication", "name": "Signature Universal Paradox Immune Calculator", "url": "https://justinahiggins614-cmyk.github.io/jah-calculator/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any", "isAccessibleForFree": true, "description": "Deterministic mathematical solver: hand-written expression parser (no eval), quadratic and cubic equation solvers, unit converter, paradox checker, projection engine, Monte Carlo simulations, virtual lab bench, and retrieval from the JAH-EQ solved-equation archive (official within the Signature/JAH system).", "featureList": "Basic arithmetic; scientific functions; quadratic solver; cubic solver; unit conversion; paradox checking; projections; Monte Carlo simulation; virtual lab bench; JAH-EQ solved-equation archive", "inputRequirements": "Mathematical expression string, e.g. (12 + 8) * 3 / 4 - 2^3; solver coefficients; or a plain-words question"}, {"@type": "Dataset", "name": "Signature Universal Paradox Immune Calculator", "creator": {"@type": "Person", "name": "Justin Addam Higgins"}, "description": "JAH-EQ solved-equation records (official within the Signature/JAH system): every equation solved once, published as a permanent record, then retrieved — marching to 1,000,000."}]}
 </script>
 <style>
 :root{--bg:#0a0e14;--panel:#131b29;--panel2:#0f1520;--line:#243149;--txt:#dbe7f5;--mut:#8fa3bd;--cy:#35e0ff;--am:#ffb347;--gn:#5df08a;--rd:#ff6b6b;--gold:#e8d98a}
@@ -21,6 +21,17 @@ header.top{background:linear-gradient(180deg,#101827,#0a0e14);border-bottom:2px 
 .jahnet a{color:var(--cy);text-decoration:none;margin:0 6px;white-space:nowrap}
 .jahnet a.me{color:#fff;font-weight:bold;border:1px solid var(--cy);border-radius:4px;padding:1px 7px}
 .jahnet .youarehere{color:var(--gold);letter-spacing:.08em;font-weight:bold;margin-left:6px}
+.sitekicker{color:var(--gold);letter-spacing:.2em;font-weight:bold;font-size:.85em;border:1px solid var(--gold);border-radius:4px;padding:1px 8px;margin-left:8px;white-space:nowrap}
+.jahstatus{display:inline-block;font-size:.72em;letter-spacing:.18em;font-weight:bold;color:#04121a;background:var(--cy);border-radius:3px;padding:2px 9px;margin:6px 8px 6px 0}
+.jahstatus.sim{background:var(--am);color:#1a1206}
+.jahstatus.pub{background:#7fe0c3;color:#0a1a14}
+.jahrecord{border:1px solid var(--line);border-radius:8px;padding:8px 12px;margin:10px 0;background:#0d1420;font-size:.8em}
+.jahrecord .jrp-meta{color:var(--mut);margin:4px 0 8px;font-size:.92em}
+.jahrecord .jrp-meta b{color:var(--am);font-weight:normal;letter-spacing:.08em}
+.jahrecord .jrp-row{display:flex;flex-wrap:wrap;gap:6px}
+.jah-aiid{border-left:3px solid var(--cy);background:#0d1420;padding:8px 12px;margin:8px 0;font-size:.82em;color:var(--txt)}
+.jah-aiid b{color:var(--cy);letter-spacing:.06em}
+.jahprov{font-size:.78em;color:var(--mut);margin:8px 0 2px}
 .tabs{display:flex;gap:6px;overflow-x:auto;padding:10px 12px;background:var(--panel2);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
 .tabs button,.tabs a.tablink{flex:0 0 auto;background:var(--panel);color:var(--txt);border:1px solid var(--line);border-radius:6px;padding:9px 14px;font-size:.92em;cursor:pointer;text-decoration:none;font-family:Arial,Helvetica,sans-serif}
 .tabs button.on,.tabs a.tablink.on{background:var(--cy);color:#04121a;font-weight:bold;border-color:var(--cy)}
@@ -134,7 +145,7 @@ math.formulamath{font-size:1.05em}
 <header class="top">
   <h1 class="brand">SIGNATURE UNIVERSAL PARADOX IMMUNE CALCULATOR<small>SOLVES ANYTHING &middot; PARADOX IMMUNE &middot; JAH DETERMINISTIC</small></h1>
   <div class="statusline" id="jah-status" role="status" aria-live="polite">engine self-test running&hellip;</div>
-  <nav aria-label="JAH Network Global Ecosystem" role="navigation"><div class="jahnet"><b>THE JAH NETWORK:</b><br>
+  <nav aria-label="JAH Network Global Ecosystem" role="navigation"><div class="jahnet"><b>THE JAH NETWORK:</b> <span class="sitekicker">SITE 2 OF 25</span><br>
     <a href="https://justinahiggins614-cmyk.github.io/jah-ai-models/" target="_blank" rel="noopener">The Signature AI Phone Book</a>
     <a class="me" href="https://justinahiggins614-cmyk.github.io/jah-calculator/">Calculator</a><span class="youarehere">YOU ARE HERE: SIGNATURE UNIVERSAL PARADOX IMMUNE CALCULATOR</span>
     <a href="https://justinahiggins614-cmyk.github.io/jah-dictionary/" target="_blank" rel="noopener">Dictionary</a>
@@ -241,6 +252,7 @@ math.formulamath{font-size:1.05em}
 <div class="panel" id="p-ask">
   <h2>ASK ANYTHING</h2>
   <p class="sub">Ask a question or type math. The JAH system answers with all ten analysis lenses plus a fusion verdict.<br>Covers mathematical calculation, logical analysis, structured comparison, and deterministic computation. Questions outside the system's stored knowledge get an explicit <b>FACT NOT AVAILABLE / INSUFFICIENT DATA</b> answer — never a fabricated one.</p>
+  <div class="jah-aiid" role="note" aria-label="AI identity card"><b>AI IDENTITY</b> &middot; <b>Name:</b> Ask Anything &middot; <b>Duties:</b> works out math, definitions, comparisons, and ten-lens analysis from your words, and talks like a human, not a printout &middot; <b>Engine:</b> deterministic calculator engine &middot; JAHtalk voice layer (on-device)</div>
   <input type="text" id="ask-in" aria-label="Ask anything input" placeholder="e.g. What is gravity?  — or —  15% of 240  — or —  bridges vs tunnels" autocomplete="off">
   <button class="go" onclick="askGo()">Ask</button>
   <div style="margin:2px 0 0"><button class="act" onclick="readAsk()">🔊 Read answer aloud</button><button class="act" onclick="ttsStop()">⏹ Stop</button></div>
@@ -260,7 +272,7 @@ math.formulamath{font-size:1.05em}
 
 <!-- ============ PROJECTION ============ -->
 <div class="panel" id="p-project">
-  <h2>PROJECTION ENGINE</h2>
+  <h2>PROJECTION ENGINE <span class="jahstatus sim">SIMULATION</span></h2>
   <p class="sub">Paste a number series (one per line, at least 3 numbers). Get linear and exponential fits, R², and a forecast.</p>
   <textarea id="pj-in" aria-label="Projection data, one number per line" placeholder="12&#10;15&#10;19&#10;24&#10;30"></textarea>
   <div style="display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap">
@@ -275,7 +287,7 @@ math.formulamath{font-size:1.05em}
 
 <!-- ============ SIMULATE ============ -->
 <div class="panel" id="p-sim">
-  <h2>SIMULATION DECK</h2>
+  <h2>SIMULATION DECK <span class="jahstatus sim">SIMULATION</span></h2>
   <p class="sub">Live simulations running in your browser. Nothing leaves your device.</p>
 
   <h2 style="font-size:1em;margin-top:14px">GAME OF LIFE <span style="color:var(--mut);font-weight:normal;font-size:.8em">— cellular automata</span></h2>
@@ -369,7 +381,7 @@ math.formulamath{font-size:1.05em}
 <!-- ============ EQUATIONS ============ -->
 <div class="panel" id="p-eq">
   <h2>THE OFFICIAL EQUATION ARCHIVE</h2>
-  <p class="sub">Every equation solved <b>once</b>, published officially as a <b>JAH-EQ</b> record — then just <b>retrieved</b>, never solved again. Marching to <b>1,000,000</b>.<br>Identity rule: input → normalized canonical form → hash → archive record. Syntactically different but mathematically equivalent inputs get their own record unless canonically identical. "Official JAH-EQ record" means a canonical record generated and stored by this calculator.</p>
+  <p class="sub">Every equation solved <b>once</b>, published officially as a <b>JAH-EQ</b> record — then just <b>retrieved</b>, never solved again. Marching to <b>1,000,000</b>.<br>Identity rule: input → normalized canonical form → hash → archive record. Syntactically different but mathematically equivalent inputs get their own record unless canonically identical. "Official JAH-EQ record" means a canonical record generated and stored by this calculator — official within the Signature/JAH system.</p>
 <div class="finderbar" id="finderbar">
 <div class="finder-kicker">FINDER &mdash; describe it in plain words</div>
 <p class="finder-sub">Tell the Finder what kind of equation you need &mdash; it reads every <b>JAH-EQ</b> record in the archive and brings you the five closest.</p>
@@ -445,6 +457,13 @@ window.addEventListener("error",function(ev){
 });
 /* ================= utils ================= */
 function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
+/* ============ NETWORK 10-FIX CONSISTENCY LAYER (additive, ES5-safe) ============ */
+function jahToday(){return new Date().toISOString().slice(0,10)}
+function jahShare(url,btn){
+ url=url||location.href;
+ if(navigator.share){navigator.share({title:document.title,text:url,url:url}).catch(function(){})}
+ else if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(url);var o=btn.textContent;btn.textContent="LINK COPIED";setTimeout(function(){btn.textContent=o},1400)}
+}
 function hashStr(s){var h=2166136261;for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
 function prng(seed){var a=seed>>>0;return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 function download(name,content,mime){var b=new Blob([content],{type:mime||"text/plain"});var u=URL.createObjectURL(b);var a=document.createElement("a");a.href=u;a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(u);a.remove()},800)}
@@ -523,7 +542,7 @@ function paintActions(){
   '<div class="row" id="send-'+tab+'"></div>';
  })(rows[i].getAttribute("data-tab"),rows[i]);
 }
-function refreshSend(tab){var s=document.getElementById("send-"+tab);if(s&&LAST[tab])s.innerHTML=sendLinks(LAST[tab].term)}
+function refreshSend(tab){var s=document.getElementById("send-"+tab);if(s&&LAST[tab])s.innerHTML=sendLinks(LAST[tab].term)+'<div class="jahprov">PROVENANCE \u00B7 computed on this device by the JAH calculator \u00B7 '+jahToday()+'</div>'}
 function readTab(tab){if(LAST[tab])ttsSpeak(LAST[tab].text)}
 function readAsk(){if(LAST['ask'])readTab('ask');else document.getElementById('ask-out').textContent='Ask me something first \u2014 then tap \uD83D\uDD0A Read answer aloud to hear it.'}
 function copyTab(tab,btn){if(LAST[tab])copyText(LAST[tab].text,btn)}
@@ -1443,7 +1462,7 @@ function wireFinder(){
 /* compact record helper: data-grounded answers, never invents */
 function eqHelperBubble(rec){
  var qs=[
-  ["What is this record?","Official equation record "+rec.id+" \u2014 type \u201c"+rec.type+"\u201d. "+rec.title],
+  ["What is this record?","Official equation record "+rec.id+" (official within the Signature/JAH system) \u2014 type \u201c"+rec.type+"\u201d. "+rec.title],
   ["What was the answer?",rec.solution?("The recorded solution: "+rec.solution):"This record does not state a solution."],
   ["How was it solved?",(rec.steps&&rec.steps.length)?(rec.steps.length+" recorded step"+(rec.steps.length===1?"":"s")+" \u2014 first: "+rec.steps[0]):"The record does not list solution steps."],
   ["How do I check it?",rec.check?("Check line from the record: "+rec.check):"This record does not carry a check line."]
@@ -1458,6 +1477,7 @@ function eqHelperBubble(rec){
  return box;
 }
 function eqSearch(){
+ document.getElementById("eq-count").textContent="Searching\u2026";
  var raw=document.getElementById("eq-q").value.trim();
  var q=raw.toLowerCase();
  var ty=document.getElementById("eq-type").value;
@@ -1509,6 +1529,9 @@ function eqProvHTML(rec){
  return h;
 }
 function eqOpen(id){
+ var b0=document.getElementById("eq-body");
+ b0.innerHTML='<p class="note">Loading record '+esc(id)+'\u2026</p>';
+ document.getElementById("eq-overlay").hidden=false;document.body.style.overflow='hidden';
  eqLoadIndex().then(function(ix){
   var hit=null,pos=-1;for(var i=0;i<ix.length;i++)if(ix[i].id===id){hit=ix[i];pos=i;break}
   if(!hit)throw new Error("not found");
@@ -1523,7 +1546,7 @@ function eqOpen(id){
   if(o.prev&&o.next)nav+=' &nbsp;&middot;&nbsp; ';
   if(o.next)nav+='<a href="?tab=eq&eq='+o.next.id+'">'+esc(o.next.id)+' &rarr;</a>';
   nav+='</div>';
-  b.innerHTML='<div class="eid">'+esc(rec.id)+' · '+esc(rec.type)+'</div>'+nav+
+  b.innerHTML='<div class="eid">'+esc(rec.id)+' · '+esc(rec.type)+'</div>'+'<span class="jahstatus">GENERATED</span>'+nav+
    '<h3 style="margin:.3em 0" data-formula="'+esc(rec.title)+'">'+esc(rec.title)+'</h3>'+
    '<div class="eqsteps">'+rec.steps.map(function(x){return '<div>'+esc(x)+'</div>'}).join("")+'</div>'+
    '<div class="eqsol" data-formula="'+esc(rec.solution)+'">'+esc(rec.solution)+'</div>'+
@@ -1532,6 +1555,15 @@ function eqOpen(id){
    '<button class="act" onclick="eqSpeak()">&#128266; Read aloud</button>'+
    '<button class="act" onclick="eqCopy(this)">&#10697; Copy</button>'+
    '<button class="act" onclick="eqDl()">&#10515; Download .txt</button></div>'+
+   '<div class="jahrecord"><span class="jahstatus">GENERATED</span>'+
+   '<div class="jrp-meta"><b>ID</b> '+esc(rec.id)+' \u00B7 <b>VERSION</b> '+esc(rec.solver_version||"JAH-EQ solver v1 (client)")+' \u00B7 <b>SOURCE</b> JAH-EQ archive \u2014 solved once by this calculator, retrieved thereafter</div>'+
+   '<div class="jrp-row">'+
+   '<a class="act" style="text-decoration:none;display:inline-block" href="?tab=eq&eq='+esc(rec.id)+'">OPEN</a>'+
+   '<button class="act" onclick="jahShare(location.origin+location.pathname+\'?tab=eq&eq='+esc(rec.id)+'\',this)">SHARE</button>'+
+   '<button class="act" onclick="eqCopy(this)">\u29C9 COPY</button>'+
+   '<button class="act" onclick="eqDl()">\u2913 DOWNLOAD</button>'+
+   '<button class="act" onclick="eqSpeak()">\uD83D\uDD0A READ ALOUD</button></div>'+
+   '<div class="jahprov">PROVENANCE \u00B7 generated by the JAH-EQ solver drip \u00B7 seed: canonical hash of the equation \u00B7 record date: '+esc(rec.ts||"as published")+'</div></div>'+
    '<div class="stamp">'+esc(rec.stamp)+'</div>'+eqProvHTML(rec);
   b.appendChild(eqHelperBubble(rec));
   b.dataset.recid=rec.id;
@@ -1539,7 +1571,9 @@ function eqOpen(id){
   try{history.replaceState(null,"","?tab=eq&eq="+rec.id)}catch(e){}
  }).catch(function(){
   var n=EQIDX?EQIDX.length:"the archive";
-  document.getElementById("eq-count").textContent="NOT FOUND: no record with ID "+id+" in "+n+" official equations. Check the ID or search the archive above.";
+  var nf="NOT FOUND: no record with ID "+id+" in "+n+" JAH-EQ equations (official within the Signature/JAH system). Check the ID or search the archive above.";
+  document.getElementById("eq-count").textContent=nf;
+  document.getElementById("eq-body").innerHTML="<p>"+esc(nf)+"</p>";
  });
 }
 function eqClose(){document.getElementById("eq-overlay").hidden=true;document.body.style.overflow='';try{history.replaceState(null,"","?tab=eq")}catch(e){}}
@@ -1547,7 +1581,7 @@ function eqCurRec(){var id=document.getElementById("eq-body").dataset.recid;for(
 function eqRecText(r){return r.id+"\n"+r.title+"\n"+"\nSTEPS\n"+r.steps.join("\n")+"\n\n"+r.solution+"\n"+r.check+"\n\nRECORD PROVENANCE\nsolver_version: "+(r.solver_version||"JAH-EQ solver v1 (client)")+"\ncanonical: "+(r.canonical||eqCanon(r.equation||r.title||""))+"\ncanonical_hash: "+(r.canonical_hash||"not yet assigned")+"\nmethod: "+(r.method||"archive retrieval \u2014 solved once at publication")+"\nprecision: "+(r.precision||"as published")+"\nresult: "+(r.solution||"")+"\ntimestamp: "+(r.ts||"not yet stamped")+"\nhash: "+(r.hash||"not yet stamped")+"\nJAH-EQ ID is the permanent serial of this record.\n\n"+r.stamp}
 function eqSpeak(){var r=eqCurRec();if(r)ttsSpeak(eqRecText(r))}
 function eqCopy(btn){var r=eqCurRec();if(r)copyText(eqRecText(r),btn)}
-function eqDl(){var r=eqCurRec();if(r){download(r.id+".txt",dlFooter("OFFICIAL JAH-EQ RECORD — "+r.id,1,eqRecText(r),"the official equation archive (retrieved, solved once at publication)"));flashNote("Export complete \u2014 "+r.id+".txt")}}
+function eqDl(){var r=eqCurRec();if(r){download(r.id+".txt",dlFooter("JAH-EQ RECORD (official within the Signature/JAH system) — "+r.id,1,eqRecText(r),"the JAH-EQ equation archive — official within the Signature/JAH system (retrieved, solved once at publication)"));flashNote("Export complete \u2014 "+r.id+".txt")}}
 
 /* ================= engine self-test (capability/status line) =================
    Runs at load. Every figure is derived live from the code/data — nothing hardcoded.
