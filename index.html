@@ -140,6 +140,9 @@ button.act.on{background:var(--cy);color:#04121a;font-weight:bold;border-color:v
 .errstate{border:2px solid var(--rd);border-radius:8px;padding:12px;margin-top:8px;background:#1c0e12}
 .errstate .errtitle{color:var(--rd);font-weight:bold;font-size:1.05em;letter-spacing:.03em}
 .errstate .errwhy{font-size:.88em;margin-top:8px;line-height:1.6}
+/* FACT NOT AVAILABLE: dashed amber — visually distinct from any calculated result */
+.factna{border:2px dashed var(--am);border-radius:8px;padding:12px;margin-top:10px;background:#1a140c}
+.factna .errtitle{color:var(--am);font-weight:bold;font-size:1.05em;letter-spacing:.03em}
 [aria-invalid="true"]{border-color:var(--rd)!important;box-shadow:0 0 0 2px rgba(255,107,107,.35)}
 .eqtools{position:sticky;top:58px;z-index:4;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px}
 .catlinks{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
@@ -215,7 +218,9 @@ math.formulamath{font-size:1.05em}
     <button onclick="mem('basic','+')">M+</button><button onclick="mem('basic','-')">M−</button>
     <button onclick="mem('basic','r')">MR</button><button onclick="mem('basic','c')">MC</button>
   </div>
+  <div class="statusline" id="mem-basic" aria-live="polite">Memory: <b>0</b></div>
   <button class="go" onclick="basicGo()">Calculate</button>
+  <button class="act warn" onclick="resetTool('basic')">Reset this tool</button>
   <div class="result" id="basic-out">Result appears here.</div>
   <div class="actions" data-tab="basic"></div>
 </div>
@@ -239,6 +244,7 @@ math.formulamath{font-size:1.05em}
     <button onclick="ins('sci-in','phi')">φ</button>
   </div>
   <button class="go" onclick="sciGo()">Calculate</button>
+  <button class="act warn" onclick="resetTool('sci')">Reset this tool</button>
   <div class="result" id="sci-out">Result appears here.</div>
   <div class="grid2">
     <div>
@@ -272,6 +278,7 @@ math.formulamath{font-size:1.05em}
   <div class="jah-aiid" role="note" aria-label="AI identity card"><b>AI IDENTITY</b> &middot; <b>Name:</b> Ask Anything &middot; <b>Duties:</b> works out math, definitions, comparisons, and ten-lens analysis from your words, and talks like a human, not a printout &middot; <b>Engine:</b> deterministic calculator engine &middot; JAHtalk voice layer (on-device)</div>
   <input type="text" id="ask-in" aria-label="Ask anything input" placeholder="e.g. What is gravity?  — or —  15% of 240  — or —  bridges vs tunnels" autocomplete="off">
   <button class="go" onclick="askGo()">Ask</button>
+  <button class="act warn" onclick="resetTool('ask')">Reset this tool</button>
   <div style="margin:2px 0 0"><button class="act" onclick="readAsk()">🔊 Read answer aloud</button><button class="act" onclick="ttsStop()">⏹ Stop</button></div>
   <div class="result" id="ask-out">Your answer appears here.</div>
   <div class="actions" data-tab="ask"></div>
@@ -283,6 +290,7 @@ math.formulamath{font-size:1.05em}
   <p class="sub">Paradox immune: every self-referential trap gets classified, contained at object level, and resolved one level up. Known self-reference traps are classified and contained instead of being allowed to crash the solver.</p>
   <input type="text" id="px-in" aria-label="Paradox statement input" placeholder='e.g. "This statement is false" — or — the barber paradox' autocomplete="off">
   <button class="go" onclick="pxGo()">Check for paradox</button>
+  <button class="act warn" onclick="resetTool('paradox')">Reset this tool</button>
   <div class="result" id="px-out">Verdict appears here.</div>
   <div class="actions" data-tab="paradox"></div>
 </div>
@@ -296,6 +304,7 @@ math.formulamath{font-size:1.05em}
     <label style="font-size:.85em;color:var(--mut)">Forecast steps:</label>
     <input type="text" id="pj-n" aria-label="Projection periods" value="5" style="width:70px">
     <button class="go" onclick="pjGo()" style="margin:0">Run projection</button>
+    <button class="act warn" onclick="resetTool('project')" style="margin:0">Reset this tool</button>
   </div>
   <canvas class="board" id="pj-cv" role="img" aria-label="Projection chart" width="640" height="300" style="margin-top:10px"></canvas>
   <div class="result" id="pj-out">Projection appears here.</div>
@@ -309,8 +318,8 @@ math.formulamath{font-size:1.05em}
 
   <h2 style="font-size:1em;margin-top:14px">GAME OF LIFE <span style="color:var(--mut);font-weight:normal;font-size:.8em">— deterministic cellular automata</span></h2>
   <p class="sub">Tap cells to seed, then run.</p>
-  <p class="note">Rules: 36×24 grid · wrap-around (toroidal) edges · standard Conway B3/S23 · all cells update simultaneously and deterministically · tap a cell to toggle it.</p>
-  <canvas class="board" id="life-cv" role="img" aria-label="Game of Life grid" width="360" height="240"></canvas><br>
+  <p class="note">Rules: 36×24 grid · wrap-around (toroidal) edges · standard Conway B3/S23 · all cells update simultaneously and deterministically · tap a cell to toggle it. Keyboard: focus the grid, move the amber cursor with arrow keys, Space or Enter toggles the cursor cell.</p>
+  <canvas class="board" id="life-cv" role="img" aria-label="Game of Life grid. Focusable: use arrow keys to move the cursor, Space or Enter to toggle a cell." width="360" height="240" tabindex="0"></canvas><br>
   <button class="act" id="life-run" onclick="lifeRun()">▶ Run</button><button class="act" id="life-pause" onclick="lifePause()" disabled>⏸ Pause</button>
   <button class="act" onclick="lifeReset()">Reset</button><button class="act" onclick="lifeRand()">Random seed</button><span class="ondev">🔒 on-device — nothing leaves your phone</span>
   <label class="f">Speed (ms per generation)</label><input type="range" id="life-spd" min="40" max="800" value="200">
@@ -319,7 +328,7 @@ math.formulamath{font-size:1.05em}
   <h2 style="font-size:1em;margin-top:14px">MONTE CARLO π <span style="color:var(--mut);font-weight:normal;font-size:.8em">— seeded probabilistic</span></h2>
   <p class="sub">Random darts in a square. Fraction inside the circle × 4 approaches π.</p>
   <canvas class="board" id="mc-cv" role="img" aria-label="Monte Carlo pi dart board" width="300" height="300"></canvas><br>
-  <label style="font-size:.85em;color:var(--mut)">Seed:</label><input type="text" id="mc-seed" value="7" style="width:70px" title="Same seed gives the same darts"><button class="act" onclick="mcBurst(1000)">Throw 1,000 darts</button><button class="act" onclick="mcBurst(20000)">Throw 20,000</button>
+  <label style="font-size:.85em;color:var(--mut)">Seed:</label><input type="text" id="mc-seed" value="7" style="width:70px" title="Same seed gives the same darts" aria-label="Monte Carlo seed"><button class="act" onclick="copySeed('mc-seed',this)">⧉ Copy seed</button><button class="act" onclick="mcBurst(1000)">Throw 1,000 darts</button><button class="act" onclick="mcBurst(20000)">Throw 20,000</button>
   <button class="act" onclick="mcReset()">Reset</button><button class="act" onclick="mcRepro()">Reproduce</button><span class="ondev">🔒 on-device — nothing leaves your phone</span>
   <div class="result" id="mc-out" style="font-size:.85em">Darts: 0 · π ≈ — · error —</div>
   <p class="note">Assumptions: darts land uniformly at random; the &pi; estimate converges roughly like 1/&radic;N, so bigger bursts give tighter estimates. Each throw is independent.</p>
@@ -328,7 +337,7 @@ math.formulamath{font-size:1.05em}
   <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
     <label style="font-size:.85em;color:var(--mut)">Dice:</label><input type="text" id="dice-n" value="2" style="width:60px">
     <label style="font-size:.85em;color:var(--mut)">Rolls:</label><input type="text" id="dice-r" value="1000" style="width:80px">
-    <label style="font-size:.85em;color:var(--mut)">Seed:</label><input type="text" id="dice-seed" value="7" style="width:70px" title="Same seed gives the same rolls">
+    <label style="font-size:.85em;color:var(--mut)">Seed:</label><input type="text" id="dice-seed" value="7" style="width:70px" title="Same seed gives the same rolls" aria-label="Dice lab seed"><button class="act" onclick="copySeed('dice-seed',this)">⧉ Copy seed</button>
     <button class="act" onclick="diceGo()">Roll</button><button class="act" onclick="diceReset()">Reset</button><button class="act" onclick="diceRepro()">Reproduce</button><span class="ondev">🔒 on-device — nothing leaves your phone</span>
   </div>
   <canvas class="board" id="dice-cv" role="img" aria-label="Dice probability histogram" width="640" height="220" style="margin-top:8px"></canvas>
@@ -337,7 +346,7 @@ math.formulamath{font-size:1.05em}
 
   <h2 style="font-size:1em;margin-top:14px">RANDOM WALK <span style="color:var(--mut);font-weight:normal;font-size:.8em">— seeded stochastic motion</span></h2>
   <canvas class="board" id="rw-cv" role="img" aria-label="Random walk path" width="360" height="240"></canvas><br>
-  <label style="font-size:.85em;color:var(--mut)">Seed:</label><input type="text" id="rw-seed" value="7" style="width:70px" title="Same seed gives the same walk"><button class="act" onclick="rwGo()">Walk 500 steps</button><button class="act" onclick="rwReset()">Reset</button><span class="ondev">🔒 on-device — nothing leaves your phone</span>
+  <label style="font-size:.85em;color:var(--mut)">Seed:</label><input type="text" id="rw-seed" value="7" style="width:70px" title="Same seed gives the same walk" aria-label="Random walk seed"><button class="act" onclick="copySeed('rw-seed',this)">⧉ Copy seed</button><button class="act" onclick="rwGo()">Walk 500 steps</button><button class="act" onclick="rwReset()">Reset</button><span class="ondev">🔒 on-device — nothing leaves your phone</span>
   <div class="result" id="rw-out" style="font-size:.85em">Distance from start: —</div>
   <p class="note">Assumptions: unit steps in random directions (uniform angle). The seed fixes the walk &mdash; the same seed gives the same walk, so runs are reproducible.</p>
 
@@ -411,6 +420,7 @@ math.formulamath{font-size:1.05em}
       <option value="">All types</option><option value="linear">Linear</option><option value="quadratic">Quadratic</option><option value="system2">Systems</option><option value="trig">Trigonometry</option><option value="power">Powers &amp; roots</option><option value="log">Logarithms</option><option value="exp">Exponentials</option><option value="evaluate">Evaluate</option><option value="percent">Percent</option><option value="derivative">Derivatives</option><option value="integral">Integrals</option><option value="geometry">Geometry</option>
     </select>
     <button class="go" onclick="eqSearch()">Search</button>
+    <button class="act warn" onclick="resetTool('eq')">Reset this tool</button>
   </div>
   <div class="catlinks" aria-label="Browse equations by category">
     <a href="?tab=eq&type=linear">Linear</a><a href="?tab=eq&type=quadratic">Quadratic</a><a href="?tab=eq&type=system2">Systems</a><a href="?tab=eq&type=trig">Trigonometry</a><a href="?tab=eq&type=power">Powers &amp; roots</a><a href="?tab=eq&type=log">Logarithms</a><a href="?tab=eq&type=exp">Exponentials</a><a href="?tab=eq&type=evaluate">Evaluate</a><a href="?tab=eq&type=percent">Percent</a><a href="?tab=eq&type=derivative">Derivatives</a><a href="?tab=eq&type=integral">Integrals</a><a href="?tab=eq&type=geometry">Geometry</a>
@@ -491,7 +501,8 @@ function copyText(t,btn){function done(){if(btn){var o=btn.innerHTML;btn.innerHT
 function flashNote(t){var e=document.getElementById("jah-toast");if(!e){e=document.createElement("div");e.id="jah-toast";e.className="toast";document.body.appendChild(e)}e.textContent=t;e.style.display="block";clearTimeout(e._t);e._t=setTimeout(function(){e.style.display="none"},2600)}
 function fmt(n,d){if(!isFinite(n))return "undefined";if(n!==0&&Math.abs(n)<1e-6||Math.abs(n)>=1e12)return n.toExponential(4);var r=Number(n.toFixed(d==null?6:d));return String(r)}
 var MEM={basic:0};
-function mem(tab,op){if(op==="+")MEM[tab]+=lastNum(tab);else if(op==="-")MEM[tab]-=lastNum(tab);else if(op==="r"){var i=document.getElementById(tab==="basic"?"basic-in":"sci-in");i.value+=fmt(MEM[tab]);}else if(op==="c")MEM[tab]=0;}
+function mem(tab,op){MEM[tab]=MEM[tab]||0;if(op==="+")MEM[tab]+=lastNum(tab);else if(op==="-")MEM[tab]-=lastNum(tab);else if(op==="r"){var i=document.getElementById(tab==="basic"?"basic-in":"sci-in");i.value+=fmt(MEM[tab]);}else if(op==="c")MEM[tab]=0;memPaint(tab)}
+function memPaint(tab){var e=document.getElementById("mem-"+tab);if(e)e.innerHTML="Memory: <b>"+esc(fmt(MEM[tab]||0))+"</b>"}
 function lastNum(){return LASTNUM||0}
 var LASTNUM=0;
 function ins(id,t){var e=document.getElementById(id);var s=e.selectionStart||e.value.length;e.value=e.value.slice(0,s)+t+e.value.slice(e.selectionEnd||s);e.focus();}
@@ -638,16 +649,16 @@ var FUNCS={
  asin:aTrigF(Math.asin),acos:aTrigF(Math.acos),atan:aTrigF(Math.atan),
  log:function(x){return Math.log10(x)},ln:Math.log,exp:Math.exp,sqrt:Math.sqrt,cbrt:Math.cbrt,
  abs:Math.abs,floor:Math.floor,ceil:Math.ceil,round:Math.round,
- fact:function(n){n=Math.round(n);if(n<0||n>170)throw new Error("factorial out of range");var r=1;for(var i=2;i<=n;i++)r*=i;return r},
+ fact:function(n){if(!isFinite(n)||Math.floor(n)!==n)throw new Error("factorial needs a whole number");n=Math.round(n);if(n<0||n>170)throw new Error("factorial out of range");var r=1;for(var i=2;i<=n;i++)r*=i;return r},
  neg:function(x){return -x}
 };
 function parseEval(s){
  var toks=tokenize(s),pos=0;
  function peek(){return toks[pos]}function next(){return toks[pos++]}
  function pExpr(){var v=pTerm();while(peek()&&peek().t==="op"&&(peek().v==="+"||peek().v==="-")){var o=next().v;var r=pTerm();v=o==="+"?v+r:v-r}return v}
- function pTerm(){var v=pPow();while(peek()&&peek().t==="op"&&(peek().v==="*"||peek().v==="/"||peek().v==="%")){var o=next().v;var r=pPow();v=o==="*"?v*r:o==="/"?v/r:v%r}return v}
- function pPow(){var v=pUnary();if(peek()&&peek().t==="op"&&peek().v==="^"){next();var r=pPow();v=Math.pow(v,r)}return v}
- function pUnary(){if(peek()&&peek().t==="op"&&(peek().v==="-"||peek().v==="+")){var o=next().v;var v=pUnary();return o==="-"?-v:v}return pPost()}
+ function pTerm(){var v=pUnary();while(peek()&&peek().t==="op"&&(peek().v==="*"||peek().v==="/"||peek().v==="%")){var o=next().v;var r=pUnary();v=o==="*"?v*r:o==="/"?v/r:v%r}return v}
+ function pPow(){var v=pPost();if(peek()&&peek().t==="op"&&peek().v==="^"){next();var r=pUnary();v=Math.pow(v,r)}return v}
+ function pUnary(){if(peek()&&peek().t==="op"&&(peek().v==="-"||peek().v==="+")){var o=next().v;var v=pUnary();return o==="-"?-v:v}return pPow()}
  function pPost(){var v=pPrim();if(peek()&&peek().t==="op"&&peek().v==="!"){next();v=FUNCS.fact(v)}return v}
  function pPrim(){
   var t=next();if(!t)throw new Error("unexpected end");
@@ -695,15 +706,17 @@ function calcErrHTML(e){
 /* returns {html,title} so result-state wrappers can label STATUS; null = OK */
 function checkCalc(v,raw){
  function E(t,h){return {html:h,title:t}}
+ raw=String(raw).replace(/\u221a/g,"sqrt(");
  if(isNaN(v)){
   if(/0+\s*\/\s*0+(?![0-9.])/.test(raw))return E("UNDEFINED: 0/0",errHTML("UNDEFINED: 0/0","Zero divided by zero has no defined value.","0/1","Make the numerator and denominator different."));
   if(/sqrt\(\s*-|log\(\s*-|ln\(\s*-/.test(raw))return E("NOT A REAL NUMBER",errHTML("NOT A REAL NUMBER","This calculator works in real numbers: square roots of negatives and logs of non-positive numbers have no real result.","sqrt(4)","Use a non-negative value inside sqrt, a positive value inside log/ln."));
-  return E("UNDEFINED RESULT",errHTML("UNDEFINED RESULT","The expression evaluates to NaN (not a number).","2+2*3","Check for 0/0, sqrt of a negative, or log of zero."));
+  if(/a(sin|cos)\(/.test(raw))return E("DOMAIN ERROR: asin/acos",errHTML("DOMAIN ERROR: asin/acos","asin and acos only accept inputs from \u22121 to 1 \u2014 outside that range there is no angle whose sine or cosine equals the input.","asin(0.5)","Use a value between -1 and 1."));
+  return E("UNDEFINED RESULT",errHTML("UNDEFINED RESULT","The expression evaluates to NaN (not a number).","2+2*3","Check for 0/0, sqrt of a negative, log of a non-positive number, or asin/acos outside -1..1."));
  }
  if(!isFinite(v)){
   if(/\/\s*0(?![0-9.])/.test(raw))return E("DIVISION BY ZERO",errHTML("DIVISION BY ZERO","Division by zero has no defined value.","5/2","Check that the denominator is not zero."));
   if(/log\(\s*0|ln\(\s*0/.test(raw))return E("LOG OF ZERO",errHTML("LOG OF ZERO","log(0) heads to negative infinity \u2014 not representable.","log(10)","Use a positive value inside log/ln."));
-  return E("OVERFLOW",errHTML("OVERFLOW","The result is too large to represent (Infinity).","10^400 \u2192 break it down","Break the calculation into smaller steps."));
+  return E("OVERFLOW",errHTML("OVERFLOW","The result is too large to represent (Infinity) \u2014 or a division by zero in disguise, e.g. 5/(2-2).","10^400 \u2192 break it down","Break the calculation into smaller steps, and check that no denominator evaluates to zero."));
  }
  return null;
 }
@@ -728,7 +741,30 @@ function fieldErr(id,msg){
 ['basic-in','sci-in','ask-in','px-in','uc-v','pj-n','eq-q','finder-q','qa','qb','qc','ca','cb','cc','cd','dice-n','dice-r','pj-in'].forEach(function(id){
  var el=document.getElementById(id);if(el)el.addEventListener('input',function(){fieldErr(id,null)});
 });
+/* keyboard: Enter runs the tool from any of its inputs (buttons are natively keyboard-operable) */
+[['basic-in','basicGo'],['sci-in','sciGo'],['ask-in','askGo'],['px-in','pxGo'],['uc-v','ucGo'],['pj-n','pjGo'],
+ ['dice-n','diceGo'],['dice-r','diceGo'],['mc-seed','mcReset'],['dice-seed','diceReset'],['rw-seed','rwReset'],
+ ['qa','solveQuad'],['qb','solveQuad'],['qc','solveQuad'],['ca','solveCubic'],['cb','solveCubic'],['cc','solveCubic'],['cd','solveCubic']].forEach(function(p){
+ var el=document.getElementById(p[0]);if(el)el.addEventListener('keydown',function(e){if(e.key==="Enter"){e.preventDefault();window[p[1]]()}});
+});
+/* universal per-tool reset: clears the tool's inputs and outputs, leaves the solve record alone */
+function resetTool(tab){
+ var outs={basic:"basic-out",sci:"sci-out",ask:"ask-out",paradox:"px-out",project:"pj-out",eq:"eq-list"};
+ var ins={basic:"basic-in",sci:"sci-in",ask:"ask-in",paradox:"px-in",project:"pj-in",eq:"eq-q"};
+ var ph={basic:"Result appears here.",sci:"Result appears here.",ask:"Your answer appears here.",paradox:"Verdict appears here.",project:"Projection appears here."};
+ if(ins[tab]){var ie=document.getElementById(ins[tab]);if(ie){ie.value="";fieldErr(ins[tab],null)}}
+ if(outs[tab]){var oe=document.getElementById(outs[tab]);if(oe){if(tab==="eq")oe.innerHTML="";else oe.textContent=ph[tab]}}
+ if(tab==="project"){var cv=document.getElementById("pj-cv");if(cv)cv.getContext("2d").clearRect(0,0,cv.width,cv.height)}
+ if(tab==="eq"){var ec=document.getElementById("eq-count");if(ec&&EQIDX)ec.textContent="Equations indexed: "+EQIDX.length+" — solved once, retrieved thereafter.";var em=document.getElementById("eq-more");if(em)em.innerHTML="";EQCUR=[];EQSHOWN=0}
+ flashNote("Tool reset.");
+}
 function closeParens(x){var o=0;for(var i=0;i<x.length;i++){if(x[i]==="("||x[i]==="√")o++;else if(x[i]===")")o--}while(o-->0)x+=")";return x}
+/* 0^0 is defined as 1 by this engine (IEEE 754 / combinatorial convention) — say so explicitly */
+function zeroPowNote(raw){
+ if(/^\s*\(?\s*0+(\.0+)?\s*\)?\s*\^\s*\(?\s*0+(\.0+)?\s*\)?\s*$/.test(raw))
+  return '\n<p class="note">0^0 is DEFINED here as 1 \u2014 the IEEE 754 and combinatorial convention (x^0 = 1 for every x; there is exactly one empty product). Some textbooks leave 0^0 undefined; this engine defines it as 1 and says so.</p>';
+ return "";
+}
 function basicGo(){
  var raw=closeParens(document.getElementById("basic-in").value.trim().replace(/=+$/,""));
  if(!raw){fieldErr("basic-in","Type an expression first — try (12 + 8) * 3 / 4 - 2^3.");return}
@@ -742,9 +778,9 @@ function basicGo(){
   else{
    var body='<span class="lbl">EXPRESSION</span>\n'+esc(raw)+'\n';
    if(r.steps.length)body+='\n<span class="lbl">STEPS</span>\n'+r.steps.map(esc).join("\n")+'\n';
-   body+='\n<span class="big">= '+fmt(r.result)+'</span>';
+   body+='\n<span class="big">= '+fmt(r.result)+'</span>'+zeroPowNote(raw);
    out.innerHTML=stateHTML(raw,METHOD_PARSER,body,"OK \u2014 solved deterministically");
-   txt="Expression: "+raw+"\n"+(r.steps.length?"Steps:\n"+r.steps.join("\n")+"\n":"")+"Result: "+fmt(r.result);
+   txt="Expression: "+raw+"\n"+(r.steps.length?"Steps:\n"+r.steps.join("\n")+"\n":"")+"Result: "+fmt(r.result)+(zeroPowNote(raw)?"\nNote: 0^0 is defined as 1 here (IEEE 754 / combinatorial convention).":"");
   }
  }catch(err){out.innerHTML=stateHTML(raw,METHOD_PARSER,calcErrHTML(err),"ERROR \u2014 see above");txt="Error evaluating "+raw+": "+err.message}
  setLast("basic",txt,term);refreshSend("basic");
@@ -761,9 +797,9 @@ function sciGo(){
   else{
    var body='<span class="lbl">EXPRESSION ('+(DEGMODE?"degrees":"radians")+')</span>\n'+esc(raw)+'\n';
    if(r.steps.length)body+='\n<span class="lbl">STEPS</span>\n'+r.steps.map(esc).join("\n")+'\n';
-   body+='\n<span class="big">= '+fmt(r.result)+'</span>';
+   body+='\n<span class="big">= '+fmt(r.result)+'</span>'+zeroPowNote(raw);
    out.innerHTML=stateHTML(raw,method,body,"OK \u2014 solved deterministically");
-   txt="Expression ("+(DEGMODE?"degrees":"radians")+")"+": "+raw+"\n"+(r.steps.length?"Steps:\n"+r.steps.join("\n")+"\n":"")+"Result: "+fmt(r.result);
+   txt="Expression ("+(DEGMODE?"degrees":"radians")+")"+": "+raw+"\n"+(r.steps.length?"Steps:\n"+r.steps.join("\n")+"\n":"")+"Result: "+fmt(r.result)+(zeroPowNote(raw)?"\nNote: 0^0 is defined as 1 here (IEEE 754 / combinatorial convention).":"");
   }
  }catch(err){out.innerHTML=stateHTML(raw,method,calcErrHTML(err),"ERROR \u2014 see above");txt="Error evaluating "+raw+": "+err.message}
  setLast("sci",txt,term);refreshSend("sci");
@@ -776,10 +812,14 @@ function setDeg(d){DEGMODE=d;
  if(m)m.innerHTML="Angle mode: <b style=\"color:var(--cy)\">\u25cf "+(d?"DEG (degrees)":"RAD (radians)")+"</b> \u2014 trig functions use "+(d?"degrees":"radians");
 }
 function quadSolveText(a,b,c){
- var d=b*b-4*a*c,t="Quadratic: "+a+"x\u00b2 + "+b+"x + "+c+" = 0\nDiscriminant: "+fmt(d)+"\n";
- if(d>0){var x1=(-b+Math.sqrt(d))/(2*a),x2=(-b-Math.sqrt(d))/(2*a);t+="Two real roots: x = "+fmt(x1)+", x = "+fmt(x2)}
- else if(d===0){t+="One real root (repeated): x = "+fmt(-b/(2*a))}
- else{var re=fmt(-b/(2*a)),im=fmt(Math.sqrt(-d)/(2*a));t+="Complex roots: x = "+re+" \u00b1 "+im+"i"}
+ var d=b*b-4*a*c;
+ /* floating-point tolerance: a discriminant this close to zero IS a repeated root */
+ var tol=1e-9*Math.max(1,Math.abs(b*b),Math.abs(4*a*c));
+ var dd=Math.abs(d)<=tol?0:d;
+ var t="Quadratic: "+a+"x\u00b2 + "+b+"x + "+c+" = 0\nDiscriminant: "+fmt(d)+"\n";
+ if(dd>0){var x1=(-b+Math.sqrt(dd))/(2*a),x2=(-b-Math.sqrt(dd))/(2*a);t+="Two real roots: x = "+fmt(x1)+", x = "+fmt(x2)}
+ else if(dd===0){t+="One real root (repeated): x = "+fmt(-b/(2*a))+" \u2014 the discriminant is zero (within floating-point tolerance), so both roots coincide."}
+ else{var re=fmt(-b/(2*a)),im=fmt(Math.sqrt(-dd)/(2*a));t+="Complex roots: x = "+re+" \u00b1 "+im+"i \u2014 shown honestly: no real number satisfies this equation."}
  return t;
 }
 function quadMathML(a,b,c){
@@ -819,11 +859,20 @@ function solveCubic(){
  var B=b/a,C=c/a,D=d/a;
  var p=(3*C-B*B)/3,q=(2*B*B*B-9*B*C+27*D)/27,disc=(q/2)*(q/2)+(p/3)*(p/3)*(p/3);
  function cbrt(x){return x<0?-Math.pow(-x,1/3):Math.pow(x,1/3)}
- var roots=[];
- if(disc>1e-12){var u=cbrt(-q/2+Math.sqrt(disc)),v=cbrt(-q/2-Math.sqrt(disc));roots=[u+v-B/3]}
- else{var r=Math.sqrt(-(p/3)*(p/3)*(p/3)),th=Math.acos(Math.max(-1,Math.min(1,-q/(2*r))));
-  for(var k=0;k<3;k++)roots.push(2*cbrt(r)*Math.cos((th+2*Math.PI*k)/3)-B/3)}
- var txt="Cubic: "+a+"x³ + "+b+"x² + "+c+"x + "+d+" = 0\nRoots: "+roots.map(function(x){return fmt(x)}).join(", ");
+ var roots=[],ctxt="";
+ if(disc>1e-12){
+  var u=cbrt(-q/2+Math.sqrt(disc)),v=cbrt(-q/2-Math.sqrt(disc));
+  var r1=u+v-B/3,re2=-(u+v)/2-B/3,im2=Math.abs(u-v)*Math.sqrt(3)/2;
+  roots=[r1];
+  ctxt="One real root: x = "+fmt(r1)+"\nTwo complex roots: x = "+fmt(re2)+" \u00b1 "+fmt(im2)+"i \u2014 shown honestly: every cubic has three roots.";
+ }else{
+  var r=Math.sqrt(Math.max(0,-(p/3)*(p/3)*(p/3)));
+  if(r<1e-12){roots=[-B/3,-B/3,-B/3];ctxt="Triple root: x = "+fmt(-B/3)+" (all three roots coincide)"}
+  else{var th=Math.acos(Math.max(-1,Math.min(1,-q/(2*r))));
+   for(var k=0;k<3;k++)roots.push(2*cbrt(r)*Math.cos((th+2*Math.PI*k)/3)-B/3);
+   ctxt="Three real roots: "+roots.map(function(x){return "x = "+fmt(x)}).join(", ")}
+ }
+ var txt="Cubic: "+a+"x³ + "+b+"x² + "+c+"x + "+d+" = 0\n"+ctxt;
  out.innerHTML=stateHTML("a="+a+", b="+b+", c="+c+", d="+d,METHOD_CUBIC,esc(txt),"OK \u2014 solved deterministically");setLast("sci",(LAST.sci?LAST.sci.text+"\n\n":"")+txt,"cubic equation");refreshSend("sci");
 }
 var UNITS={
@@ -968,6 +1017,11 @@ function askGo(){
   setLast("ask",askGuard("ASK ANYTHING\n"+soc),q);refreshSend("ask");return;
  }
  var txt="",term=q,modeTag="LOGICAL ANALYSIS";
+ /* percent pattern first: "15% of 240" would otherwise die in the generic math attempt on the word "of" */
+ var pm=q.match(/(\d+(?:\.\d+)?)\s*(?:%|percent)\s*of\s*(\d+(?:\.\d+)?)/i);
+ if(pm){var pv=parseFloat(pm[1])*parseFloat(pm[2])/100;
+  out.innerHTML='<div style="font-size:.78em;color:var(--mut);letter-spacing:.06em;margin-bottom:8px">ANSWER MODE: CALCULATION</div>'+askClassHTML("CALCULATION")+'<span class="lbl">SOURCE</span>\nCalculated on-device: '+pm[1]+' \u00d7 '+pm[2]+' \u00f7 100 \u2014 no stored data, no browsing.\n<span class="lbl">COMPUTED DIRECTLY</span>\n<span class="big">'+pm[1]+'% of '+pm[2]+' = '+fmt(pv)+'</span>';
+  txt="Question: "+q+"\nAnswer: "+fmt(pv);modeTag="CALCULATION";setLast("ask",askGuard("ANSWER MODE: "+modeTag+"\n"+txt),term);refreshSend("ask");return}
  /* 1) pure math anywhere in the input -> compute it */
  var mq=q.match(/(?:calculate|compute|evaluate|solve|what(?:'s| is))\s+([(0-9][0-9+\-*/^%().\s]*[0-9)][0-9+\-*/^%().\s]*)/i);
  var cand=mq?mq[1]:q;
@@ -975,16 +1029,19 @@ function askGo(){
   try{var v=parseEval(closeParens(cand));LASTNUM=v;
    var ce=checkCalc(v,cand);
    if(ce){out.innerHTML=askClassHTML("CALCULATION ERROR")+ce.html;txt="Question: "+q+"\nError evaluating "+cand.trim()+" (see error state).";modeTag="CALCULATION ERROR";setLast("ask",askGuard("ANSWER MODE: "+modeTag+"\nRESULT CLASSIFICATION: "+askClassify(modeTag)+"\n"+txt),term);refreshSend("ask");return}
-   var h='<div style="font-size:.78em;color:var(--mut);letter-spacing:.06em;margin-bottom:8px">ANSWER MODE: CALCULATION</div>'+askClassHTML("CALCULATION")+'<span class="lbl">COMPUTED DIRECTLY</span>\n<span class="big">'+esc(cand.trim())+' = '+fmt(v)+'</span>';
+   var h='<div style="font-size:.78em;color:var(--mut);letter-spacing:.06em;margin-bottom:8px">ANSWER MODE: CALCULATION</div>'+askClassHTML("CALCULATION")+'<span class="lbl">SOURCE</span>\nCalculated on-device by the hand-written expression parser \u2014 no stored data, no browsing.\n<span class="lbl">COMPUTED DIRECTLY</span>\n<span class="big">'+esc(cand.trim())+' = '+fmt(v)+'</span>'+zeroPowNote(cand);
    modeTag="CALCULATION";out.innerHTML=h;txt="Question: "+q+"\nComputed: "+cand.trim()+" = "+fmt(v);
    setLast("ask",askGuard("ANSWER MODE: "+modeTag+"\n"+txt),term);refreshSend("ask");return;
-  }catch(e){}
+  }catch(e){
+   /* a full-input math attempt that fails to parse gets a real error, not a lens essay */
+   if(cand.trim()===q.trim()){
+    modeTag="CALCULATION ERROR";
+    out.innerHTML=askClassHTML("CALCULATION ERROR")+calcErrHTML(e);
+    txt="Question: "+q+"\nCould not evaluate '"+cand.trim()+"': "+e.message;
+    setLast("ask",askGuard("ANSWER MODE: "+modeTag+"\nRESULT CLASSIFICATION: "+askClassify(modeTag)+"\n"+txt),term);refreshSend("ask");return;
+   }
+  }
  }
- /* percent pattern: "15% of 240" or "15 percent of 240" */
- var pm=q.match(/(\d+(?:\.\d+)?)\s*(?:%|percent)\s*of\s*(\d+(?:\.\d+)?)/i);
- if(pm){var pv=parseFloat(pm[1])*parseFloat(pm[2])/100;
-  out.innerHTML='<div style="font-size:.78em;color:var(--mut);letter-spacing:.06em;margin-bottom:8px">ANSWER MODE: CALCULATION</div>'+askClassHTML("CALCULATION")+'<span class="lbl">COMPUTED DIRECTLY</span>\n<span class="big">'+pm[1]+'% of '+pm[2]+' = '+fmt(pv)+'</span>';
-  txt="Question: "+q+"\nAnswer: "+fmt(pv);modeTag="CALCULATION";setLast("ask",askGuard("ANSWER MODE: "+modeTag+"\n"+txt),term);refreshSend("ask");return}
  var low=q.toLowerCase(),html="",plain="";
  /* 2) definition pattern -> ONE highlighted right answer (JAH ANSWER).
        Signature ecosystem (syllables/letters) is the *reference* line;
@@ -997,10 +1054,10 @@ function askGo(){
   var dk=defKey(subj),sy=syllables(subj),lt=subj.replace(/[^a-zA-Z]/g,"").length;
   var sigref='<p style="color:var(--mut);font-size:.78em;margin:8px 0 0">signature reference: '+sy+' syllable'+(sy===1?"":"s")+' \u00b7 '+lt+' letters</p>';
   if(dk){
-   modeTag="FACTUAL EXPLANATION";html+='<div class="verdict"><b style="color:var(--gn)">JAH ANSWER \u2713</b><p style="margin:6px 0;font-size:.95em;line-height:1.55">'+DEFS[dk]+'</p>'+sigref+'</div>';
+   modeTag="FACTUAL EXPLANATION";html+='<div class="verdict"><b style="color:var(--gn)">JAH ANSWER \u2713</b><p style="margin:6px 0;font-size:.95em;line-height:1.55">'+DEFS[dk]+'</p><p class="note" style="margin:8px 0 0">SOURCE: JAH stored answer bank \u2014 a fixed on-page definition list (no browsing, nothing invented).</p>'+sigref+'</div>';
    plain+="JAH ANSWER: "+DEFS[dk]+"\n\n";
   }else{
-   modeTag="UNSUPPORTED";html+='<div class="verdict" style="border-color:var(--am)"><b style="color:var(--am)">FACT NOT AVAILABLE</b><p style="margin:6px 0;font-size:.95em;line-height:1.55">No stored definition for \u201c'+esc(subj)+'\u201d yet \u2014 nothing is invented here. The ten-lens analysis below breaks it down from structure only, and the full established definition is one tap away in the IWB Dictionary link below.</p>'+sigref+'</div>';
+   modeTag="UNSUPPORTED";html+='<div class="factna" role="alert"><div class="errtitle">\u26a0 FACT NOT AVAILABLE \u2014 not a calculated result</div><p style="margin:6px 0;font-size:.95em;line-height:1.55">No stored definition for \u201c'+esc(subj)+'\u201d yet \u2014 nothing is invented here. The ten-lens analysis below breaks it down from structure only, and the full established definition is one tap away in the IWB Dictionary link below.</p><p class="note" style="margin:6px 0 0">SOURCE: none \u2014 no stored definition exists for this term.</p>'+sigref+'</div>';
    plain+="FACT NOT AVAILABLE: no stored definition for '"+subj+"' yet; nothing invented. See the ten-lens analysis below and the IWB Dictionary link.\n\n";
   }
   term=subj;
@@ -1010,7 +1067,8 @@ function askGo(){
  if(cm){
   var A=cm[1].replace(/^compare\s+/i,"").trim(),B=cm[2].replace(/\?$/,"").trim();
   html+=lensHTML("DIRECT ANSWER — COMPARISON","<b>"+esc(A)+"</b> vs <b>"+esc(B)+"</b>: no honest comparison without real data, so here is the framework. "+
-  "Score each on the same five axes — cost, speed, reliability, scale, simplicity — 1 to 10 from your own measurements. The winner is the one whose total fits your actual constraint, not the one with the louder reputation. The lenses below analyze each side's structure.");
+  "Score each on the same five axes — cost, speed, reliability, scale, simplicity — 1 to 10 from your own measurements. The winner is the one whose total fits your actual constraint, not the one with the louder reputation. The lenses below analyze each side's structure."+
+  '<p class="note" style="margin:8px 0 0">SOURCE: logical framework \u2014 worked out from your words, not looked up.</p>');
   plain+="COMPARISON: "+A+" vs "+B+" — score both on cost, speed, reliability, scale, simplicity (1-10 each) from real measurements.\n\n";
   term=A+" "+B;modeTag="COMPARISON";
  }
@@ -1019,7 +1077,8 @@ function askGo(){
   modeTag="INSUFFICIENT DATA";
   html+=lensHTML("DIRECT ANSWER — QUANTITY","Counting the real world needs real data, which I do not browse. "+
   "Use Fermi estimation: break the question into 3 multiplications you CAN guess (e.g. people × rate × time), multiply, then sanity-check the order of magnitude. "+
-  "An estimate with stated assumptions beats a precise-sounding guess with hidden ones.");
+  "An estimate with stated assumptions beats a precise-sounding guess with hidden ones."+
+  '<p class="note" style="margin:8px 0 0">SOURCE: estimation method (Fermi) \u2014 computed from your words, not looked up.</p>');
   plain+="QUANTITY: use Fermi estimation — 3 guessable multiplications, then sanity-check the magnitude.\n\n";
  }
  /* 5) ten-lens deterministic analysis — verdict first, lenses behind an optional expansion */
@@ -1243,12 +1302,13 @@ function drawProject(ys,ly,ey,n,lf,ef){
 
 /* ================= SIMULATE ================= */
 /* --- Game of Life --- */
-var LIFE={w:36,h:24,grid:[],timer:null,gen:0};
-function lifeInit(){LIFE.grid=[];for(var y=0;y<LIFE.h;y++){var r=[];for(var x=0;x<LIFE.w;x++)r.push(0);LIFE.grid.push(r)}LIFE.gen=0;lifeDraw();lifeStat()}
+var LIFE={w:36,h:24,grid:[],timer:null,gen:0,cur:{x:0,y:0}};
+function lifeInit(){LIFE.grid=[];for(var y=0;y<LIFE.h;y++){var r=[];for(var x=0;x<LIFE.w;x++)r.push(0);LIFE.grid.push(r)}LIFE.gen=0;LIFE.cur={x:0,y:0};lifeDraw();lifeStat()}
 function lifeDraw(){var cv=document.getElementById("life-cv"),cx=cv.getContext("2d");
  var cw=cv.width/LIFE.w,ch=cv.height/LIFE.h;cx.fillStyle="#070b12";cx.fillRect(0,0,cv.width,cv.height);
  cx.fillStyle="#35e0ff";
- for(var y=0;y<LIFE.h;y++)for(var x=0;x<LIFE.w;x++)if(LIFE.grid[y][x])cx.fillRect(x*cw+0.5,y*ch+0.5,cw-1,ch-1);}
+ for(var y=0;y<LIFE.h;y++)for(var x=0;x<LIFE.w;x++)if(LIFE.grid[y][x])cx.fillRect(x*cw+0.5,y*ch+0.5,cw-1,ch-1);
+ cx.strokeStyle="#ffb347";cx.lineWidth=2;cx.strokeRect(LIFE.cur.x*cw+1,LIFE.cur.y*ch+1,cw-2,ch-2);}
 function lifeStat(){var n=0;for(var y=0;y<LIFE.h;y++)for(var x=0;x<LIFE.w;x++)n+=LIFE.grid[y][x];
  document.getElementById("life-out").textContent="Generation: "+LIFE.gen+" · Living cells: "+n;
  setLast("sim","Game of Life — generation "+LIFE.gen+", living cells "+n+".","game of life");refreshSend("sim")}
@@ -1259,18 +1319,36 @@ function lifeStep(){var g=LIFE.grid,w=LIFE.w,h=LIFE.h,ng=[];
  LIFE.grid=ng;LIFE.gen++;lifeDraw();lifeStat()}
 function simBtn(id,dis){var b=document.getElementById(id);if(b)b.disabled=!!dis}
 function lifeLiveCount(){var n=0;for(var y=0;y<LIFE.h;y++)for(var x=0;x<LIFE.w;x++)n+=LIFE.grid[y][x];return n}
-function lifeRun(){if(lifeLiveCount()===0){flashNote("Seed the grid first — tap some cells (or Random seed), then Run.");return}lifePause();var spd=parseInt(document.getElementById("life-spd").value)||200;LIFE.timer=setInterval(lifeStep,spd);simBtn("life-run",true);simBtn("life-pause",false)}
+function lifeRun(){if(lifeLiveCount()===0){flashNote("Seed the grid first — tap some cells (or Random seed), then Run.");return}lifePause();var spd=parseInt(document.getElementById("life-spd").value)||200;spd=Math.max(40,Math.min(800,spd));LIFE.timer=setInterval(lifeStep,spd);simBtn("life-run",true);simBtn("life-pause",false)}
 function lifePause(){if(LIFE.timer){clearInterval(LIFE.timer);LIFE.timer=null}simBtn("life-run",false);simBtn("life-pause",true)}
 function lifeReset(){lifePause();lifeInit();simBtn("life-run",false);simBtn("life-pause",true)}
 function lifeRand(){lifePause();for(var y=0;y<LIFE.h;y++)for(var x=0;x<LIFE.w;x++)LIFE.grid[y][x]=Math.random()<0.25?1:0;LIFE.gen=0;lifeDraw();lifeStat()}
 document.getElementById("life-cv").addEventListener("click",function(e){
  var r=this.getBoundingClientRect(),x=Math.floor((e.clientX-r.left)/r.width*LIFE.w),y=Math.floor((e.clientY-r.top)/r.height*LIFE.h);
  if(x>=0&&x<LIFE.w&&y>=0&&y<LIFE.h){LIFE.grid[y][x]=LIFE.grid[y][x]?0:1;lifeDraw();lifeStat()}});
+/* keyboard access: focus the grid, arrows move the cursor, Space/Enter toggles the cursor cell */
+document.getElementById("life-cv").addEventListener("keydown",function(e){
+ var c=LIFE.cur,handled=true,k=e.key;
+ if(k==="ArrowUp")c.y=(c.y-1+LIFE.h)%LIFE.h;
+ else if(k==="ArrowDown")c.y=(c.y+1)%LIFE.h;
+ else if(k==="ArrowLeft")c.x=(c.x-1+LIFE.w)%LIFE.w;
+ else if(k==="ArrowRight")c.x=(c.x+1)%LIFE.w;
+ else if(k===" "||k==="Enter"){LIFE.grid[c.y][c.x]=LIFE.grid[c.y][c.x]?0:1;lifeStat()}
+ else handled=false;
+ if(handled){e.preventDefault();lifeDraw()}
+});
 /* --- Monte Carlo pi --- */
-var MC={in:0,tot:0,seed:7,rnd:prng(7)};
-function mcSeed(){var sd=parseInt(document.getElementById("mc-seed").value);if(isNaN(sd))sd=7;return sd}
-function mcReset(){var sd=mcSeed();MC={in:0,tot:0,seed:sd,rnd:prng(sd>>>0)};var cv=document.getElementById("mc-cv");cv.getContext("2d").clearRect(0,0,cv.width,cv.height);mcStat()}
-function mcBurst(n){var cv=document.getElementById("mc-cv"),cx=cv.getContext("2d"),S=cv.width,cx0=S/2,R=S/2;
+var MC={in:0,tot:0,seed:7,rnd:prng(7),lastN:1000};
+/* seed validation: whole numbers only — invalid input gets a visible message and falls back */
+function seedVal(id,def){
+ var el=document.getElementById(id),s=String(el.value).trim();
+ if(!/^[+-]?\d+$/.test(s)){fieldErr(id,"Seed must be a whole number \u2014 using "+def+" instead.");el.value=String(def);return def}
+ fieldErr(id,null);return parseInt(s,10);
+}
+function copySeed(id,btn){var el=document.getElementById(id);if(el)copyText(String(el.value).trim()||"7",btn)}
+function mcSeed(){return seedVal("mc-seed",7)}
+function mcReset(){var sd=mcSeed();MC={in:0,tot:0,seed:sd,lastN:MC.lastN||1000,rnd:prng(sd>>>0)};var cv=document.getElementById("mc-cv");cv.getContext("2d").clearRect(0,0,cv.width,cv.height);mcStat()}
+function mcBurst(n){MC.lastN=n;var cv=document.getElementById("mc-cv"),cx=cv.getContext("2d"),S=cv.width,cx0=S/2,R=S/2;
  cx.fillStyle="rgba(53,224,255,0.9)";var cx2=cx;
  for(var i=0;i<n;i++){var x=MC.rnd()*2-1,y=MC.rnd()*2-1;MC.tot++;
   var inside=x*x+y*y<=1;if(inside)MC.in++;
@@ -1279,10 +1357,10 @@ function mcBurst(n){var cv=document.getElementById("mc-cv"),cx=cv.getContext("2d
 function mcStat(){var pi=MC.tot?4*MC.in/MC.tot:0,err=MC.tot?Math.abs(pi-Math.PI):0;
  document.getElementById("mc-out").textContent="Darts: "+MC.tot+" · π ≈ "+(MC.tot?fmt(pi,5):"—")+" · error "+(MC.tot?fmt(err,5):"—")+" · seed "+MC.seed+" (same seed → same darts)";
  if(MC.tot)setLast("sim","Monte Carlo π — "+MC.tot+" darts, π ≈ "+fmt(pi,5)+", error "+fmt(err,5)+", seed "+MC.seed+".","monte carlo pi");refreshSend("sim")}
-function mcRepro(){mcReset();mcBurst(1000)}
+function mcRepro(){var n=MC.lastN||1000;mcReset();mcBurst(n)}
 /* --- Dice lab --- */
 var DICE={counts:{},rolls:0,seed:7,rnd:prng(7)};
-function diceSeed(){var sd=parseInt(document.getElementById("dice-seed").value);if(isNaN(sd))sd=7;return sd}
+function diceSeed(){return seedVal("dice-seed",7)}
 function diceReset(){var sd=diceSeed();DICE={counts:{},rolls:0,seed:sd,rnd:prng(sd>>>0)};document.getElementById("dice-cv").getContext("2d").clearRect(0,0,640,220);document.getElementById("dice-out").textContent="No rolls yet."}
 function diceGo(){
  var ndRaw=document.getElementById("dice-n").value.trim(),nrRaw=document.getElementById("dice-r").value.trim();
@@ -1313,7 +1391,7 @@ function rwGo(){var cv=document.getElementById("rw-cv"),cx=cv.getContext("2d"),W
  var ox=W/2,oy=H/2,sc=3;
  if(RW.steps===0){cx.clearRect(0,0,W,H);cx.fillStyle="#5df08a";cx.fillRect(ox-2,oy-2,4,4)}
  cx.strokeStyle="#35e0ff";cx.lineWidth=1.5;cx.beginPath();cx.moveTo(ox+RW.x*sc,oy+RW.y*sc);
- var sd=parseInt(document.getElementById("rw-seed").value);if(isNaN(sd))sd=7;
+ var sd=seedVal("rw-seed",7);
  var rnd=prng(sd>>>0);
  for(var i=0;i<500;i++){var a=rnd()*Math.PI*2;RW.x+=Math.cos(a);RW.y+=Math.sin(a);RW.steps++;
   cx.lineTo(ox+RW.x*sc,oy+RW.y*sc)}
@@ -1405,22 +1483,26 @@ function recDownload(){var t=recText();if(t){download("jah-calculator-solve-reco
 function recClear(){try{localStorage.removeItem("jah_calc_record")}catch(e){}recRender()}
 
 /* ================= official equation archive ================= */
-var EQIDX=null,EQCHUNKS={},EQSHOWN=0,EQCUR=[],EQLASTMOD="";
+var EQIDX=null,EQCHUNKS={},EQSHOWN=0,EQCUR=[],EQLASTMOD="",EQIDX_P=null;
 function eqGunzip(ab){
  var ds;try{ds=new DecompressionStream("gzip")}catch(e){return Promise.reject(new Error("gzip unsupported"))}
  return new Response(new Blob([ab]).stream().pipeThrough(ds)).arrayBuffer()
   .then(function(b2){return new TextDecoder().decode(b2)});
 }
+/* shared promise + 20s timeout: never hangs forever, concurrent callers share one fetch */
 function eqLoadIndex(){
  if(EQIDX)return Promise.resolve(EQIDX);
- return fetch("data/index/eq.idx.json.gz").then(function(r){
-  if(!r.ok)throw new Error("index missing");
+ if(EQIDX_P)return EQIDX_P;
+ EQIDX_P=fetch("data/index/eq.idx.json.gz").then(function(r){
+  if(!r.ok)throw new Error("index missing (HTTP "+r.status+")");
   try{EQLASTMOD=r.headers.get("last-modified")||""}catch(e){EQLASTMOD=""}
   return r.arrayBuffer();
  }).then(eqGunzip).then(function(txt){
   EQIDX=txt.split("\n").filter(Boolean).map(function(l){return JSON.parse(l)});
   return EQIDX;
  });
+ var timeout=new Promise(function(_,rej){setTimeout(function(){rej(new Error("archive index timed out after 20s"))},20000)});
+ return Promise.race([EQIDX_P,timeout]).catch(function(e){EQIDX_P=null;throw e});
 }
 function eqUpdatedLine(){
  var el=document.getElementById("eq-updated");if(!el)return;
@@ -1446,7 +1528,7 @@ function eqInit(){
   eqUpdatedLine();
   var m=/[?&]eq=(JAH-EQ-[0-9]+)/i.exec(location.search);
   if(m)eqOpen(m[1].toUpperCase());
- }).catch(function(){el.textContent="Archive index not reachable."});
+ }).catch(function(){el.innerHTML='Archive index not reachable. <button class="act" onclick="eqInit()">Retry</button>'});
 }
 /* ============ FINDER AI: describe it in plain words ============ */
 var FINDER_STOP={the:1,a:1,an:1,and:1,or:1,of:1,to:1,in:1,for:1,on:1,with:1,is:1,are:1,was:1,were:1,be:1,by:1,as:1,at:1,from:1,that:1,this:1,it:1,its:1,you:1,your:1,i:1,me:1,my:1,we:1,our:1,they:1,them:1,their:1,he:1,she:1,his:1,her:1,not:1,no:1,yes:1,do:1,does:1,did:1,can:1,could:1,will:1,would:1,should:1,what:1,which:1,who:1,whom:1,when:1,where:1,why:1,how:1,all:1,any:1,both:1,each:1,few:1,more:1,most:1,other:1,some:1,such:1,than:1,then:1,there:1,these:1,those:1,over:1,under:1,between:1,into:1,through:1,about:1,after:1,before:1,also:1,just:1,very:1,only:1,own:1,same:1,so:1,but:1,if:1,because:1,while:1,up:1,out:1,down:1,off:1,again:1,once:1,here:1,need:1,want:1,looking:1,find:1,get:1,show:1,give:1,tell:1,like:1,please:1};
@@ -1472,9 +1554,9 @@ function wireFinder(){
    }).join("");
    var links=res.querySelectorAll("[data-feq]");
    for(var li=0;li<links.length;li++)(function(a){a.addEventListener("click",function(ev){ev.preventDefault();eqOpen(a.getAttribute("data-feq"))})})(links[li]);
-  }).catch(function(){res.innerHTML='<p class="finder-none">The archive could not be read right now. Check your connection and try again.</p>'});
+  }).catch(function(){res.innerHTML='<p class="finder-none">The archive could not be read right now. Check your connection and <button class="act" onclick="_finderRun()">try again</button>.</p>'});
  }
- btn.onclick=run;
+ btn.onclick=run;window._finderRun=run;
  inp.addEventListener("keydown",function(e){if(e.key==="Enter")run()});
 }
 /* compact record helper: data-grounded answers, never invents */
@@ -1509,8 +1591,10 @@ function eqSearch(){
   });
   EQSHOWN=0;
   document.getElementById("eq-count").textContent=EQCUR.length+" of "+ix.length+" equations"+(q||ty?" match":"")+".";
-  document.getElementById("eq-list").innerHTML="";
+  document.getElementById("eq-list").innerHTML=EQCUR.length?"":'<p class="finder-none">No equations matched \u2014 try a type like \u201cquadratic\u201d or an ID like JAH-EQ-00000001.</p>';
   eqMore();
+ }).catch(function(){
+  document.getElementById("eq-count").innerHTML='Archive search failed to load. <button class="act" onclick="eqSearch()">Retry</button>';
  });
 }
 function eqMore(){
@@ -1600,11 +1684,16 @@ function eqOpen(id){
   b.dataset.recid=rec.id;
   document.getElementById("eq-overlay").hidden=false;document.body.style.overflow='hidden';
   try{history.replaceState(null,"","?tab=eq&eq="+rec.id)}catch(e){}
- }).catch(function(){
-  var n=EQIDX?EQIDX.length:"the archive";
-  var nf="NOT FOUND: no record with ID "+id+" in "+n+" JAH-EQ equations (official within the Signature/JAH system). Check the ID or search the archive above.";
-  document.getElementById("eq-count").textContent=nf;
-  document.getElementById("eq-body").innerHTML="<p>"+esc(nf)+"</p>";
+ }).catch(function(err){
+  var msg=String((err&&err.message)||""),b=document.getElementById("eq-body");
+  if(msg==="not found"){
+   var n=EQIDX?EQIDX.length:"the archive";
+   var nf="NOT FOUND: no record with ID "+id+" in "+n+" JAH-EQ equations (official within the Signature/JAH system). Check the ID or search the archive above.";
+   document.getElementById("eq-count").textContent=nf;
+   b.innerHTML="<p>"+esc(nf)+"</p>";
+  }else{
+   b.innerHTML='<div class="errstate" role="alert"><div class="errtitle">\u26a0 RECORD FAILED TO LOAD</div><div class="errwhy">Why: '+esc(msg||"the archive chunk could not be fetched")+'.<br>Recovery: check your connection and retry.</div><button class="act" onclick="eqOpen(\''+esc(id)+'\')" style="margin-top:8px">Retry</button></div>';
+  }
  });
 }
 function eqClose(){document.getElementById("eq-overlay").hidden=true;document.body.style.overflow='';try{history.replaceState(null,"","?tab=eq")}catch(e){}}
@@ -1639,7 +1728,7 @@ function jahSelfTest(){
 }
 
 /* ================= init ================= */
-paintActions();ucFill();setDeg(true);lifeInit();mcReset();rwReset();
+paintActions();ucFill();setDeg(true);lifeInit();mcReset();rwReset();memPaint("basic");
 labPend();labProj();labOhm();labGas();
 REC_ARMED=true;
 wireFinder();
