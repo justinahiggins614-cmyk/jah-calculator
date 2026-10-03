@@ -27,11 +27,12 @@ for path in sorted(glob.glob(os.path.join(ROOT, "data/equations/eq-c*.jsonl.gz")
 api_n = None
 api_path = os.path.join(ROOT, "api.json")
 if os.path.exists(api_path):
-    api_n = json.load(open(api_path)).get("equations")
+    api = json.load(open(api_path))
+    api_n = api.get("archive_count", api.get("records_approx"))
 
 print("index rows        : %d" % len(idx_ids))
 print("chunk records     : %d" % chunk_n)
-print("api.json equations: %s" % api_n)
+print("api.json count    : %s" % api_n)
 
 fails = []
 if chunk_n != len(idx_ids):

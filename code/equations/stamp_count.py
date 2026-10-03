@@ -19,10 +19,10 @@ def main():
     for fn in ("index.html", "data.html"):
         p = os.path.join(ROOT, fn)
         t = open(p, encoding="utf-8").read()
-        t2 = re.sub(r'(<span id="eq-count-num">)[^<]*(</span>)',
-                    lambda m: m.group(1) + num + m.group(2), t, count=1)
-        t2 = re.sub(r'(<span id="eq-count-date">)[^<]*(</span>)',
-                    lambda m: m.group(1) + today + m.group(2), t2, count=1)
+        t2 = re.sub(r'(<span id="eq-count-num(-f)?">)[^<]*(</span>)',
+                    lambda m: m.group(1) + num + m.group(3), t)
+        t2 = re.sub(r'(<span id="eq-count-date(-f)?">)[^<]*(</span>)',
+                    lambda m: m.group(1) + today + m.group(3), t2)
         if t2 != t:
             open(p, "w", encoding="utf-8").write(t2)
         print(f"stamp: {fn} -> {num} as of {today}")

@@ -12,7 +12,9 @@ ROOT = os.path.dirname(os.path.dirname(HERE))
 OUT = os.path.join(ROOT, "data", "exports", "equations.csv")
 
 FIELDS = ["id", "n", "type", "title", "equation", "steps",
-          "solution", "check", "solver_version", "canonical_hash"]
+          "solution", "check", "solver_version", "engine_version",
+          "schema_version", "canonical", "canonical_hash", "record_hash",
+          "archive_status", "seed", "source", "stable_url", "ts"]
 
 def main():
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
@@ -33,7 +35,12 @@ def main():
                         d.get("title", ""), d.get("equation", ""),
                         "\n".join(steps),
                         d.get("solution", ""), d.get("check", ""),
-                        d.get("solver_version", ""), d.get("canonical_hash", ""),
+                        d.get("solver_version", ""), d.get("engine_version", ""),
+                        d.get("schema_version", ""), d.get("canonical", ""),
+                        d.get("canonical_hash", ""), d.get("record_hash", ""),
+                        d.get("archive_status", "PUBLISHED"),
+                        d.get("seed", ""), d.get("source", "jah-eq-generator"),
+                        d.get("stable_url", ""), d.get("ts", ""),
                     ])
                     n += 1
     print(f"csv: {n} records -> {OUT} ({os.path.getsize(OUT)} bytes)")

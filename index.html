@@ -290,7 +290,7 @@ math.formulamath{font-size:1.05em}
   <h2>SIMULATION DECK <span class="jahstatus sim">SIMULATION</span></h2>
   <p class="sub">Live simulations running in your browser. Nothing leaves your device.</p>
 
-  <h2 style="font-size:1em;margin-top:14px">GAME OF LIFE <span style="color:var(--mut);font-weight:normal;font-size:.8em">— cellular automata</span></h2>
+  <h2 style="font-size:1em;margin-top:14px">GAME OF LIFE <span style="color:var(--mut);font-weight:normal;font-size:.8em">— deterministic cellular automata</span></h2>
   <p class="sub">Tap cells to seed, then run.</p>
   <p class="note">Rules: 36×24 grid · wrap-around (toroidal) edges · standard Conway B3/S23 · all cells update simultaneously and deterministically · tap a cell to toggle it.</p>
   <canvas class="board" id="life-cv" role="img" aria-label="Game of Life grid" width="360" height="240"></canvas><br>
@@ -299,7 +299,7 @@ math.formulamath{font-size:1.05em}
   <label class="f">Speed (ms per generation)</label><input type="range" id="life-spd" min="40" max="800" value="200">
   <div class="result" id="life-out" style="font-size:.85em">Generation: 0 · Living cells: 0</div>
 
-  <h2 style="font-size:1em;margin-top:14px">MONTE CARLO π <span style="color:var(--mut);font-weight:normal;font-size:.8em">— probabilistic</span></h2>
+  <h2 style="font-size:1em;margin-top:14px">MONTE CARLO π <span style="color:var(--mut);font-weight:normal;font-size:.8em">— seeded probabilistic</span></h2>
   <p class="sub">Random darts in a square. Fraction inside the circle × 4 approaches π.</p>
   <canvas class="board" id="mc-cv" role="img" aria-label="Monte Carlo pi dart board" width="300" height="300"></canvas><br>
   <label style="font-size:.85em;color:var(--mut)">Seed:</label><input type="text" id="mc-seed" value="7" style="width:70px" title="Same seed gives the same darts"><button class="act" onclick="mcBurst(1000)">Throw 1,000 darts</button><button class="act" onclick="mcBurst(20000)">Throw 20,000</button>
@@ -307,7 +307,7 @@ math.formulamath{font-size:1.05em}
   <div class="result" id="mc-out" style="font-size:.85em">Darts: 0 · π ≈ — · error —</div>
   <p class="note">Assumptions: darts land uniformly at random; the &pi; estimate converges roughly like 1/&radic;N, so bigger bursts give tighter estimates. Each throw is independent.</p>
 
-  <h2 style="font-size:1em;margin-top:14px">DICE PROBABILITY LAB <span style="color:var(--mut);font-weight:normal;font-size:.8em">— statistics</span></h2>
+  <h2 style="font-size:1em;margin-top:14px">DICE PROBABILITY LAB <span style="color:var(--mut);font-weight:normal;font-size:.8em">— seeded stochastic</span></h2>
   <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
     <label style="font-size:.85em;color:var(--mut)">Dice:</label><input type="text" id="dice-n" value="2" style="width:60px">
     <label style="font-size:.85em;color:var(--mut)">Rolls:</label><input type="text" id="dice-r" value="1000" style="width:80px">
@@ -316,9 +316,9 @@ math.formulamath{font-size:1.05em}
   </div>
   <canvas class="board" id="dice-cv" role="img" aria-label="Dice probability histogram" width="640" height="220" style="margin-top:8px"></canvas>
   <div class="result" id="dice-out" style="font-size:.85em">No rolls yet.</div>
-  <p class="note">Assumptions: fair six-sided dice, independent rolls. The mean settles toward n &times; 3.5 as the number of rolls grows.</p>
+  <p class="note">Assumptions: fair six-sided dice, independent rolls. Displayed mean = mean of the <b>summed</b> rolls; it settles toward n &times; 3.5 (expected sum of n dice; each die averages 3.5). Seeded stochastic &mdash; the same seed reproduces the same rolls.</p>
 
-  <h2 style="font-size:1em;margin-top:14px">RANDOM WALK <span style="color:var(--mut);font-weight:normal;font-size:.8em">— stochastic motion</span></h2>
+  <h2 style="font-size:1em;margin-top:14px">RANDOM WALK <span style="color:var(--mut);font-weight:normal;font-size:.8em">— seeded stochastic motion</span></h2>
   <canvas class="board" id="rw-cv" role="img" aria-label="Random walk path" width="360" height="240"></canvas><br>
   <label style="font-size:.85em;color:var(--mut)">Seed:</label><input type="text" id="rw-seed" value="7" style="width:70px" title="Same seed gives the same walk"><button class="act" onclick="rwGo()">Walk 500 steps</button><button class="act" onclick="rwReset()">Reset</button><span class="ondev">🔒 on-device — nothing leaves your phone</span>
   <div class="result" id="rw-out" style="font-size:.85em">Distance from start: —</div>
@@ -431,7 +431,7 @@ math.formulamath{font-size:1.05em}
 
 </div><!-- /wrap -->
 <footer class="site">
-  <b style="color:var(--gold)">JAH Universal Calculator</b> — is a JAH site. Solves anything, paradox immune, powered by the JAH deterministic system.<br>
+  <b style="color:var(--gold)">Signature Universal Paradox Immune Calculator</b> — is a JAH site. Solves anything, paradox immune, powered by the JAH deterministic system.<br>
   Partner of <a href="https://justinahiggins614-cmyk.github.io/jah-ai-models/" target="_blank" rel="noopener">The Signature AI Telephone Book</a> ·
   <a href="https://justinahiggins614-cmyk.github.io/jah-calculator/">Signature Universal Paradox Immune Calculator</a> ·
   <a href="https://justinahiggins614-cmyk.github.io/jah-dictionary/" target="_blank" rel="noopener">The Signature Dictionary</a> ·
@@ -441,7 +441,8 @@ math.formulamath{font-size:1.05em}
   <a href="https://justinahiggins614-cmyk.github.io/signature-one-archive/specs.html" target="_blank" rel="noopener">Signature Spec Catalog Pending Patents</a> ·
   <a href="https://justinahiggins614-cmyk.github.io/signature-llama/" target="_blank" rel="noopener">Signature Llama</a> ·
   <a href="https://justinahiggins614-cmyk.github.io/jah-computer-systems/" target="_blank" rel="noopener">The Signature PC System Depository</a><br>
-  <a href="data.html">Data &amp; methodology</a> · <a href="data/exports/equations.csv" download>Equation catalog (CSV)</a> · <a href="sitemap-index.xml">Sitemap</a>
+  <a href="data.html">Data &amp; methodology</a> · <a href="data/exports/equations.csv" download>Equation catalog (CSV)</a> · <a href="sitemap-index.xml">Sitemap</a><br>
+  <span style="color:var(--mut);font-size:.8em">Engine jah-calc-engine-1.0 · Solver jah-eq-solver-1.0 · Schema jah-eq-schema-1.0 · Archive <span id="eq-count-num-f">74,300</span> records as of <span id="eq-count-date-f">2026-10-03</span></span>
 </footer>
 
 <script src="js/jah-talk-fallback.js"></script>
@@ -1515,15 +1516,28 @@ function eqCanon(s){
 }
 function eqProvHTML(rec){
  var canon=rec.canonical||eqCanon(rec.equation||rec.title||"");
- var rows=[["Solver version",rec.solver_version||"JAH-EQ solver v1 (client)"],
+ var rows=[["Record ID",rec.id],
+  ["Type",rec.type],
+  ["Input",rec.input||rec.equation||""],
+  ["Normalized input",rec.normalized_input||canon],
   ["Canonical equation",canon],
-  ["Canonical hash",rec.canonical_hash||"not yet assigned"],
+  ["Exact result",rec.exact||rec.solution||""],
+  ["Approximate result",rec.approximate||rec.solution||""],
+  ["Verification",rec.verification||rec.check||""],
+  ["Assumptions",rec.assumptions||"deterministic solve; see method"],
+  ["Solver version",rec.solver_version||"jah-eq-solver-1.0"],
+  ["Engine version",rec.engine_version||"jah-calc-engine-1.0"],
+  ["Schema version",rec.schema_version||"jah-eq-schema-1.0"],
   ["Method",rec.method||"archive retrieval \u2014 solved once at publication"],
   ["Precision",rec.precision||"as published"],
-  ["Result",rec.solution||""],
+  ["Archive status",rec.archive_status||"PUBLISHED"],
+  ["Seed",rec.seed==null?"legacy record (pre-seed)":String(rec.seed)],
+  ["Source",rec.source||"jah-eq-generator"],
+  ["Stable URL",rec.stable_url||("?tab=eq&eq="+rec.id)],
   ["Record timestamp",rec.ts||"not yet stamped"],
-  ["Record hash",rec.hash||"not yet stamped"]];
- var h='<div style="margin-top:12px;border:1px solid var(--ln);border-radius:8px;padding:10px 12px;font-size:.82em"><b style="letter-spacing:.06em">RECORD PROVENANCE</b><table class="dt" style="margin-top:6px">';
+  ["Record hash (SHA-256)",rec.record_hash||"legacy record \u2014 stamped on republication"],
+  ["Canonical hash",rec.canonical_hash||"not yet assigned"]];
+ var h='<div style="margin-top:12px;border:1px solid var(--ln);border-radius:8px;padding:10px 12px;font-size:.82em"><b style="letter-spacing:.06em">RECORD PROVENANCE \u00B7 JAH-EQ STANDARD</b><table class="dt" style="margin-top:6px">';
  rows.forEach(function(r){h+="<tr><td style='color:var(--mut)'>"+esc(r[0])+"</td><td>"+esc(String(r[1]))+"</td></tr>"});
  h+='</table><p class="note" style="margin:8px 0 0">The JAH-EQ ID is the permanent serial of this record: once published, the record is retrieved, never solved again.</p></div>';
  return h;
@@ -1556,7 +1570,7 @@ function eqOpen(id){
    '<button class="act" onclick="eqCopy(this)">&#10697; Copy</button>'+
    '<button class="act" onclick="eqDl()">&#10515; Download .txt</button></div>'+
    '<div class="jahrecord"><span class="jahstatus">GENERATED</span>'+
-   '<div class="jrp-meta"><b>ID</b> '+esc(rec.id)+' \u00B7 <b>VERSION</b> '+esc(rec.solver_version||"JAH-EQ solver v1 (client)")+' \u00B7 <b>SOURCE</b> JAH-EQ archive \u2014 solved once by this calculator, retrieved thereafter</div>'+
+   '<div class="jrp-meta"><b>ID</b> '+esc(rec.id)+' \u00B7 <b>VERSION</b> '+esc(rec.solver_version||"jah-eq-solver-1.0")+' \u00B7 <b>SOURCE</b> JAH-EQ archive \u2014 solved once by this calculator, retrieved thereafter</div>'+
    '<div class="jrp-row">'+
    '<a class="act" style="text-decoration:none;display:inline-block" href="?tab=eq&eq='+esc(rec.id)+'">OPEN</a>'+
    '<button class="act" onclick="jahShare(location.origin+location.pathname+\'?tab=eq&eq='+esc(rec.id)+'\',this)">SHARE</button>'+
@@ -1578,7 +1592,7 @@ function eqOpen(id){
 }
 function eqClose(){document.getElementById("eq-overlay").hidden=true;document.body.style.overflow='';try{history.replaceState(null,"","?tab=eq")}catch(e){}}
 function eqCurRec(){var id=document.getElementById("eq-body").dataset.recid;for(var k in EQCHUNKS)if(EQCHUNKS[k][id])return EQCHUNKS[k][id];return null}
-function eqRecText(r){return r.id+"\n"+r.title+"\n"+"\nSTEPS\n"+r.steps.join("\n")+"\n\n"+r.solution+"\n"+r.check+"\n\nRECORD PROVENANCE\nsolver_version: "+(r.solver_version||"JAH-EQ solver v1 (client)")+"\ncanonical: "+(r.canonical||eqCanon(r.equation||r.title||""))+"\ncanonical_hash: "+(r.canonical_hash||"not yet assigned")+"\nmethod: "+(r.method||"archive retrieval \u2014 solved once at publication")+"\nprecision: "+(r.precision||"as published")+"\nresult: "+(r.solution||"")+"\ntimestamp: "+(r.ts||"not yet stamped")+"\nhash: "+(r.hash||"not yet stamped")+"\nJAH-EQ ID is the permanent serial of this record.\n\n"+r.stamp}
+function eqRecText(r){return r.id+"\n"+r.title+"\n"+"\nSTEPS\n"+r.steps.join("\n")+"\n\n"+r.solution+"\n"+r.check+"\n\nRECORD PROVENANCE \u00B7 JAH-EQ STANDARD\ntype: "+(r.type||"")+"\ninput: "+(r.input||r.equation||"")+"\nnormalized_input: "+(r.normalized_input||eqCanon(r.equation||r.title||""))+"\nexact: "+(r.exact||r.solution||"")+"\napproximate: "+(r.approximate||r.solution||"")+"\nverification: "+(r.verification||r.check||"")+"\nassumptions: "+(r.assumptions||"deterministic solve; see method")+"\nsolver_version: "+(r.solver_version||"jah-eq-solver-1.0")+"\nengine_version: "+(r.engine_version||"jah-calc-engine-1.0")+"\nschema_version: "+(r.schema_version||"jah-eq-schema-1.0")+"\ncanonical: "+(r.canonical||eqCanon(r.equation||r.title||""))+"\ncanonical_hash: "+(r.canonical_hash||"not yet assigned")+"\nmethod: "+(r.method||"archive retrieval \u2014 solved once at publication")+"\nprecision: "+(r.precision||"as published")+"\narchive_status: "+(r.archive_status||"PUBLISHED")+"\nseed: "+(r.seed==null?"legacy record (pre-seed)":r.seed)+"\nsource: "+(r.source||"jah-eq-generator")+"\nstable_url: "+(r.stable_url||("?tab=eq&eq="+r.id))+"\ntimestamp: "+(r.ts||"not yet stamped")+"\nrecord_hash_sha256: "+(r.record_hash||"legacy record \u2014 stamped on republication")+"\nJAH-EQ ID is the permanent serial of this record.\n\n"+r.stamp}
 function eqSpeak(){var r=eqCurRec();if(r)ttsSpeak(eqRecText(r))}
 function eqCopy(btn){var r=eqCurRec();if(r)copyText(eqRecText(r),btn)}
 function eqDl(){var r=eqCurRec();if(r){download(r.id+".txt",dlFooter("JAH-EQ RECORD (official within the Signature/JAH system) — "+r.id,1,eqRecText(r),"the JAH-EQ equation archive — official within the Signature/JAH system (retrieved, solved once at publication)"));flashNote("Export complete \u2014 "+r.id+".txt")}}
@@ -1596,12 +1610,15 @@ function jahSelfTest(){
  function paint(){
   var s="ENGINE STATUS · PARSER "+(parserOk?"<b>READY</b>":"<span class='bad'>ERROR</span>");
   s+=" · DEFINITIONS <b>"+nd+"</b>";
-  s+=" · EQ ARCHIVE <b>"+(eqN==null?"loading…":eqN.toLocaleString()+" records")+"</b>";
+  s+=" · EQ ARCHIVE <b>"+(eqN==null?(eqTimedOut?"unavailable":"loading…"):eqN.toLocaleString()+" records")+"</b>";
   s+=" · SOLVE RECORD "+(recOk?"<b>LOCAL</b>":"<span class='bad'>UNAVAILABLE</span>");
   el.innerHTML=s;
  }
  paint();
- if(typeof eqLoadIndex==="function")eqLoadIndex().then(function(ix){eqN=ix.length;paint()}).catch(function(){paint()});
+ var eqTimedOut=false;
+ setTimeout(function(){if(eqN==null){eqTimedOut=true;paint()}},10000);
+ if(typeof eqLoadIndex==="function")eqLoadIndex().then(function(ix){eqN=ix.length;paint()}).catch(function(){eqTimedOut=true;paint()});
+ else{eqTimedOut=true;paint()}
 }
 
 /* ================= init ================= */

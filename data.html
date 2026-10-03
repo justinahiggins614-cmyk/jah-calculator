@@ -59,10 +59,26 @@ th{color:var(--gold);font-weight:normal}
 <h2>VERSIONING</h2>
 <p>Records are immutable once published: an existing JAH-EQ record is never edited in place. If the solver improves, new records carry the new <code>solver_version</code>; old records keep theirs, so the archive stays a faithful history of what was solved and when. Identity is by canonical form — syntactically different but mathematically equivalent inputs get their own record unless canonically identical.</p>
 
+<h2>PRIVACY &amp; DATA STORAGE</h2>
+<ul>
+<li><b>Calculations, simulations, and lab readings never leave your device.</b> There is no account, no analytics, and no calculation data is uploaded anywhere.</li>
+<li><b>Solve records and the lab notebook live in your browser's localStorage only.</b> They persist across refreshes and restarts, are erased if you clear browser data, and do not follow you to another device.</li>
+<li><b>Read-aloud is the one exception:</b> tapping a voice button sends the text being spoken to your voice provider — first your browser's built-in speech synthesis, then (if unavailable) the ResponsiveVoice or Google text-to-speech services — so the audio can be generated. Voice use is always your explicit tap, never automatic.</li>
+<li><b>Downloaded files</b> (CSV, TXT, equation records) are plain data files, not executables. The downloadable equation chunks contain JSON records, never code that runs on open.</li>
+</ul>
+
+<h2>VERSIONS</h2>
+<ul>
+<li><b>Engine:</b> <code>jah-calc-engine-1.0</code> — hand-written expression parser (no eval), quadratic/cubic solvers, unit converter, paradox checker, projection engine, seeded simulations, virtual lab.</li>
+<li><b>Solver:</b> <code>jah-eq-solver-1.0</code> — the generator that solves each equation once at publication; every record carries its solver version.</li>
+<li><b>Record schema:</b> <code>jah-eq-schema-1.0</code> — ID, type, input, normalized input, exact/approximate result, verification, assumptions, solver/engine/schema versions, canonical form + hash, archive status, seed, source, stable URL, record SHA-256 hash, timestamp.</li>
+<li><b>Archive revision:</b> published in <a href="api.json">api.json</a> as <code>archive_revision</code> with <code>archive_generated_at</code>; records are immutable once published and never renumbered.</li>
+</ul>
+
 <h2>GROWTH &amp; EXPORTS</h2>
 <ul>
 <li>The archive grows by <b>+2,000 records every 2 hours</b> toward 1,000,000.</li>
-<li><b>CSV export:</b> <a href="data/exports/equations.csv" download>the full equation catalog as CSV</a> (id, n, type, title, equation, steps, solution, check, solver_version, canonical_hash).</li>
+<li><b>CSV export:</b> <a href="data/exports/equations.csv" download>the full equation catalog as CSV</a> (id, n, type, title, equation, steps, solution, check, solver_version, engine_version, schema_version, canonical, canonical_hash, record_hash, archive_status, seed, source, stable_url, ts). UTF-8, fields quoted where needed; SHA-256 hashes are per-record.</li>
 <li><b>Machine index:</b> <a href="data/index/eq.idx.json.gz">eq.idx.json.gz</a> (one JSON object per line: id, title, type, chunk) and <a href="api.json">api.json</a>.</li>
 <li><b>Sitemap:</b> <a href="sitemap-index.xml">sitemap index</a> lists every record URL (<code>index.html?tab=eq&amp;eq=JAH-EQ-########</code>).</li>
 </ul>

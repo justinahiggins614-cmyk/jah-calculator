@@ -405,8 +405,23 @@ def canonical_form(eq):
     return s
 
 
+SCHEMA_VERSION = 'jah-eq-schema-1.0'
+ENGINE_VERSION = 'jah-calc-engine-1.0'
+SOLVER_VERSION = 'jah-eq-solver-1.0'
+SITE_URL = 'https://justinahiggins614-cmyk.github.io/jah-calculator/'
+
+
+def record_hash(rec):
+    """SHA-256 over the canonical serialization (sorted keys, hash excluded)."""
+    body = {k: v for k, v in rec.items() if k != 'record_hash'}
+    canon = json.dumps(body, sort_keys=True, ensure_ascii=False,
+                       separators=(',', ':')).encode('utf-8')
+    return hashlib.sha256(canon).hexdigest()
+
+
 def generate_record(i):
-    r = random.Random(1000003 + i * 7919)
+    seed = 1000003 + i * 7919
+    r = random.Random(seed)
     t = TYPES[(i - 1) % len(TYPES)]
     # mix it up: every 13th record picks randomly for variety
     if i % 13 == 0:
@@ -416,12 +431,26 @@ def generate_record(i):
     rec['n'] = i
     rec['stamp'] = STAMP
     # provenance: every new record carries its solver identity and canonical form
-    rec['solver_version'] = 'jah-eq-solver-1.0'
+    rec['solver_version'] = SOLVER_VERSION
+    rec['engine_version'] = ENGINE_VERSION
+    rec['schema_version'] = SCHEMA_VERSION
     rec['canonical'] = canonical_form(rec.get('equation'))
     rec['canonical_hash'] = hashlib.sha256(rec['canonical'].encode('utf-8')).hexdigest()[:16]
     rec['method'] = 'deterministic solve at generation'
     rec['precision'] = 'as published'
     rec['ts'] = datetime.now(timezone.utc).isoformat(timespec='seconds')
+    # JAH-EQ record standard: identity, input, verification, archive status
+    rec['input'] = rec.get('equation', '')
+    rec['normalized_input'] = rec['canonical']
+    rec['exact'] = rec.get('solution', '')
+    rec['approximate'] = rec.get('solution', '')
+    rec['verification'] = rec.get('check', '')
+    rec['assumptions'] = 'deterministically generated from seed; no physical measurement; symbolic/numeric solve only'
+    rec['archive_status'] = 'PUBLISHED'
+    rec['seed'] = seed
+    rec['source'] = 'jah-eq-generator'
+    rec['stable_url'] = SITE_URL + '?tab=eq&eq=' + rec['id']
+    rec['record_hash'] = record_hash(rec)
     return rec
 
 

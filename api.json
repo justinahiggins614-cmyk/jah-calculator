@@ -1,15 +1,1 @@
-{
-  "site": "Signature Universal Paradox Immune Calculator",
-  "site_url": "https://justinahiggins614-cmyk.github.io/jah-calculator/",
-  "creator": "Justin Addam Higgins (JAH)",
-  "description": "Universal calculator: basic to scientific grade, ask-anything, paradox check, projections, simulations, and lab experiments.",
-  "for_bots": "Machine-readable manifest. Humans use the site above; bots, scrapers, and AI assistants should use the endpoints below \u2014 plain JSON/JSONL over HTTPS, no JavaScript needed.",
-  "records_approx": 74300,
-  "records_as_of": "2026-09-29",
-  "note": "Equation archive: JAH-EQ-00000001..00000300 published; drip adds ~2,000 every 2h toward 1,000,000. Per-record sitemaps: sitemap-eq-N.xml; index: sitemap-index.xml.",
-  "endpoints": [],
-  "deep_links": [],
-  "raw_github_base": "https://raw.githubusercontent.com/justinahiggins614-cmyk/jah-calculator/main/",
-  "raw_example": "https://raw.githubusercontent.com/justinahiggins614-cmyk/jah-calculator/main/index.html",
-  "sitemap": "https://justinahiggins614-cmyk.github.io/jah-calculator/sitemap.xml"
-}
+{"api_version":"1.0","archive_count":74300,"archive_generated_at":"2026-10-03T04:11:00+00:00","archive_revision":"eq-drip-2026-10-03T04:11","archive_updated_at":"2026-10-03T04:11:00+00:00","creator":"Justin Addam Higgins (JAH)","description":"Universal calculator: basic to scientific grade, ask-anything, paradox check, projections, simulations, and lab experiments.","endpoints":[{"description":"Compact JSONL index: one row per equation (id, title, type, chunk)","name":"equation index","url":"https://justinahiggins614-cmyk.github.io/jah-calculator/data/index/eq.idx.json.gz"},{"description":"Full equation records, 150 per chunk (JSONL, gzipped)","name":"equation chunks","url":"https://justinahiggins614-cmyk.github.io/jah-calculator/data/equations/eq-cNNNNN.jsonl.gz"},{"description":"Full archive as CSV","name":"CSV export","url":"https://justinahiggins614-cmyk.github.io/jah-calculator/data/exports/equations.csv"},{"description":"Data & methodology documentation","name":"methodology","url":"https://justinahiggins614-cmyk.github.io/jah-calculator/data.html"}],"engine_version":"jah-calc-engine-1.0","for_bots":"Machine-readable manifest. Humans use the site above; bots, scrapers, and AI assistants should use the endpoints below — plain JSON/JSONL over HTTPS, no JavaScript needed.","growth":"The archive grows by +2,000 records every 2 hours via the automated equation drip, toward 1,000,000.","id_scheme":"JAH-EQ-######## (8-digit, zero-padded, sequential from 1; permanent once published, never reused)","records_approx":74300,"records_as_of":"2026-10-03","schema_version":"jah-eq-schema-1.0","site":"Signature Universal Paradox Immune Calculator","site_url":"https://justinahiggins614-cmyk.github.io/jah-calculator/","sitemap":"https://justinahiggins614-cmyk.github.io/jah-calculator/sitemap.xml","solver_version":"jah-eq-solver-1.0"}
