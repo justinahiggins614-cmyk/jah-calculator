@@ -6,6 +6,8 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
 BASE = "https://justinahiggins614-cmyk.github.io/jah-calculator/index.html"
 BATCH = 50000
+CATEGORIES = ["linear", "quadratic", "system2", "trig", "power", "log", "exp",
+              "evaluate", "percent", "derivative", "integral", "geometry"]
 
 def load_ids():
     ids = []
@@ -29,6 +31,13 @@ def main():
                 f.write(f'  <url><loc>{BASE}?tab=eq&amp;eq={eid}</loc><changefreq>monthly</changefreq></url>\n')
             f.write('</urlset>\n')
         files.append(fn)
+    # category landing URLs (static fallbacks for non-JS crawlers)
+    with open(os.path.join(ROOT, "sitemap-eq-cats.xml"), "w", encoding="utf-8") as f:
+        f.write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n')
+        for cat in CATEGORIES:
+            f.write(f'  <url><loc>{BASE}?tab=eq&amp;type={cat}</loc><changefreq>weekly</changefreq></url>\n')
+        f.write('</urlset>\n')
+    files.append("sitemap-eq-cats.xml")
     # sitemap index
     with open(os.path.join(ROOT, "sitemap-index.xml"), "w", encoding="utf-8") as f:
         f.write('<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n')

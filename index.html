@@ -7,7 +7,7 @@
 <meta name="description" content="Signature Universal Paradox Immune Calculator — basic and scientific calculator, equation solver, unit converter, paradox checker, projection engine, simulations, lab bench, and the official JAH-EQ solved-equation archive.">
 <link rel="canonical" href="https://justinahiggins614-cmyk.github.io/jah-calculator/">
 <script type="application/ld+json">
-{"@context": "https://schema.org", "@graph": [{"@context": "https://schema.org", "@type": "WebApplication", "name": "Signature Universal Paradox Immune Calculator", "url": "https://justinahiggins614-cmyk.github.io/jah-calculator/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any", "isAccessibleForFree": true, "description": "Basic and scientific calculator with equation solver, unit converter, paradox checker, projection engine, simulation deck, virtual lab bench, and the official JAH-EQ solved-equation archive.", "offers": {"@type": "Offer", "price": "0"}}, {"@type": "Dataset", "name": "Signature Universal Paradox Immune Calculator", "creator": {"@type": "Person", "name": "Justin Addam Higgins"}}]}
+{"@context": "https://schema.org", "@graph": [{"@type": "WebApplication", "name": "Signature Universal Paradox Immune Calculator", "url": "https://justinahiggins614-cmyk.github.io/jah-calculator/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any", "isAccessibleForFree": true, "description": "Basic and scientific calculator with equation solver, unit converter, paradox checker, projection engine, simulation deck, virtual lab bench, and the official JAH-EQ solved-equation archive.", "offers": {"@type": "Offer", "price": "0"}}, {"@type": "SoftwareApplication", "name": "Signature Universal Paradox Immune Calculator", "url": "https://justinahiggins614-cmyk.github.io/jah-calculator/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any", "isAccessibleForFree": true, "description": "Deterministic mathematical solver: hand-written expression parser (no eval), quadratic and cubic equation solvers, unit converter, paradox checker, projection engine, Monte Carlo simulations, virtual lab bench, and retrieval from the official JAH-EQ solved-equation archive.", "featureList": "Basic arithmetic; scientific functions; quadratic solver; cubic solver; unit conversion; paradox checking; projections; Monte Carlo simulation; virtual lab bench; JAH-EQ solved-equation archive", "inputRequirements": "Mathematical expression string, e.g. (12 + 8) * 3 / 4 - 2^3; solver coefficients; or a plain-words question"}, {"@type": "Dataset", "name": "Signature Universal Paradox Immune Calculator", "creator": {"@type": "Person", "name": "Justin Addam Higgins"}, "description": "Official JAH-EQ solved-equation records: every equation solved once, published as a permanent record, then retrieved — marching to 1,000,000."}]}
 </script>
 <style>
 :root{--bg:#0a0e14;--panel:#131b29;--panel2:#0f1520;--line:#243149;--txt:#dbe7f5;--mut:#8fa3bd;--cy:#35e0ff;--am:#ffb347;--gn:#5df08a;--rd:#ff6b6b;--gold:#e8d98a}
@@ -109,6 +109,19 @@ details.statdrawer>summary{display:none}
 .fh-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
 .fh-row button{background:var(--panel2);border:1px solid var(--cy);color:var(--cy);border-radius:6px;padding:8px 12px;cursor:pointer;font-size:.88em}
 .fh-a{font-size:.92em;color:var(--txt);background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-height:1.4em}
+
+/* Site-2 diagnostics: mobile math display, validation, sticky category bar */
+.result{overflow-x:auto}
+.xscroll{overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%;box-shadow:inset -14px 0 14px -14px rgba(53,224,255,.35)}
+table.dt{display:block;overflow-x:auto;max-width:100%}
+.ferr{color:#ff9a9a;background:#2a1215;border:1px solid var(--rd);border-radius:6px;padding:8px 10px;margin:6px 0;font-size:.88em;font-weight:bold}
+[aria-invalid="true"]{border-color:var(--rd)!important;box-shadow:0 0 0 2px rgba(255,107,107,.35)}
+.eqtools{position:sticky;top:58px;z-index:4;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px}
+.catlinks{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.catlinks a{font-size:.8em;color:var(--cy);border:1px solid var(--line);border-radius:12px;padding:4px 10px;text-decoration:none;background:var(--panel2)}
+.catlinks a:hover{border-color:var(--cy)}
+math.formulamath{font-size:1.05em}
+@media(max-width:767px){.result{font-size:.85em}.eqsteps{font-size:.85em}.eqsol{font-size:1.1em}}
 </style>
 </head>
 <body>
@@ -364,6 +377,9 @@ details.statdrawer>summary{display:none}
     </select>
     <button class="go" onclick="eqSearch()">Search</button>
   </div>
+  <div class="catlinks" aria-label="Browse equations by category">
+    <a href="?tab=eq&type=linear">Linear</a><a href="?tab=eq&type=quadratic">Quadratic</a><a href="?tab=eq&type=system2">Systems</a><a href="?tab=eq&type=trig">Trigonometry</a><a href="?tab=eq&type=power">Powers &amp; roots</a><a href="?tab=eq&type=log">Logarithms</a><a href="?tab=eq&type=exp">Exponentials</a><a href="?tab=eq&type=evaluate">Evaluate</a><a href="?tab=eq&type=percent">Percent</a><a href="?tab=eq&type=derivative">Derivatives</a><a href="?tab=eq&type=integral">Integrals</a><a href="?tab=eq&type=geometry">Geometry</a>
+  </div>
   <details class="statdrawer" open><summary>Archive stats</summary>
   <div class="eqcount" id="eq-count">Loading archive…</div>
   <p class="eqcount" id="eq-count-static"><span id="eq-count-num">70,300</span> solved equation records in the official archive as of <span id="eq-count-date">2026-10-03</span>.</p>
@@ -442,7 +458,7 @@ document.getElementById("tabbar").addEventListener("click",function(e){var b=e.t
 function showTab(t){TABS.forEach(function(x){document.getElementById("p-"+x).classList.toggle("on",x===t)});
  var bs=document.querySelectorAll("#tabbar a[data-t]");for(var i=0;i<bs.length;i++)bs[i].classList.toggle("on",bs[i].getAttribute("data-t")===t);
  try{history.replaceState(null,"","?tab="+t)}catch(e){};if(t==="rec"&&window.recRender)recRender();if(t==="eq"&&window.eqInit)eqInit();}
-(function(){var m=/[?&]tab=([a-z]+)/.exec(location.search);if(m&&TABS.indexOf(m[1])>=0)showTab(m[1]);var q2=/[?&]eq=(JAH-EQ-[0-9]+)/i.exec(location.search);if(q2)showTab("eq")})();
+(function(){var m=/[?&]tab=([a-z]+)/.exec(location.search);if(m&&TABS.indexOf(m[1])>=0)showTab(m[1]);var q2=/[?&]eq=(JAH-EQ-[0-9]+)/i.exec(location.search);if(q2)showTab("eq");var ty=/[?&]type=([a-z0-9]+)/i.exec(location.search);if(ty){var sel=document.getElementById("eq-type");if(sel){for(var i=0;i<sel.options.length;i++)if(sel.options[i].value===ty[1].toLowerCase()){sel.selectedIndex=i;break}}if(m&&m[1]==="eq"&&window.eqSearch)eqSearch()}})();
 /* per-tab last-result text + action rows */
 var LAST={};
 function setLast(tab,text,term){LAST[tab]={text:text,term:term||""}}
@@ -650,16 +666,28 @@ function checkCalc(v,raw){
 }
 /* visible result-state wrapper: INPUT / METHOD / OUTPUT / STATUS */
 function stateHTML(input,method,outputHTML,status){
- return '<span class="lbl">INPUT</span>\n'+esc(input)+'\n\n'+
+ return '<span class="lbl">INPUT</span>\n<span class="formula" data-formula="'+esc(input)+'">'+esc(input)+'</span>\n\n'+
   '<span class="lbl">METHOD</span>\n'+esc(method)+'\n\n'+
   '<span class="lbl">OUTPUT</span>\n'+outputHTML+'\n\n'+
   '<span class="lbl">STATUS</span>\n'+esc(status);
 }
 var METHOD_PARSER="Hand-written expression parser \u2014 parentheses first, then ^, then \u00d7 \u00f7 %, then + \u2212. No eval, no black box.";
+/* inline field validation: high-contrast error under the field, clears on input */
+function fieldErr(id,msg){
+ var el=document.getElementById(id);if(!el)return;
+ var e=document.getElementById(id+'-ferr');
+ if(!e){e=document.createElement('div');e.id=id+'-ferr';e.className='ferr';e.setAttribute('role','alert');el.parentNode.insertBefore(e,el.nextSibling)}
+ if(msg){e.textContent=msg;e.hidden=false;el.setAttribute('aria-invalid','true');try{e.scrollIntoView({block:'nearest'})}catch(x){}}
+ else{e.hidden=true;e.textContent='';el.removeAttribute('aria-invalid')}
+}
+['basic-in','sci-in','ask-in','px-in','uc-v','pj-n','eq-q','finder-q','qa','qb','qc','ca','cb','cc','cd'].forEach(function(id){
+ var el=document.getElementById(id);if(el)el.addEventListener('input',function(){fieldErr(id,null)});
+});
 function closeParens(x){var o=0;for(var i=0;i<x.length;i++){if(x[i]==="("||x[i]==="√")o++;else if(x[i]===")")o--}while(o-->0)x+=")";return x}
 function basicGo(){
  var raw=closeParens(document.getElementById("basic-in").value.trim().replace(/=+$/,""));
- if(!raw)return;
+ if(!raw){fieldErr("basic-in","Type an expression first — try (12 + 8) * 3 / 4 - 2^3.");return}
+ fieldErr("basic-in",null);
  var out=document.getElementById("basic-out"),txt,term=raw;
  try{
   var r=evalSteps(raw);
@@ -678,7 +706,8 @@ function basicGo(){
 }
 function sciGo(){
  var raw=closeParens(document.getElementById("sci-in").value.trim().replace(/=+$/,""));
- if(!raw)return;
+ if(!raw){fieldErr("sci-in","Type an expression first — try sin(30) + log(1000) + 2^10.");return}
+ fieldErr("sci-in",null);
  var out=document.getElementById("sci-out"),txt,term=raw,method=METHOD_PARSER+" ("+(DEGMODE?"degrees":"radians")+")";
  try{
   var r=evalSteps(raw);LASTNUM=r.result;
@@ -702,10 +731,17 @@ function quadSolveText(a,b,c){
  else{var re=fmt(-b/(2*a)),im=fmt(Math.sqrt(-d)/(2*a));t+="Complex roots: x = "+re+" \u00b1 "+im+"i"}
  return t;
 }
+function quadMathML(a,b,c){
+ function num(x){return '<mn>'+esc(fmt(x))+'</mn>'}
+ var eq='<math class="formulamath" xmlns="http://www.w3.org/1998/Math/MathML" aria-label="quadratic equation"><mrow>'+num(a)+'<msup><mi>x</mi><mn>2</mn></msup><mo>+</mo>'+num(b)+'<mi>x</mi><mo>+</mo>'+num(c)+'<mo>=</mo><mn>0</mn></mrow></math>';
+ var qf='<math class="formulamath" xmlns="http://www.w3.org/1998/Math/MathML" aria-label="quadratic formula: x equals negative b plus or minus the square root of b squared minus 4 a c, all over 2 a"><mrow><mi>x</mi><mo>=</mo><mfrac><mrow><mo>&#8722;</mo>'+num(b)+'<mo>&#177;</mo><msqrt><mrow><msup>'+num(b)+'<mn>2</mn></msup><mo>&#8722;</mo><mn>4</mn>'+num(a)+num(c)+'</mrow></msqrt></mrow><mrow><mn>2</mn>'+num(a)+'</mrow></mfrac></mrow></math>';
+ return '<div data-formula="'+esc(a)+'x^2+'+esc(b)+'x+'+esc(c)+'=0">'+eq+'<br>'+qf+'</div>';
+}
 function solveQuad(){
  var a=parseFloat(document.getElementById("qa").value),b=parseFloat(document.getElementById("qb").value),c=parseFloat(document.getElementById("qc").value);
  var out=document.getElementById("solver-out"),txt2;
- if([a,b,c].some(isNaN)){out.innerHTML=stateHTML("quadratic coefficients (incomplete)",METHOD_QUAD,errHTML("MISSING COEFFICIENTS","a, b, and c must all be numbers.","a=1, b=-3, c=2","Fill in all three coefficient fields."),"ERROR \u2014 MISSING COEFFICIENTS");return}
+ if([a,b,c].some(isNaN)){fieldErr("qa","a, b, and c must all be numbers — try a=1, b=-3, c=2.");out.innerHTML=stateHTML("quadratic coefficients (incomplete)",METHOD_QUAD,errHTML("MISSING COEFFICIENTS","a, b, and c must all be numbers.","a=1, b=-3, c=2","Fill in all three coefficient fields."),"ERROR \u2014 MISSING COEFFICIENTS");return}
+ fieldErr("qa",null);
  if(a===0){
   if(b===0){
    txt2="With a=0 and b=0 this is not even linear.\n"+(c===0?"Every number is a solution (the equation is 0 = 0).":"No solution \u2014 the equation is a contradiction ("+c+" = 0).");
@@ -715,7 +751,7 @@ function solveQuad(){
   out.innerHTML=stateHTML("a="+a+", b="+b+", c="+c,METHOD_QUAD,esc(txt2),"OK \u2014 solved deterministically");setLast("sci",(LAST.sci?LAST.sci.text+"\n\n":"")+txt2,"quadratic equation");refreshSend("sci");return;
  }
  txt2=quadSolveText(a,b,c);
- out.innerHTML=stateHTML("a="+a+", b="+b+", c="+c,METHOD_QUAD,esc(txt2),"OK \u2014 solved deterministically");setLast("sci",(LAST.sci?LAST.sci.text+"\n\n":"")+txt2,"quadratic equation");refreshSend("sci");
+ out.innerHTML=stateHTML("a="+a+", b="+b+", c="+c,METHOD_QUAD,esc(txt2)+quadMathML(a,b,c),"OK \u2014 solved deterministically");setLast("sci",(LAST.sci?LAST.sci.text+"\n\n":"")+txt2,"quadratic equation");refreshSend("sci");
 }
 function solveCubic(){
  var a=parseFloat(document.getElementById("ca").value),b=parseFloat(document.getElementById("cb").value),c=parseFloat(document.getElementById("cc").value),d=parseFloat(document.getElementById("cd").value);
@@ -756,7 +792,8 @@ function ucGo(){
  var c=document.getElementById("uc-cat").value,v=parseFloat(document.getElementById("uc-v").value);
  var f=document.getElementById("uc-from").value,t=document.getElementById("uc-to").value;
  var out=document.getElementById("uc-out");
- if(isNaN(v)){out.innerHTML=stateHTML("conversion value (missing)","Unit conversion via base-unit factors",errHTML("MISSING VALUE","The value to convert must be a number.","5","Type a number in the Value field."),"ERROR \u2014 MISSING VALUE");return}
+ if(isNaN(v)){fieldErr("uc-v","The value to convert must be a number — try 5.");out.innerHTML=stateHTML("conversion value (missing)","Unit conversion via base-unit factors",errHTML("MISSING VALUE","The value to convert must be a number.","5","Type a number in the Value field."),"ERROR \u2014 MISSING VALUE");return}
+ fieldErr("uc-v",null);
  var r=fromBase(c,toBase(c,v,f),t);
  var txt=v+" "+f+" = "+fmt(r)+" "+t;
  out.innerHTML=stateHTML(v+" "+f+" \u2192 "+t,"Unit conversion via base-unit factors",esc(txt),"OK \u2014 converted");setLast("sci",(LAST.sci?LAST.sci.text+"\n\n":"")+"Convert: "+txt,"unit conversion");refreshSend("sci");
@@ -868,7 +905,8 @@ function askClassHTML(tag){return '<div style="font-size:.78em;color:var(--mut);
 function askGo(){
  var q=document.getElementById("ask-in").value.trim();
  var out=document.getElementById("ask-out");
- if(!q){out.textContent="Ask me something first.";return}
+ if(!q){fieldErr("ask-in","Ask me something first — try 'What is gravity?', '15% of 240', or 'bridges vs tunnels'.");out.textContent="Ask me something first.";return}
+ fieldErr("ask-in",null);
  /* social layer first: greetings + "what are your duties?" get a human answer */
  var soc=askSocial(q);
  if(soc!==null){
@@ -1043,7 +1081,8 @@ var PARADOXES=[
 function pxGo(){
  var q=document.getElementById("px-in").value.trim();
  var out=document.getElementById("px-out");
- if(!q){out.textContent="Give me a statement to check.";return}
+ if(!q){fieldErr("px-in","Give me a statement to check — try \"This statement is false\".");out.textContent="Give me a statement to check.";return}
+ fieldErr("px-in",null);
  var found=null;
  for(var i=0;i<PARADOXES.length;i++){if(PARADOXES[i].re.test(q)){found=PARADOXES[i];break}}
  var html="",cond,reason,resol;
@@ -1264,9 +1303,9 @@ var LABCSV_HEAD=["experiment","timestamp","input","input_unit","output","output_
 function labRec(exp,row){row.experiment=exp;row.timestamp=new Date().toISOString();row.simulated="SIMULATED";LABROWS.push(row);labTable()}
 function labTable(){var el=document.getElementById("lab-table");
  if(!LABROWS.length){el.textContent="No readings recorded yet.";return}
- var h='<table class="dt"><tr><th>#</th><th>Experiment</th><th>Timestamp</th><th>Input</th><th>Output</th><th>Model</th><th>Simulated</th></tr>';
+ var h='<div class="xscroll"><table class="dt"><tr><th>#</th><th>Experiment</th><th>Timestamp</th><th>Input</th><th>Output</th><th>Model</th><th>Simulated</th></tr>';
  LABROWS.forEach(function(r,i){h+="<tr><td>"+(i+1)+"</td><td>"+esc(r.experiment)+"</td><td>"+esc(r.timestamp)+"</td><td>"+esc(r.input)+"</td><td>"+esc(r.output)+"</td><td>"+esc(r.model)+"</td><td>"+esc(r.simulated)+"</td></tr>"});
- el.innerHTML=h+"</table>"}
+ el.innerHTML=h+"</table></div>"}
 function labCSV(){if(!LABROWS.length)return;
  var csv=LABCSV_HEAD.join(",")+"\n";
  LABROWS.forEach(function(r){csv+=LABCSV_HEAD.map(function(k){return '"'+String(r[k]==null?"":r[k]).replace(/"/g,'""')+'"'}).join(",")+"\n"});
@@ -1415,7 +1454,7 @@ function eqMore(){
  var next=EQCUR.slice(EQSHOWN,EQSHOWN+50);
  next.forEach(function(e){
   var d=document.createElement("div");d.className="eqitem";
-  d.innerHTML='<div class="eid">'+esc(e.id)+' · '+esc(e.y)+'</div><div class="et">'+esc(e.t)+'</div>';
+  d.innerHTML='<div class="eid">'+esc(e.id)+' · '+esc(e.y)+'</div><div class="et" data-formula="'+esc(e.t)+'">'+esc(e.t)+'</div>';
   d.onclick=function(){eqOpen(e.id)};
   list.appendChild(d);
  });
@@ -1459,9 +1498,9 @@ function eqOpen(id){
   if(o.next)nav+='<a href="?tab=eq&eq='+o.next.id+'">'+esc(o.next.id)+' &rarr;</a>';
   nav+='</div>';
   b.innerHTML='<div class="eid">'+esc(rec.id)+' · '+esc(rec.type)+'</div>'+nav+
-   '<h3 style="margin:.3em 0">'+esc(rec.title)+'</h3>'+
+   '<h3 style="margin:.3em 0" data-formula="'+esc(rec.title)+'">'+esc(rec.title)+'</h3>'+
    '<div class="eqsteps">'+rec.steps.map(function(x){return '<div>'+esc(x)+'</div>'}).join("")+'</div>'+
-   '<div class="eqsol">'+esc(rec.solution)+'</div>'+
+   '<div class="eqsol" data-formula="'+esc(rec.solution)+'">'+esc(rec.solution)+'</div>'+
    '<div>'+esc(rec.check)+'</div>'+
    '<div class="row" style="margin-top:10px">'+
    '<button class="act" onclick="eqSpeak()">&#128266; Read aloud</button>'+
