@@ -1153,12 +1153,118 @@ function lenses(q){
 }
 
 /* ================= PARADOX CHECK ================= */
+/* Three-gate engine (2026-10-03 rebuild):
+   Gate A — VALIDITY: is it complete, well-formed English? Unknown words,
+     unfinished sentences and fragments are reported as such, NEVER "stable".
+   Gate B — PARADOX PATTERN LIBRARY: classic paradoxes, matched on
+     typo-normalized text so misspellings ("powrful") still classify.
+   Gate C — STRUCTURAL: self-reference and direct contradiction.
+   Only when all three gates pass is input called LOGICALLY STABLE. */
+
+/* --- typo normalization for matching (never shown to the user) --- */
+var PX_FIX = {
+ "powrful":"powerful","poweful":"powerful","powerfull":"powerful","powerfll":"powerful",
+ "omnipotant":"omnipotent","omnipitent":"omnipotent","omnipotence":"omnipotence",
+ "cant":"cannot","wont":"will not","dont":"do not","doesnt":"does not","didnt":"did not",
+ "isnt":"is not","arent":"are not","wasnt":"was not","werent":"were not",
+ "havent":"have not","hasnt":"has not","hadnt":"had not",
+ "couldnt":"could not","wouldnt":"would not","shouldnt":"should not","mustnt":"must not",
+ "statment":"statement","statemnt":"statement","sentance":"sentence","sentense":"sentence",
+ "lieing":"lying","barbar":"barber","thesus":"theseus","paradoxx":"paradox","paradx":"paradox",
+ "sorites":"sorites","everythig":"everything","somone":"someone","becuase":"because",
+ "recieve":"receive","seperate":"separate","definately":"definitely",
+ "wich":"which","whcih":"which","teh":"the","adn":"and","tihs":"this","thier":"their",
+ "beleive":"believe","freind":"friend","pepole":"people","knwo":"know","nkow":"know",
+ "qestion":"question","awser":"answer","wrld":"world",
+ "togather":"together","untill":"until","occured":"occurred","seperate":"separate",
+ "achillies":"achilles","archilles":"achilles","irresistable":"irresistible",
+ "imoveable":"immovable","neccessary":"necessary","existant":"existent"
+};
+function pxNorm(s){
+ var t = " " + String(s).toLowerCase() + " ";
+ t = t.replace(/[\u2018\u2019\u201B\u201C\u201D`']/g, "");
+ t = t.replace(/[a-z]+/g, function(w){ return PX_FIX[w] || w; });
+ t = t.replace(/[^a-z0-9\s]/g, " ");
+ t = t.replace(/\s+/g, " ");
+ return t;
+}
+
+/* --- common English words for the validity gate (simple dictionary check) --- */
+var PX_WORDS = "a about above across act action actually add after again against age ago air all allow almost alone along already also always am among amount an and animal another answer any anyone anything appear are around as ask at away baby back bad ball bank base be became because become been before begin behind being best better between big black blood blue board boat body book born both box boy bring brown build built buy by call came can cannot carry catch cause center certain chair change check child choose city class clean clear close cold color come common contain could country course court cover create cried cross crowd day death did die different do does doing done door down draw dream drive drop dry during each earth eat end enemy enjoy enough enter even evening ever every everyone everything example except expect eye face fact fall far fast father feel feet few field fight figure fill final find fine finger finish fire first fish five floor fly follow food foot for force form found four free friend from front full fun game gave get girl give given go god goes going gold good got great green ground group grow guess had half hand happen hard has have he head hear heard heart heat heavy held hello help her here hers herself high him himself his hit hold home horse hot hour house how however hundred hurt i idea if in into is it its itself job join just keep kept kind knew know known land large last late laugh law lead learn least leave left less let letter lie life lift light like likely line list little live long look lose lot love low made make man many may me mean meet men might mile mind minute miss money month moon more morning most mother mountain move much must my name near need never new next night no nor north not note nothing now number of off often oil old on once one only open or order other our out over own page paint paper part pass people per person phone pick picture piece place plain plan plant play point poor possible pound power powerful press pretty pull push put question quick quiet quite race radio rain raise ran reach read ready real red remember rich right river road rock roll room rose round rule run said same sand save say school sea season second see seem self sell sent set seven several shall shape share sharp she ship short should show side sign since sing single sister sit six size sleep slow small smell smile so some someone something sometimes song soon sound south space spell spring stand star start state still stone stood stop story street strong such sun sure table take taken talk tall tell ten test than thank that the their them then there these they thick thin thing think third those though thought three through throw time to today together told too took top touch town toward tree true try turn two under until up upon use used usual very visit wait walk wall want war warm was watch water wave way we wear week weight well went were what whatever when where whether which while white who whole whom whose why wide wife will with within without woman women wonder wood word work world would write writer wrong wrote yard year yes yet you young your paradox omnipotent omnipotence almighty barber russell zeno sorites heap theseus grandfather achilles tortoise dichotomy hanging surprise statement sentence claim liar lying false true truth contradiction stable logic logical universe infinite infinity motion impossible set sets contain contains itself shave shaves shaved prisoner judge unexpected grain grains sand pile bald exam test travel machine kill killing born birth father mother child children family plank planks replaced identity arrow race runner nose grow pinocchio nose force irresistible immovable object stone boulder heavy lift lifting moving weight all powerful someone this themselves themself ourselves yourself yourselves boil degree celsius fahrenheit refer endless exist became begun bring broke burn caught choose claim copy cook cool cost count couple cry damage dance dare deal decide defeat demand depend describe deserve differ doubt drag drank dream drink drove duty earn ease east edge effect effort eight eighteen eighty eleven else empire empty engine entire escape event evil exact exit extra fade fail faint fair faith familiar famous fancy farm fashion fatal fault favor fear feast feather feed fellow fence fever fierce fifteen fifty file film finance firm fit fix flash flat flavor flesh float flood flour flow flower fluid focus fold folk fool forecast forest forget forgive formal former forth fortune forty frame freeze fresh frighten frost fruit fuel fully function fund funny fur furnish further future gain garage garden gas gather gaze general gentle giant gift glad glance glass glide globe glory glove glow glue goal goat golden goods goose govern grace grade grain grand grant grape grass grateful grave gray greet grief grind groan groom gross grove growth guard guest guide habit hall hammer handle hang happy harbor harm harvest hate haven hazard headache heal health hearing heaven hedge height helmet helpful hence herb herd hero hesitate hidden hide highway hill hire history hitch hobby holder hole holiday hollow honest honey honor hook hope horn hospital host hotel huge human humble humor hunger hunt hurry husband hush hut ice ideal ignore ill image imagine immediate impact imply inch include income indeed index indicate inner input insect inside insist install instance instead insure intact interest inward iron island issue ivory jacket jail jar jaw jealous jeans joint joke journal journey joy juice jump jungle junior jury keen kettle key kick kid king kiss kitchen kite knee knife knock knot label labor ladder lady lake lamp lane laser later launch laundry lawn lawyer layer lazy leader leaf leather ledge legal legend lemon lend length lesson level liberty library lick lies limit linen liner link lion liquid listen lively liver load loaf loan local locate lock lodge lonely loop loose lord loss loud lounge lovely lover loyal luck lucky lumber lunch lung machine mad magic mail main major maker manage manner map march margin mark market marry mask mass master match material math matter mayor meadow means meant meanwhile measure meat medal media melt member memory mental mention merchant mercy merry mesh message metal method middle migrate mild milk mill mine minor minus mirror mistake mix moan mobile mock model moderate modern modest monitor monkey mood moral mortal motor mouse mouth movie mud multiply murder muscle museum music mutual nail narrow nasty nation native nature nearly neat needle negative neighbor neither nerve nest net news nice nine nineteen ninety noble nobody noise none noon normal north nose notice noun nourish novel nowhere nurse nut oak oar obey object obtain occur ocean odd offer office olive olympic omit onion opera opinion oppose orange organ ought ounce outer outfit oven overcome owner oxygen oyster pace pack paddle paid pail pain pair palace pale palm panel panic parade pardon parent park party passage past paste patch path patient patrol pattern pause pave peace peach pearl pedal penal pencil pepper perceive perfect perform perhaps period permit pest pet phase photo phrase picnic pierce pig pigeon pile pilot pinch pine pink pint pioneer pitch plague planet plate plaza plead pleasant please pleasure plenty plow plural pocket poem poet poison polar police polish pond ponder pop port pose position pour powder praise pray preach precious prefer prepare present press price pride priest prime print prior prison prize proof proper property prose protect proud prove provide public pulse pump punch punish pupil purchase pure purple purpose puzzle qualify quality quarrel quart queen query quest queue quilt quit quiz quote rabbit rack radar raft rage raid rail rally ranch range rapid rare rash rate rather ratio rattle react realm reap reason rebel recall receive recent recipe reckon record refine reflect reform refresh refuse regard region regret relief rely remain remark remedy remind remote remove render renew rent repair repeat repel reply report rescue resemble reserve resolve resort respect respond rest restore result return reveal review reward rhythm rice riddle ride rigid ring rinse rise risk roach roast rob robe robin rocket rod roman roof roost root rope rough route royal rub rubber rude ruin ruler rumor rural rush rust sacred sad saddle safe safety sail saint salad salary sample sane sang satin satisfy sauce scale scalp scar scarce scare scarf scene scent science scissors score scout scrap scratch scream screen screw script seal search seat secret section secure seed seek seen seldom select senate send senior sense separate series serve settle severe shade shadow shake shallow shame shark shear sheep sheer sheet shelf shell shelter shift shine shiny shirt shock shoe shook shoot shop shore shot shoulder shout shower shown shut shy sick siege sight signal silent silly silver simple sincere sink sir site skate sketch ski skill skin skip skirt slice slide slight slim slip slope smart snake snap snare sneak sneeze sniff soak soap soar sober soccer social sock socket soft soil solar soldier sole solid solve song soot soothe sore sorry sort soul source span spare spark speak spear special speech speed spend spice spill spin spirit split spoil spoke sport spot spray sprint square stack staff stage stair stall stamp stare state station stay steady steak steal steam steel steep steer stem step stick stiff sting stock stool stoop store storm stove straight strange strap straw stray streak strength stretch strict stride strike string strip stripe strive stroke struggle study stuff stumble stump stun stupid sturdy style subject submit subtle sudden suffer sugar suit summer summon sunny super supper surface surge surgery surrender surround survey survive swallow swamp swear sweat sweep sweet swell swift swim swing switch sword symbol tablet tack tackle tail tailor tale talent tame tank tap tape target taste teach team tear tease teeth temper temple tend tender tense tenth term terrible theater theft theme thirst thirty threw throat thumb thunder thus ticket tide tidy tie tiger tight till timber tiny tip tired title toast toe toil token toll tomb tomorrow tongue tonight tool tooth torch total tough tour tower toxic trace track trade trail train trait tramp tray tread treat treaty tremble trend trial tribe trick trigger trim trip triumph troop trout truck trumpet trunk trust tube tumble tumor tune tunnel turkey twice twig twin twist type typical ugly ultimate uncle undo union unique unit unite unity upper upset urban urge urgent useful utter vacant valid valley value vanish vapor vast veil vein velvet vendor verse version vessel vest video view vigor village violin virtual visual vital vivid vocal voice void volume vote voyage wake wander ward warp wash wasp waste wax weak weary weave wedge weigh weird welcome weld west whale wheat wheel whence whiff whine whip whirl whisk wicked widen widow width willing win wind window wine wing wink winner winter wipe wire wisdom wise wish witness wooden wool wore worker worry worse worth would wound woven wrap wreck wrench wrestle wrinkle wrist yacht yarn yearn yeast yellow yesterday yield yours youth zero zone";
+var PX_WORDSET = null;
+function pxWordSet(){
+ if(PX_WORDSET) return PX_WORDSET;
+ PX_WORDSET = {};
+ var w = PX_WORDS.split(" ");
+ for(var i=0;i<w.length;i++) if(w[i]) PX_WORDSET[w[i]] = 1;
+ return PX_WORDSET;
+}
+function pxKnown(w){
+ var set = pxWordSet();
+ if(set[w]) return true;
+ if(/^[a-z]$/.test(w)) return true;
+ if(/\d/.test(w)) return true;
+ var stems = [w.replace(/ies$/,"y"), w.replace(/s$/,""), w.replace(/es$/,""), w.replace(/ed$/,""),
+              w.replace(/ing$/,""), w.replace(/ly$/,""), w.replace(/(er|est)$/,"")];
+ for(var i=0;i<stems.length;i++) if(set[stems[i]]) return true;
+ return false;
+}
+function pxLev(a,b){
+ var m=a.length,n=b.length,d=[],i,j;
+ if(!m) return n; if(!n) return m;
+ for(i=0;i<=m;i++) d[i]=[i];
+ for(j=0;j<=n;j++) d[0][j]=j;
+ for(i=1;i<=m;i++) for(j=1;j<=n;j++)
+  d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));
+ return d[m][n];
+}
+function pxSuggest(w){
+ if(w.length<4) return null;
+ var set=pxWordSet(),best=null,bd=3;
+ for(var k in set){
+  if(Math.abs(k.length-w.length)>2) continue;
+  var d=pxLev(w,k);
+  if(d<bd){bd=d;best=k;}
+ }
+ return bd<=2?best:null;
+}
+
+/* --- Gate A: validity --- */
+function pxValidity(raw){
+ var t=String(raw).trim();
+ if(!t) return {err:{head:"EMPTY INPUT",reason:"There's nothing to check. Type a statement first."}};
+ var cleaned=(" "+t.toLowerCase().replace(/[\u2018\u2019\u201B\u201C\u201D`']/g,"")+" ");
+ cleaned=cleaned.replace(/[^a-z0-9\s]/g," ").replace(/\s+/g," ");
+ var words=cleaned.match(/[a-z]+/g)||[];
+ if(words.length<3)
+  return {err:{head:"TOO SHORT",reason:"That's not a full statement \u2014 just "+words.length+" word"+(words.length===1?"":"s")+". Give me a whole sentence to check, like \u201cThis statement is false\u201d."}};
+ var normWords=[];
+ for(var i=0;i<words.length;i++){
+  var w=words[i];
+  if(PX_FIX[w]){ /* known misspelling: auto-correct, counts as valid */
+   var fx=PX_FIX[w].split(" ");
+   for(var k=0;k<fx.length;k++) normWords.push(fx[k]);
+   continue;
+  }
+  if(pxKnown(w)){normWords.push(w);continue;}
+  var sug=pxSuggest(w);
+  if(sug)
+   return {err:{head:"NOT ENGLISH",reason:"I don't recognize the word \u201c"+w+"\u201d \u2014 did you mean \u201c"+sug+"\u201d? Check the spelling and run it again. I can't judge a statement I can't read."}};
+  normWords.push(w); /* rare/technical word with no close match: benefit of the doubt */
+ }
+ var tail=t.match(/\b(is|are|was|were|be|been|being|am|has|have|had|do|does|did|will|would|can|could|shall|should|may|might|must)\s*[?.!]*$/i);
+ if(tail)
+  return {err:{head:"UNFINISHED SENTENCE",reason:"This stops mid-thought \u2014 it ends with \u201c"+tail[1]+"\u201d and nothing after it. Finish the sentence and I'll check it."}};
+ return {norm:normWords.join(" ")};
+}
+
+/* --- Gate B: paradox pattern library (fuzzy, runs on normalized text) --- */
 var PARADOXES=[
- {re:/this (statement|sentence) is false/i,type:"LIAR PARADOX",
+ {re:/this (statement|sentence|claim) is false/i,type:"LIAR PARADOX",
   solve:"The sentence is out of order, not the universe. \u2018This statement is false\u2019 tries to grade its own truth from inside itself, which no statement is allowed to do. The universal signature reads it from one level up: ungrounded, set aside, logic intact.",
   obj:'"This statement is false" cannot be true (then it is false) and cannot be false (then it is true). At the object level it is UNDECIDABLE.',
   meta:"Step one level up: the sentence tries to grade its own truth from inside itself. Truth needs a level above the sentence to stand on. Mark it UNGROUNDED — a broken truth-teller — and move on. Logic is intact; only this sentence is out of order."},
- {re:/i am lying|this sentence is (not )?true/i,type:"SELF-REFERENTIAL TRUTH PARADOX",
+ {re:/i am lying|\b(says?|claims?|said)\b[^a-z]{0,20}(he|she|they|i)\s+(is|are|am)\s+lying|this sentence is (not )?true/i,type:"SELF-REFERENTIAL TRUTH PARADOX",
   solve:"A claim about its own truth gets its value assigned from outside \u2014 by the speaker\u2019s level, not from inside the sentence. Read it one level up and the loop unwinds into a plain observation.",
   obj:"A sentence that talks about its own truth value creates a loop with no stable assignment. Object level: UNDECIDABLE.",
   meta:"Stratify: the claim lives at level 0, its truth value must be assigned at level 1. When level 0 tries to do level 1's job, you get a loop. Assign the value from outside — 'the speaker is unreliable here' — and the loop collapses into a plain observation."},
@@ -1178,10 +1284,18 @@ var PARADOXES=[
   solve:"Wednesday stands. The prisoner\u2019s proof reasoned about its own reasoning and fooled itself \u2014 from the judge\u2019s level there is no contradiction at all.",
   obj:"The prisoner proves by backward induction the hanging cannot be a surprise — then it happens Wednesday and IS a surprise. Object level: UNDECIDABLE within the prisoner's reasoning.",
   meta:"The flaw: 'surprise' means 'not provable in advance', and the prisoner's proof used the very notion it was analyzing — self-reference again. Step up: from the judge's level, Wednesday is perfectly consistent. The paradox is an artifact of reasoning about one's own reasoning."},
- {re:/omnipotent|all-?powerful|can god make|god.*(rock|stone|boulder).*(can\u0027t|cannot|cant|n\u0027t|too heavy|lift|move)|make.*(rock|stone).*(can\u0027t|cannot|too heavy)/i,type:"OMNIPOTENCE PARADOX",
-  solve:"A universal signature with a boundless ecosystem makes the rock AND moves it: either, neither, both, hither, thither, upside down, whatever. The trap forces one side; the signature holds both sides at once, so the paradox never forms.",
-  obj:"Can an all-powerful being make a stone too heavy to lift? Yes limits power; no limits power. Object level: UNDECIDABLE as stated.",
-  meta:"The phrase 'all-powerful' is doing two jobs: it means 'can do anything possible' but the question smuggles in 'can do the logically impossible'. Clarify the definition — power over the possible — and the contradiction evaporates. Bad definitions, not bad logic."},
+ {re:/(omnipotent|all\s*-?\s*powerful|almighty).{0,60}?(rock|stone|boulder)|make.{0,40}?(rock|stone|boulder).{0,40}?(cannot|too heavy|lift)|can god make|god.{0,40}?(rock|stone|boulder)/i,type:"OMNIPOTENCE PARADOX",
+  solve:"The question smuggles a logical impossibility and then blames omnipotence for it. \u2018A rock an all-powerful being cannot lift\u2019 is a contradiction in terms — like a square circle or a married bachelor. Omnipotence never meant \u2018can do the logically impossible\u2019; it means unlimited power over everything possible.",
+  obj:"Can an all-powerful being make a stone too heavy for itself to lift? If yes, there is something it cannot lift; if no, there is something it cannot make. Stated this way it looks like a trap either way.",
+  meta:"Define the terms and the trap opens: power ranges over the possible. A \u2018rock too heavy for omnipotence to lift\u2019 is not a thing that could exist — it is words arranged to contradict themselves. The contradiction was packed into the question, not discovered by it."},
+ {re:/irresistible force|immovable object/i,type:"IRRESISTIBLE FORCE PARADOX",
+  solve:"They cannot both exist in the same world — the setup contradicts itself before anything moves. One of the two has to give, so the \u2018paradox\u2019 is just proof the pair is impossible.",
+  obj:"What happens when an irresistible force meets an immovable object? If the force wins, the object was movable; if the object holds, the force was resistible. Object level: UNDECIDABLE.",
+  meta:"The two descriptions are mutually exclusive by definition. Like the omnipotence paradox, the contradiction lives in the premises: a world containing both is logically impossible, so nothing about the world follows."},
+ {re:/pinocchio|my nose (will|is going to) grow/i,type:"PINOCCHIO PARADOX",
+  solve:"The nose grows when he lies — but the growth itself would make the statement true, which would make it a lie about nothing. Read it one level up: the sentence tries to fix its own truth value from inside, which is the liar paradox wearing a wooden nose.",
+  obj:"\u2018My nose will grow now\u2019 — if true, it was a lie (nose grows); if a lie, the nose grows, making it true. Object level: UNDECIDABLE.",
+  meta:"Same shape as the liar: a sentence grading its own truth from inside itself. Ungrounded — set it aside. The nose, presumably, stays put."},
  {re:/grandfather paradox|kill.*grandfather|time travel/i,type:"GRANDFATHER PARADOX",
   solve:"The act branches: in branch A you are born and travel; your act opens branch B where you never were. No single timeline holds the contradiction, so none exists.",
   obj:"Going back and preventing your own birth makes your trip impossible, which makes your birth possible. Object level: UNDECIDABLE in a single timeline.",
@@ -1195,33 +1309,60 @@ var PARADOXES=[
   obj:"To move anywhere you must first cross half the distance, then half of that, forever — so motion never starts. Object level: UNDECIDABLE inside the infinite-division framing.",
   meta:"An infinite series can sum to a finite number: 1/2 + 1/4 + 1/8 + ... = 1. The paradox confuses 'infinitely many steps' with 'infinite time'. Calculus resolved this 2,000 years later — the infinite is summable."}
 ];
+
+/* --- Gate C: structural checks (run on normalized text) --- */
+function pxStructural(t){
+ var m=t.match(/\b(.{1,28}?)\s+is\s+(.{1,28}?)\s+and\s+\1\s+is\s+not\s+\2\b/);
+ if(m)
+  return {type:"DIRECT CONTRADICTION",
+   obj:"\u2018"+m[1]+" is "+m[2]+"\u2019 and \u2018"+m[1]+" is not "+m[2]+"\u2019 in the same breath — both cannot hold. Object level: CONTRADICTORY.",
+   solve:"Drop one of the two claims. A statement that asserts P and not-P at once is not deep, it is broken — fix the premise and the \u2018paradox\u2019 never forms.",
+   meta:"Contradictions are caught at the object level before anything else runs: no stratification needed, no mystery. One of the two halves has to go."};
+ if(/this (statement|sentence|claim)|itself|self-referen/.test(t)){
+  var why=t.length<120?"short enough to inspect directly \u2014 read it as a claim about the speaker, not about the world, and the loop unwinds.":"long \u2014 break it into its self-referential part and its world part, and judge each at its own level.";
+  return {type:"UNLISTED SELF-REFERENCE",
+   obj:"No classic trap matched, so the general stratification rule applies: evaluate from one level up. This statement is "+why,
+   solve:"Read it from one level up: the part that talks about itself becomes a plain observation about the speaker, and the loop unwinds. No crash, no contradiction admitted into the system.",
+   meta:"Self-reference is always handled one level above the sentence doing the referring."};
+ }
+ return null;
+}
+
+/* --- main analysis: pure function, no DOM (testable) --- */
+function pxAnalyze(q){
+ var v=pxValidity(q);
+ if(v.err)
+  return {cond:"NOT VALID ENGLISH \u2014 "+v.err.head,
+          reason:v.err.reason,
+          resol:"Fix the wording and run the check again \u2014 a paradox check needs a complete, well-formed statement to work with."};
+ var t=v.norm,found=null,i; /* typo-fixed normalized text for matching */
+ for(i=0;i<PARADOXES.length;i++){if(PARADOXES[i].re.test(t)){found=PARADOXES[i];break;}}
+ if(found)
+  return {cond:found.type+" \u2014 DETECTED, classified, contained, SOLVED \u2713",
+          reason:found.obj,
+          resol:found.solve+" "+found.meta};
+ var st=pxStructural(t);
+ if(st)
+  return {cond:st.type+" \u2014 DETECTED, classified, contained, SOLVED \u2713",
+          reason:st.obj,
+          resol:st.solve+" "+st.meta};
+ return {cond:"none \u2014 LOGICALLY STABLE \u2713",
+         reason:"Complete English statement. No known paradox pattern, no self-reference, no contradictory premises, no level-mixing.",
+         resol:"The statement stands as given \u2014 nothing to solve."};
+}
+
 function pxGo(){
  var q=document.getElementById("px-in").value.trim();
  var out=document.getElementById("px-out");
  if(!q){fieldErr("px-in","Give me a statement to check — try \"This statement is false\".");out.textContent="Give me a statement to check.";return}
  fieldErr("px-in",null);
- var found=null;
- for(var i=0;i<PARADOXES.length;i++){if(PARADOXES[i].re.test(q)){found=PARADOXES[i];break}}
- var html="",cond,reason,resol;
- if(found){
-  cond=found.type+" \u2014 DETECTED, classified, contained, SOLVED \u2713";
-  reason=found.obj;
-  resol=found.solve+" "+found.meta;
- }else if(/this (statement|sentence|claim)|itself|self-referen/i.test(q)){
-  var why=q.length<120?"short enough to inspect directly \u2014 read it as a claim about the speaker, not about the world, and the loop unwinds.":"long \u2014 break it into its self-referential part and its world part, and judge each at its own level.";
-  cond="UNLISTED SELF-REFERENCE \u2014 DETECTED, SOLVED \u2713";
-  reason="No classic trap matched, so the general stratification rule applies: evaluate from one level up. This statement is "+why;
-  resol="Read it from one level up: the part that talks about itself becomes a plain observation about the speaker, and the loop unwinds. No crash, no contradiction admitted into the system.";
- }else{
-  cond="none \u2014 LOGICALLY STABLE \u2713";
-  reason="No self-reference, no contradictory premises, no level-mixing.";
-  resol="The statement stands as given \u2014 nothing to solve.";
- }
+ var r=pxAnalyze(q);
+ var html="";
  html+='<span class="lbl">INPUT</span>\n'+esc(q)+'\n\n';
- html+='<span class="lbl">DETECTED CONDITION</span>\n'+esc(cond)+'\n\n';
- html+='<div class="lens" style="border-color:var(--am)"><b style="color:var(--am)">REASON</b><p>'+esc(reason)+'</p></div>';
- html+='<div class="verdict"><b style="color:var(--gn)">RESOLUTION</b><p style="margin:6px 0 0;font-size:.95em;line-height:1.55">'+esc(resol)+'</p></div>';
- var txt="Paradox check\n\nINPUT:\n"+q+"\n\nDETECTED CONDITION:\n"+cond+"\n\nREASON:\n"+reason+"\n\nRESOLUTION:\n"+resol+"\n";
+ html+='<span class="lbl">DETECTED CONDITION</span>\n'+esc(r.cond)+'\n\n';
+ html+='<div class="lens" style="border-color:var(--am)"><b style="color:var(--am)">REASON</b><p>'+esc(r.reason)+'</p></div>';
+ html+='<div class="verdict"><b style="color:var(--gn)">RESOLUTION</b><p style="margin:6px 0 0;font-size:.95em;line-height:1.55">'+esc(r.resol)+'</p></div>';
+ var txt="Paradox check\n\nINPUT:\n"+q+"\n\nDETECTED CONDITION:\n"+r.cond+"\n\nREASON:\n"+r.reason+"\n\nRESOLUTION:\n"+r.resol+"\n";
  out.innerHTML=html;
  setLast("paradox",txt,q);refreshSend("paradox");
 }
