@@ -115,6 +115,12 @@ details.statdrawer>summary{display:none}
 .xscroll{overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%;box-shadow:inset -14px 0 14px -14px rgba(53,224,255,.35)}
 table.dt{display:block;overflow-x:auto;max-width:100%}
 .ferr{color:#ff9a9a;background:#2a1215;border:1px solid var(--rd);border-radius:6px;padding:8px 10px;margin:6px 0;font-size:.88em;font-weight:bold}
+button.act[disabled]{opacity:.38;cursor:not-allowed}
+button.act.on{background:var(--cy);color:#04121a;font-weight:bold;border-color:var(--cy)}
+.ondev{font-size:.78em;color:var(--gn);border:1px solid var(--gn);border-radius:20px;padding:3px 10px;margin:4px 0 4px 8px;white-space:nowrap;display:inline-block}
+.errstate{border:2px solid var(--rd);border-radius:8px;padding:12px;margin-top:8px;background:#1c0e12}
+.errstate .errtitle{color:var(--rd);font-weight:bold;font-size:1.05em;letter-spacing:.03em}
+.errstate .errwhy{font-size:.88em;margin-top:8px;line-height:1.6}
 [aria-invalid="true"]{border-color:var(--rd)!important;box-shadow:0 0 0 2px rgba(255,107,107,.35)}
 .eqtools{position:sticky;top:58px;z-index:4;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px}
 .catlinks{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
@@ -161,7 +167,7 @@ math.formulamath{font-size:1.05em}
   <a class="tablink" href="?tab=sci" data-t="sci">Scientific</a>
   <a class="tablink" href="?tab=ask" data-t="ask">Ask Anything</a>
   <a class="tablink" href="?tab=paradox" data-t="paradox">Paradox Check</a>
-  <a class="tablink" href="?tab=project" data-t="project">Project</a>
+  <a class="tablink" href="?tab=project" data-t="project">Projection</a>
   <a class="tablink" href="?tab=sim" data-t="sim">Simulate</a>
   <a class="tablink" href="?tab=lab" data-t="lab">Lab</a><a class="tablink" href="?tab=eq" data-t="eq">Equations</a><a class="tablink" href="?tab=rec" data-t="rec">Record</a>
 </nav>
@@ -192,8 +198,8 @@ math.formulamath{font-size:1.05em}
   <p class="sub">Trig, logs, powers, constants, equation solver, unit converter.</p>
   <input type="text" id="sci-in" aria-label="Scientific calculation input" placeholder="e.g. sin(30) + log(1000) + 2^10" autocomplete="off">
   <div style="margin:8px 0"><label style="font-size:.85em;color:var(--mut)">Angle mode:</label>
-    <button class="act" id="degbtn" onclick="setDeg(true)">DEG</button><button class="act" id="radbtn" onclick="setDeg(false)">RAD</button>
-    <span id="degmode" style="margin-left:8px;font-size:.85em;color:var(--cy)">Angle mode: DEG</span>
+    <button class="act on" id="degbtn" onclick="setDeg(true)" aria-pressed="true">DEG</button><button class="act" id="radbtn" onclick="setDeg(false)" aria-pressed="false">RAD</button>
+    <span id="degmode" style="margin-left:8px;font-size:.85em;color:var(--cy)">Angle mode: <b style="color:var(--cy)">&#9679; DEG (degrees)</b> — trig functions use degrees</span>
   </div>
   <div class="fnrow">
     <button onclick="ins('sci-in','sin(')">sin</button><button onclick="ins('sci-in','cos(')">cos</button>
@@ -252,10 +258,10 @@ math.formulamath{font-size:1.05em}
   <div class="actions" data-tab="paradox"></div>
 </div>
 
-<!-- ============ PROJECT ============ -->
+<!-- ============ PROJECTION ============ -->
 <div class="panel" id="p-project">
   <h2>PROJECTION ENGINE</h2>
-  <p class="sub">Paste a number series (one per line). Get linear and exponential fits, R², and a forecast.</p>
+  <p class="sub">Paste a number series (one per line, at least 3 numbers). Get linear and exponential fits, R², and a forecast.</p>
   <textarea id="pj-in" aria-label="Projection data, one number per line" placeholder="12&#10;15&#10;19&#10;24&#10;30"></textarea>
   <div style="display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap">
     <label style="font-size:.85em;color:var(--mut)">Forecast steps:</label>
@@ -276,8 +282,8 @@ math.formulamath{font-size:1.05em}
   <p class="sub">Tap cells to seed, then run.</p>
   <p class="note">Rules: 36×24 grid · wrap-around (toroidal) edges · standard Conway B3/S23 · all cells update simultaneously and deterministically · tap a cell to toggle it.</p>
   <canvas class="board" id="life-cv" role="img" aria-label="Game of Life grid" width="360" height="240"></canvas><br>
-  <button class="act" onclick="lifeRun()">▶ Run</button><button class="act" onclick="lifePause()">⏸ Pause</button>
-  <button class="act" onclick="lifeReset()">Reset</button><button class="act" onclick="lifeRand()">Random seed</button>
+  <button class="act" id="life-run" onclick="lifeRun()">▶ Run</button><button class="act" id="life-pause" onclick="lifePause()" disabled>⏸ Pause</button>
+  <button class="act" onclick="lifeReset()">Reset</button><button class="act" onclick="lifeRand()">Random seed</button><span class="ondev">🔒 on-device — nothing leaves your phone</span>
   <label class="f">Speed (ms per generation)</label><input type="range" id="life-spd" min="40" max="800" value="200">
   <div class="result" id="life-out" style="font-size:.85em">Generation: 0 · Living cells: 0</div>
 
@@ -285,7 +291,7 @@ math.formulamath{font-size:1.05em}
   <p class="sub">Random darts in a square. Fraction inside the circle × 4 approaches π.</p>
   <canvas class="board" id="mc-cv" role="img" aria-label="Monte Carlo pi dart board" width="300" height="300"></canvas><br>
   <label style="font-size:.85em;color:var(--mut)">Seed:</label><input type="text" id="mc-seed" value="7" style="width:70px" title="Same seed gives the same darts"><button class="act" onclick="mcBurst(1000)">Throw 1,000 darts</button><button class="act" onclick="mcBurst(20000)">Throw 20,000</button>
-  <button class="act" onclick="mcReset()">Reset</button><button class="act" onclick="mcRepro()">Reproduce</button>
+  <button class="act" onclick="mcReset()">Reset</button><button class="act" onclick="mcRepro()">Reproduce</button><span class="ondev">🔒 on-device — nothing leaves your phone</span>
   <div class="result" id="mc-out" style="font-size:.85em">Darts: 0 · π ≈ — · error —</div>
   <p class="note">Assumptions: darts land uniformly at random; the &pi; estimate converges roughly like 1/&radic;N, so bigger bursts give tighter estimates. Each throw is independent.</p>
 
@@ -294,7 +300,7 @@ math.formulamath{font-size:1.05em}
     <label style="font-size:.85em;color:var(--mut)">Dice:</label><input type="text" id="dice-n" value="2" style="width:60px">
     <label style="font-size:.85em;color:var(--mut)">Rolls:</label><input type="text" id="dice-r" value="1000" style="width:80px">
     <label style="font-size:.85em;color:var(--mut)">Seed:</label><input type="text" id="dice-seed" value="7" style="width:70px" title="Same seed gives the same rolls">
-    <button class="act" onclick="diceGo()">Roll</button><button class="act" onclick="diceReset()">Reset</button><button class="act" onclick="diceRepro()">Reproduce</button>
+    <button class="act" onclick="diceGo()">Roll</button><button class="act" onclick="diceReset()">Reset</button><button class="act" onclick="diceRepro()">Reproduce</button><span class="ondev">🔒 on-device — nothing leaves your phone</span>
   </div>
   <canvas class="board" id="dice-cv" role="img" aria-label="Dice probability histogram" width="640" height="220" style="margin-top:8px"></canvas>
   <div class="result" id="dice-out" style="font-size:.85em">No rolls yet.</div>
@@ -302,7 +308,7 @@ math.formulamath{font-size:1.05em}
 
   <h2 style="font-size:1em;margin-top:14px">RANDOM WALK <span style="color:var(--mut);font-weight:normal;font-size:.8em">— stochastic motion</span></h2>
   <canvas class="board" id="rw-cv" role="img" aria-label="Random walk path" width="360" height="240"></canvas><br>
-  <label style="font-size:.85em;color:var(--mut)">Seed:</label><input type="text" id="rw-seed" value="7" style="width:70px" title="Same seed gives the same walk"><button class="act" onclick="rwGo()">Walk 500 steps</button><button class="act" onclick="rwReset()">Reset</button>
+  <label style="font-size:.85em;color:var(--mut)">Seed:</label><input type="text" id="rw-seed" value="7" style="width:70px" title="Same seed gives the same walk"><button class="act" onclick="rwGo()">Walk 500 steps</button><button class="act" onclick="rwReset()">Reset</button><span class="ondev">🔒 on-device — nothing leaves your phone</span>
   <div class="result" id="rw-out" style="font-size:.85em">Distance from start: —</div>
   <p class="note">Assumptions: unit steps in random directions (uniform angle). The seed fixes the walk &mdash; the same seed gives the same walk, so runs are reproducible.</p>
 
@@ -639,7 +645,7 @@ function evalSteps(raw){
 }
 /* ================= universal error state ================= */
 function errHTML(type,why,eg,next){
- return '<div style="color:var(--rd)">\u26a0 '+esc(type)+'</div><div style="font-size:.85em;margin-top:6px">Why: '+esc(why)+'<br>Example of valid input: '+esc(eg)+'<br>Recovery: '+esc(next)+'</div>';
+ return '<div class="errstate" role="alert"><div class="errtitle">\u26a0 '+esc(type)+'</div><div class="errwhy">Why: '+esc(why)+'<br>Example of valid input: '+esc(eg)+'<br>Recovery: '+esc(next)+'</div></div>';
 }
 function calcErrHTML(e){
  var m=String((e&&e.message)||"");
@@ -672,6 +678,8 @@ function stateHTML(input,method,outputHTML,status){
   '<span class="lbl">STATUS</span>\n'+esc(status);
 }
 var METHOD_PARSER="Hand-written expression parser \u2014 parentheses first, then ^, then \u00d7 \u00f7 %, then + \u2212. No eval, no black box.";
+var METHOD_QUAD="Quadratic formula \u2014 x = (-b \u00b1 \u221a(b\u00b2-4ac)) / 2a, solved by hand-written arithmetic.";
+var METHOD_CUBIC="Depressed-cubic (Cardano) solution \u2014 solved by hand-written arithmetic.";
 /* inline field validation: high-contrast error under the field, clears on input */
 function fieldErr(id,msg){
  var el=document.getElementById(id);if(!el)return;
@@ -680,7 +688,7 @@ function fieldErr(id,msg){
  if(msg){e.textContent=msg;e.hidden=false;el.setAttribute('aria-invalid','true');try{e.scrollIntoView({block:'nearest'})}catch(x){}}
  else{e.hidden=true;e.textContent='';el.removeAttribute('aria-invalid')}
 }
-['basic-in','sci-in','ask-in','px-in','uc-v','pj-n','eq-q','finder-q','qa','qb','qc','ca','cb','cc','cd'].forEach(function(id){
+['basic-in','sci-in','ask-in','px-in','uc-v','pj-n','eq-q','finder-q','qa','qb','qc','ca','cb','cc','cd','dice-n','dice-r','pj-in'].forEach(function(id){
  var el=document.getElementById(id);if(el)el.addEventListener('input',function(){fieldErr(id,null)});
 });
 function closeParens(x){var o=0;for(var i=0;i<x.length;i++){if(x[i]==="("||x[i]==="√")o++;else if(x[i]===")")o--}while(o-->0)x+=")";return x}
@@ -723,7 +731,13 @@ function sciGo(){
  }catch(err){out.innerHTML=stateHTML(raw,method,calcErrHTML(err),"ERROR \u2014 see above");txt="Error evaluating "+raw+": "+err.message}
  setLast("sci",txt,term);refreshSend("sci");
 }
-function setDeg(d){DEGMODE=d;document.getElementById("degbtn").style.borderColor=d?"var(--cy)":"";document.getElementById("radbtn").style.borderColor=d?"":"var(--cy)";var m=document.getElementById("degmode");if(m)m.textContent="Angle mode: "+(d?"DEG":"RAD")}
+function setDeg(d){DEGMODE=d;
+ var db=document.getElementById("degbtn"),rb=document.getElementById("radbtn");
+ db.className="act"+(d?" on":"");rb.className="act"+(d?"":" on");
+ db.setAttribute("aria-pressed",d?"true":"false");rb.setAttribute("aria-pressed",d?"false":"true");
+ var m=document.getElementById("degmode");
+ if(m)m.innerHTML="Angle mode: <b style=\"color:var(--cy)\">\u25cf "+(d?"DEG (degrees)":"RAD (radians)")+"</b> \u2014 trig functions use "+(d?"degrees":"radians");
+}
 function quadSolveText(a,b,c){
  var d=b*b-4*a*c,t="Quadratic: "+a+"x\u00b2 + "+b+"x + "+c+" = 0\nDiscriminant: "+fmt(d)+"\n";
  if(d>0){var x1=(-b+Math.sqrt(d))/(2*a),x2=(-b-Math.sqrt(d))/(2*a);t+="Two real roots: x = "+fmt(x1)+", x = "+fmt(x2)}
@@ -896,9 +910,12 @@ function askGuard(s){
  return (typeof JAHtalk==="undefined")?s:JAHtalk.guard(s,ASK_PROFILE);
 }
 function askClassify(tag){
- if(tag==="CALCULATION")return "Calculated";
- if(tag==="FACTUAL EXPLANATION")return "Known";
- if(tag==="UNSUPPORTED")return "Unsupported";
+ if(tag==="CALCULATION")return "Calculated answer";
+ if(tag==="FACTUAL EXPLANATION")return "Stored fact";
+ if(tag==="LOGICAL ANALYSIS"||tag==="COMPARISON")return "Logical analysis";
+ if(tag==="UNSUPPORTED")return "FACT NOT AVAILABLE";
+ if(tag==="INSUFFICIENT DATA")return "Insufficient data";
+ if(tag==="CALCULATION ERROR")return "Calculation error";
  return "Cannot determine";
 }
 function askClassHTML(tag){return '<div style="font-size:.78em;color:var(--mut);letter-spacing:.06em;margin-bottom:8px">RESULT CLASSIFICATION: <b style="color:var(--cy)">'+askClassify(tag).toUpperCase()+'</b></div>'}
@@ -946,8 +963,8 @@ function askGo(){
    modeTag="FACTUAL EXPLANATION";html+='<div class="verdict"><b style="color:var(--gn)">JAH ANSWER \u2713</b><p style="margin:6px 0;font-size:.95em;line-height:1.55">'+DEFS[dk]+'</p>'+sigref+'</div>';
    plain+="JAH ANSWER: "+DEFS[dk]+"\n\n";
   }else{
-   modeTag="UNSUPPORTED";html+='<div class="verdict" style="border-color:var(--am)"><b style="color:var(--am)">UNSUPPORTED \u2014 FACT NOT AVAILABLE / INSUFFICIENT DATA</b><p style="margin:6px 0;font-size:.95em;line-height:1.55">No stored definition for \u201c'+esc(subj)+'\u201d yet \u2014 nothing is invented here. The ten-lens analysis below breaks it down from structure only, and the full established definition is one tap away in the IWB Dictionary link below.</p>'+sigref+'</div>';
-   plain+="UNSUPPORTED \u2014 FACT NOT AVAILABLE / INSUFFICIENT DATA: no stored definition for '"+subj+"' yet; nothing invented. See the ten-lens analysis below and the IWB Dictionary link.\n\n";
+   modeTag="UNSUPPORTED";html+='<div class="verdict" style="border-color:var(--am)"><b style="color:var(--am)">FACT NOT AVAILABLE</b><p style="margin:6px 0;font-size:.95em;line-height:1.55">No stored definition for \u201c'+esc(subj)+'\u201d yet \u2014 nothing is invented here. The ten-lens analysis below breaks it down from structure only, and the full established definition is one tap away in the IWB Dictionary link below.</p>'+sigref+'</div>';
+   plain+="FACT NOT AVAILABLE: no stored definition for '"+subj+"' yet; nothing invented. See the ten-lens analysis below and the IWB Dictionary link.\n\n";
   }
   term=subj;
  }
@@ -962,15 +979,18 @@ function askGo(){
  }
  /* 4) quantity pattern */
  if(/how many|how much|how long|how far/i.test(q)){
+  modeTag="INSUFFICIENT DATA";
   html+=lensHTML("DIRECT ANSWER — QUANTITY","Counting the real world needs real data, which I do not browse. "+
   "Use Fermi estimation: break the question into 3 multiplications you CAN guess (e.g. people × rate × time), multiply, then sanity-check the order of magnitude. "+
   "An estimate with stated assumptions beats a precise-sounding guess with hidden ones.");
   plain+="QUANTITY: use Fermi estimation — 3 guessable multiplications, then sanity-check the magnitude.\n\n";
  }
- /* 5) ten-lens deterministic analysis */
+ /* 5) ten-lens deterministic analysis — verdict first, lenses behind an optional expansion */
  var L=lenses(q);
- html+=L.html;plain+=L.text;
+ plain+=L.text;
  html+='<div class="verdict"><b style="color:var(--gn)">HYBRID FUSION VERDICT</b><p style="margin:6px 0 0;font-size:.9em">'+esc(L.verdict)+'</p></div>';
+ html+='<div style="margin-top:10px"><button class="act" id="lens-toggle" onclick="toggleLenses(this)" aria-expanded="false" aria-controls="lens-block">Show ten-lens analysis</button></div>';
+ html+='<div id="lens-block" hidden>'+L.html+'</div>';
  plain+="\nHYBRID FUSION VERDICT: "+L.verdict+"\n";
  plain+="\nI compute from your words — I don't browse the web.";
  html+='<p class="note">I compute from your words — I don\'t browse the web.</p>';
@@ -980,6 +1000,7 @@ function askGo(){
 }
 function syllables(w){w=String(w).toLowerCase().replace(/[^a-z]/g,"");if(!w)return 1;if(w.length<=3)return 1;var m=w.replace(/(?:[^laeiouy]e|ed|es)$/,"").match(/[aeiouy]{1,2}/g);return Math.max(1,m?m.length:1)}
 function lensHTML(t,b){return '<div class="lens"><b>'+esc(t)+'</b><p>'+b+'</p></div>'}
+function toggleLenses(btn){var b=document.getElementById("lens-block");if(!b)return;var open=b.hidden;b.hidden=!open;btn.setAttribute("aria-expanded",open?"true":"false");btn.textContent=open?"Hide ten-lens analysis":"Show ten-lens analysis"}
 function lenses(q){
  var h=hashStr(q.toLowerCase()),rnd=prng(h);
  var words=q.toLowerCase().replace(/[^a-z0-9\s]/g,"").split(/\s+/).filter(function(w){return w.length>3});
@@ -1108,13 +1129,13 @@ function pxGo(){
  out.innerHTML=html;
  setLast("paradox",txt,q);refreshSend("paradox");
 }
-/* ================= PROJECT ================= */
+/* ================= PROJECTION ================= */
 function pjGo(){
  var raw=document.getElementById("pj-in").value.trim().split("\n");
  var ys=raw.map(function(x){return parseFloat(x.trim())}).filter(function(x){return!isNaN(x)});
  var out=document.getElementById("pj-out");
  var PJMETHOD="Least-squares linear fit + exponential fit on log(data) \u2014 R\u00b2 comparison, forecast extrapolates the better fit.";
- if(ys.length<3){out.innerHTML=stateHTML("number series (incomplete)",PJMETHOD,errHTML("NOT ENOUGH DATA","Projection needs at least 3 numbers, one per line.","12\n15\n19\n24","Paste 3 or more numbers."),"ERROR \u2014 NOT ENOUGH DATA");return}
+ if(ys.length<3){out.innerHTML=stateHTML("number series (incomplete)",PJMETHOD,errHTML("NOT ENOUGH DATA","Projection needs at least 3 numbers, one per line \u2014 a straight-line fit needs 2+ points and the linear-vs-exponential R\u00b2 comparison needs 3+. With fewer points there is nothing to fit.","12\n15\n19\n24","Paste 3 or more numbers, one per line."),"ERROR \u2014 NOT ENOUGH DATA");return}
  var n=parseInt(document.getElementById("pj-n").value);
  if(isNaN(n)||n<1||n>50){out.innerHTML=stateHTML("series: "+ys.join(", ")+" \u00b7 steps: "+document.getElementById("pj-n").value,PJMETHOD,errHTML("BAD FORECAST STEPS","Forecast steps must be a whole number from 1 to 50.","5","Type a number between 1 and 50."),"ERROR \u2014 BAD FORECAST STEPS");return}
  var xs=ys.map(function(_,i){return i+1});
@@ -1199,9 +1220,11 @@ function lifeStep(){var g=LIFE.grid,w=LIFE.w,h=LIFE.h,ng=[];
   for(var dy=-1;dy<=1;dy++)for(var dx=-1;dx<=1;dx++){if(!dx&&!dy)continue;var nx=(x+dx+w)%w,ny=(y+dy+h)%h;n+=g[ny][nx]}
   ng[y].push((g[y][x]&&n===2)||n===3?1:0)}}
  LIFE.grid=ng;LIFE.gen++;lifeDraw();lifeStat()}
-function lifeRun(){lifePause();var spd=parseInt(document.getElementById("life-spd").value)||200;LIFE.timer=setInterval(lifeStep,spd)}
-function lifePause(){if(LIFE.timer){clearInterval(LIFE.timer);LIFE.timer=null}}
-function lifeReset(){lifePause();lifeInit()}
+function simBtn(id,dis){var b=document.getElementById(id);if(b)b.disabled=!!dis}
+function lifeLiveCount(){var n=0;for(var y=0;y<LIFE.h;y++)for(var x=0;x<LIFE.w;x++)n+=LIFE.grid[y][x];return n}
+function lifeRun(){if(lifeLiveCount()===0){flashNote("Seed the grid first — tap some cells (or Random seed), then Run.");return}lifePause();var spd=parseInt(document.getElementById("life-spd").value)||200;LIFE.timer=setInterval(lifeStep,spd);simBtn("life-run",true);simBtn("life-pause",false)}
+function lifePause(){if(LIFE.timer){clearInterval(LIFE.timer);LIFE.timer=null}simBtn("life-run",false);simBtn("life-pause",true)}
+function lifeReset(){lifePause();lifeInit();simBtn("life-run",false);simBtn("life-pause",true)}
 function lifeRand(){lifePause();for(var y=0;y<LIFE.h;y++)for(var x=0;x<LIFE.w;x++)LIFE.grid[y][x]=Math.random()<0.25?1:0;LIFE.gen=0;lifeDraw();lifeStat()}
 document.getElementById("life-cv").addEventListener("click",function(e){
  var r=this.getBoundingClientRect(),x=Math.floor((e.clientX-r.left)/r.width*LIFE.w),y=Math.floor((e.clientY-r.top)/r.height*LIFE.h);
@@ -1225,8 +1248,11 @@ var DICE={counts:{},rolls:0,seed:7,rnd:prng(7)};
 function diceSeed(){var sd=parseInt(document.getElementById("dice-seed").value);if(isNaN(sd))sd=7;return sd}
 function diceReset(){var sd=diceSeed();DICE={counts:{},rolls:0,seed:sd,rnd:prng(sd>>>0)};document.getElementById("dice-cv").getContext("2d").clearRect(0,0,640,220);document.getElementById("dice-out").textContent="No rolls yet."}
 function diceGo(){
- var nd=Math.max(1,Math.min(10,parseInt(document.getElementById("dice-n").value)||2));
- var nr=Math.max(1,Math.min(100000,parseInt(document.getElementById("dice-r").value)||1000));
+ var ndRaw=document.getElementById("dice-n").value.trim(),nrRaw=document.getElementById("dice-r").value.trim();
+ var nd=parseInt(ndRaw),nr=parseInt(nrRaw),dout=document.getElementById("dice-out");
+ if(isNaN(nd)||nd<1||nd>10){fieldErr("dice-n","Dice must be a whole number from 1 to 10 — try 2.");dout.innerHTML=stateHTML("dice count: "+(ndRaw||"(empty)"),"Dice probability lab",errHTML("INVALID DICE COUNT","Dice must be a whole number from 1 to 10.","2","Type a number between 1 and 10."),"ERROR \u2014 INVALID DICE COUNT");return}
+ if(isNaN(nr)||nr<1||nr>100000){fieldErr("dice-r","Rolls must be a whole number from 1 to 100000 — try 1000.");dout.innerHTML=stateHTML("roll count: "+(nrRaw||"(empty)"),"Dice probability lab",errHTML("INVALID ROLL COUNT","Rolls must be a whole number from 1 to 100000.","1000","Type a number between 1 and 100000."),"ERROR \u2014 INVALID ROLL COUNT");return}
+ fieldErr("dice-n",null);fieldErr("dice-r",null);
  for(var i=0;i<nr;i++){var s=0;for(var d=0;d<nd;d++)s+=1+Math.floor(DICE.rnd()*6);DICE.counts[s]=(DICE.counts[s]||0)+1;DICE.rolls++}
  var cv=document.getElementById("dice-cv"),cx=cv.getContext("2d"),W=cv.width,H=cv.height;
  cx.clearRect(0,0,W,H);
@@ -1307,7 +1333,7 @@ function labTable(){var el=document.getElementById("lab-table");
  LABROWS.forEach(function(r,i){h+="<tr><td>"+(i+1)+"</td><td>"+esc(r.experiment)+"</td><td>"+esc(r.timestamp)+"</td><td>"+esc(r.input)+"</td><td>"+esc(r.output)+"</td><td>"+esc(r.model)+"</td><td>"+esc(r.simulated)+"</td></tr>"});
  el.innerHTML=h+"</table></div>"}
 function labCSV(){if(!LABROWS.length)return;
- var csv=LABCSV_HEAD.join(",")+"\n";
+ var csv="# JAH Lab Notebook export \u2014 ALL readings below are SIMULATED model outputs, never physical measurements.\n"+LABCSV_HEAD.join(",")+"\n";
  LABROWS.forEach(function(r){csv+=LABCSV_HEAD.map(function(k){return '"'+String(r[k]==null?"":r[k]).replace(/"/g,'""')+'"'}).join(",")+"\n"});
  download("jah-lab-notebook.csv",csv,"text/csv");flashNote("Export complete \u2014 jah-lab-notebook.csv ("+LABROWS.length+" readings)")}
 function labClear(){LABROWS=[];labTable()}
