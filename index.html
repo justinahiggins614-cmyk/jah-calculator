@@ -7,7 +7,7 @@
 <meta name="description" content="Signature Universal Paradox Immune Calculator — basic and scientific calculator, equation solver, unit converter, paradox checker, projection engine, simulations, lab bench, and the official JAH-EQ solved-equation archive.">
 <link rel="canonical" href="https://justinahiggins614-cmyk.github.io/jah-calculator/">
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebApplication","name":"Signature Universal Paradox Immune Calculator","url":"https://justinahiggins614-cmyk.github.io/jah-calculator/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","isAccessibleForFree":true,"description":"Basic and scientific calculator with equation solver, unit converter, paradox checker, projection engine, simulation deck, virtual lab bench, and the official JAH-EQ solved-equation archive.","offers":{"@type":"Offer","price":"0"}}
+{"@context": "https://schema.org", "@graph": [{"@context": "https://schema.org", "@type": "WebApplication", "name": "Signature Universal Paradox Immune Calculator", "url": "https://justinahiggins614-cmyk.github.io/jah-calculator/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any", "isAccessibleForFree": true, "description": "Basic and scientific calculator with equation solver, unit converter, paradox checker, projection engine, simulation deck, virtual lab bench, and the official JAH-EQ solved-equation archive.", "offers": {"@type": "Offer", "price": "0"}}, {"@type": "Dataset", "name": "Signature Universal Paradox Immune Calculator", "creator": {"@type": "Person", "name": "Justin Addam Higgins"}}]}
 </script>
 <style>
 :root{--bg:#0a0e14;--panel:#131b29;--panel2:#0f1520;--line:#243149;--txt:#dbe7f5;--mut:#8fa3bd;--cy:#35e0ff;--am:#ffb347;--gn:#5df08a;--rd:#ff6b6b;--gold:#e8d98a}
@@ -73,11 +73,14 @@ footer.site a{color:var(--cy)}
 .eqtools input{flex:1;min-width:170px;width:auto}
 .eqtools select{width:auto;padding:10px}
 .eqcount{color:var(--mut);font-size:.9em;margin:6px 0}
+details.statdrawer{border:0;padding:0;margin:0;background:none}
+details.statdrawer>summary{display:none}
+@media(max-width:767px){details.statdrawer{border:1px solid var(--line);border-radius:8px;padding:8px 12px;margin:10px 0}details.statdrawer>summary{display:list-item;cursor:pointer;font-weight:bold;color:var(--cy)}}
 .eqitem{border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin:8px 0;cursor:pointer;background:var(--panel2)}
 .eqitem:hover{border-color:var(--cy)}
 .eqitem .eid{font-size:.78em;color:var(--mut)}
 .eqitem .et{font-weight:bold;color:var(--txt)}
-.eqoverlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:200;display:flex;align-items:center;justify-content:center;padding:16px}
+.eqoverlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(4px);z-index:200;display:flex;align-items:center;justify-content:center;padding:16px}
 .eqoverlay[hidden]{display:none}
 .eqcard{background:var(--panel);color:var(--txt);border-radius:12px;max-width:640px;width:100%;max-height:88vh;overflow:auto;padding:20px;position:relative;border:2px solid var(--cy)}
 .eqclose{position:absolute;top:8px;right:8px}
@@ -112,7 +115,7 @@ footer.site a{color:var(--cy)}
 <header class="top">
   <h1 class="brand">SIGNATURE UNIVERSAL PARADOX IMMUNE CALCULATOR<small>SOLVES ANYTHING &middot; PARADOX IMMUNE &middot; JAH DETERMINISTIC</small></h1>
   <div class="statusline" id="jah-status" role="status" aria-live="polite">engine self-test running&hellip;</div>
-  <div class="jahnet"><b>THE JAH NETWORK:</b><br>
+  <nav aria-label="JAH Network Global Ecosystem" role="navigation"><div class="jahnet"><b>THE JAH NETWORK:</b><br>
     <a href="https://justinahiggins614-cmyk.github.io/jah-ai-models/" target="_blank" rel="noopener">The Signature AI Phone Book</a>
     <a class="me" href="https://justinahiggins614-cmyk.github.io/jah-calculator/">Calculator</a><span class="youarehere">YOU ARE HERE: SIGNATURE UNIVERSAL PARADOX IMMUNE CALCULATOR</span>
     <a href="https://justinahiggins614-cmyk.github.io/jah-dictionary/" target="_blank" rel="noopener">Dictionary</a>
@@ -138,7 +141,7 @@ footer.site a{color:var(--cy)}
     <a href="https://justinahiggins614-cmyk.github.io/signature-experiment-solver/" target="_blank" rel="noopener">Experiment Solver</a>
     <a href="https://justinahiggins614-cmyk.github.io/signature-ai-image-video-maker/" target="_blank" rel="noopener">Signature AI Pixel</a>
     <a href="https://justinahiggins614-cmyk.github.io/signature-ai-song-maker/" target="_blank" rel="noopener">Signature Music Studio</a>
-  </div>
+  </div></nav>
 </header>
 <nav class="tabs" id="tabbar" aria-label="Calculator modes">
   <a class="tablink on" href="?tab=basic" data-t="basic">Basic</a>
@@ -361,8 +364,10 @@ footer.site a{color:var(--cy)}
     </select>
     <button class="go" onclick="eqSearch()">Search</button>
   </div>
+  <details class="statdrawer" open><summary>Archive stats</summary>
   <div class="eqcount" id="eq-count">Loading archive…</div>
   <p class="eqcount" id="eq-count-static"><span id="eq-count-num">70,300</span> solved equation records in the official archive as of <span id="eq-count-date">2026-10-03</span>.</p>
+  </details>
   <div class="note" id="eq-updated" style="margin-top:2px">Site updated: —</div>
   <div id="eq-list"></div>
   <div id="eq-more" style="text-align:center;margin:10px 0"></div>
@@ -1465,14 +1470,14 @@ function eqOpen(id){
    '<div class="stamp">'+esc(rec.stamp)+'</div>'+eqProvHTML(rec);
   b.appendChild(eqHelperBubble(rec));
   b.dataset.recid=rec.id;
-  document.getElementById("eq-overlay").hidden=false;
+  document.getElementById("eq-overlay").hidden=false;document.body.style.overflow='hidden';
   try{history.replaceState(null,"","?tab=eq&eq="+rec.id)}catch(e){}
  }).catch(function(){
   var n=EQIDX?EQIDX.length:"the archive";
   document.getElementById("eq-count").textContent="NOT FOUND: no record with ID "+id+" in "+n+" official equations. Check the ID or search the archive above.";
  });
 }
-function eqClose(){document.getElementById("eq-overlay").hidden=true;try{history.replaceState(null,"","?tab=eq")}catch(e){}}
+function eqClose(){document.getElementById("eq-overlay").hidden=true;document.body.style.overflow='';try{history.replaceState(null,"","?tab=eq")}catch(e){}}
 function eqCurRec(){var id=document.getElementById("eq-body").dataset.recid;for(var k in EQCHUNKS)if(EQCHUNKS[k][id])return EQCHUNKS[k][id];return null}
 function eqRecText(r){return r.id+"\n"+r.title+"\n"+"\nSTEPS\n"+r.steps.join("\n")+"\n\n"+r.solution+"\n"+r.check+"\n\nRECORD PROVENANCE\nsolver_version: "+(r.solver_version||"JAH-EQ solver v1 (client)")+"\ncanonical: "+(r.canonical||eqCanon(r.equation||r.title||""))+"\ncanonical_hash: "+(r.canonical_hash||"not yet assigned")+"\nmethod: "+(r.method||"archive retrieval \u2014 solved once at publication")+"\nprecision: "+(r.precision||"as published")+"\nresult: "+(r.solution||"")+"\ntimestamp: "+(r.ts||"not yet stamped")+"\nhash: "+(r.hash||"not yet stamped")+"\nJAH-EQ ID is the permanent serial of this record.\n\n"+r.stamp}
 function eqSpeak(){var r=eqCurRec();if(r)ttsSpeak(eqRecText(r))}
@@ -1506,6 +1511,10 @@ labPend();labProj();labOhm();labGas();
 REC_ARMED=true;
 wireFinder();
 jahSelfTest();
+</script>
+<script>
+/* FIX-03: stat drawers collapse on mobile (<768px), expanded on desktop; auto-syncs dynamic renders */
+(function(){function jahStatSync(){var w=window.innerWidth||document.documentElement.clientWidth;var ds=document.querySelectorAll('details.statdrawer');for(var i=0;i<ds.length;i++){if(w<768){ds[i].removeAttribute('open')}else{ds[i].setAttribute('open','')}}}if(document.addEventListener){window.addEventListener('resize',jahStatSync);if(window.MutationObserver){new MutationObserver(jahStatSync).observe(document.documentElement,{childList:true,subtree:true})}jahStatSync()}})();
 </script>
 </body>
 </html>
