@@ -401,7 +401,7 @@ math.formulamath{font-size:1.05em}
   <p style="margin:10px 0"><a href="data.html#archive" style="display:inline-block;background:#1c2940;color:var(--cy);border:1px solid var(--cy);border-radius:8px;padding:10px 18px;text-decoration:none;font-weight:bold">&#128214; BROWSE THE FULL EQUATION ARCHIVE (A&ndash;Z)</a><br><span class="note">Every JAH-EQ record ever solved &mdash; searchable, collapsible A&ndash;Z lists.</span></p>
   <details class="statdrawer" open><summary>Archive stats</summary>
   <div class="eqcount" id="eq-count">Loading archive…</div>
-  <p class="eqcount" id="eq-count-static"><span id="eq-count-num">108,300</span> solved equation records in the official archive as of <span id="eq-count-date">2026-10-04</span>.</p>
+  <p class="eqcount" id="eq-count-static"><span id="eq-count-num">110,300</span> solved equation records in the official archive as of <span id="eq-count-date">2026-10-04</span>.</p>
   </details>
   <div class="note" id="eq-updated" style="margin-top:2px">Site updated: —</div>
   <div id="eq-list"></div>
@@ -474,7 +474,7 @@ math.formulamath{font-size:1.05em}
   <a href="https://justinahiggins614-cmyk.github.io/signature-llama/" target="_blank" rel="noopener">Signature Llama</a> ·
   <a href="https://justinahiggins614-cmyk.github.io/jah-computer-systems/" target="_blank" rel="noopener">The Signature PC System Depository</a><br>
   <a href="data.html">Data &amp; methodology</a> · <a href="data/exports/equations.csv" download>Equation catalog (CSV)</a> · <a href="sitemap-index.xml">Sitemap</a><br>
-  <span style="color:var(--mut);font-size:.8em">Engine jah-calc-engine-1.0 · Solver jah-eq-solver-1.0 · Schema jah-eq-schema-1.0 · Archive <span id="eq-count-num-f">108,300</span> records as of <span id="eq-count-date-f">2026-10-04</span></span>
+  <span style="color:var(--mut);font-size:.8em">Engine jah-calc-engine-1.0 · Solver jah-eq-solver-1.0 · Schema jah-eq-schema-1.0 · Archive <span id="eq-count-num-f">110,300</span> records as of <span id="eq-count-date-f">2026-10-04</span></span>
 <div class="jah-stamp" style="margin-top:10px;text-align:center;"><img src="assets/signature-stamp.jpg" alt="Official Signature stamp" style="height:64px;width:auto;border-radius:4px;"><div style="font-size:.72em;opacity:.75;margin-top:4px;">Official Signature stamp</div></div>
 </footer>
 
@@ -582,6 +582,34 @@ function readTab(tab){if(LAST[tab])ttsSpeak(LAST[tab].text)}
 function readAsk(){if(LAST['ask'])readTab('ask');else document.getElementById('ask-out').textContent='Ask me something first \u2014 then tap \uD83D\uDD0A Read answer aloud to hear it.'}
 function copyTab(tab,btn){if(LAST[tab])copyText(LAST[tab].text,btn)}
 function dlTab(tab){if(LAST[tab]){download("jah-calculator-"+tab+".txt",dlFooter("JAH UNIVERSAL CALCULATOR — "+tab.toUpperCase()+" RESULT",1,LAST[tab].text));flashNote("Export complete \u2014 jah-calculator-"+tab+".txt")}}
+/* ==== JAH global read-aloud controller (one per page): no stacked voices, no orphan audio ==== */
+(function(){
+if(window.__JAHREAD)return;
+var R={audios:[],lastTap:0,lastLabel:""};
+R.stopAll=function(){
+ try{if(window.speechSynthesis)window.speechSynthesis.cancel();}catch(e){}
+ try{if(window.responsiveVoice&&window.responsiveVoice.cancel)window.responsiveVoice.cancel();}catch(e){}
+ var i,a;
+ for(i=0;i<R.audios.length;i++){a=R.audios[i];try{a.pause();}catch(e){}try{a.removeAttribute("src");}catch(e){}try{a.load();}catch(e){}}
+ R.audios.length=0;
+ var els=document.querySelectorAll("audio");
+ for(i=0;i<els.length;i++){try{els[i].pause();}catch(e){}}
+};
+R.reg=function(a){if(a&&R.audios.indexOf(a)<0)R.audios.push(a);return a;};
+R.playGuard=function(label){
+ var now=Date.now();
+ if(now-R.lastTap<450&&label===R.lastLabel){R.lastTap=0;R.lastLabel="";R.stopAll();return false;}
+ R.lastTap=now;R.lastLabel=String(label||"");
+ R.stopAll();return true;
+};
+try{
+ var NativeAudio=window.Audio;
+ window.Audio=function(src){var a=src===undefined?new NativeAudio():new NativeAudio(src);R.reg(a);return a;};
+ window.Audio.prototype=NativeAudio.prototype;
+}catch(e){}
+window.__JAHREAD=R;
+})();
+
 /* ================= tiered TTS ================= */
 var TTS={audio:null,synth:null,queue:[],stopped:true,speed:1,utter:null};
 var TTS_URLS=[
@@ -589,7 +617,8 @@ var TTS_URLS=[
  function(t){return "https://translate.google.com/translate_tts?ie=UTF-8&q="+encodeURIComponent(t)+"&tl=en&client=tw-ob"},
  function(t){return "https://translate.googleapis.com/translate_tts?ie=UTF-8&q="+encodeURIComponent(t)+"&tl=en&client=tw-ob"}];
 function ttsChunks(t){t=String(t).replace(/\s+/g," ").trim();var out=[],cur="";t.split(/(?<=[.!?;])\s+/).forEach(function(s){if((cur+" "+s).length>170){if(cur)out.push(cur);cur=s}else cur=(cur?cur+" ":"")+s});if(cur)out.push(cur);return out.slice(0,90)}
-function ttsStop(){TTS.stopped=true;TTS.queue=[];if(TTS.utter){try{window.speechSynthesis.cancel()}catch(e){}}TTS.utter=null;if(TTS.audio){try{TTS.audio.pause()}catch(e){}TTS.audio=null}}
+function ttsStop(){try{if(window.__JAHREAD)window.__JAHREAD.stopAll();}catch(e){}
+ TTS.stopped=true;TTS.queue=[];if(TTS.utter){try{window.speechSynthesis.cancel()}catch(e){}}TTS.utter=null;if(TTS.audio){try{TTS.audio.pause()}catch(e){}TTS.audio=null}}
 function pickVoice(){try{var vs=window.speechSynthesis.getVoices();if(!vs.length)return null;
  var en=vs.filter(function(v){return/^en([-_]US)?/i.test(v.lang)});
  var pool=en.length?en:vs;
@@ -609,6 +638,7 @@ function ttsUrlTier(chunks,tier){
  a.src=src;var p=a.play();if(p&&p.catch)p.catch(function(){fin(false)});
 }
 function ttsSpeak(text){
+ if(window.__JAHREAD&&!window.__JAHREAD.playGuard("ttsSpeak"))return;
  ttsStop();var chunks=ttsChunks(text);if(!chunks.length)return;TTS.stopped=false;
  if("speechSynthesis" in window){
   try{
