@@ -14,13 +14,13 @@ The sixth JAH site. Solves anything, paradox immune, powered by the JAH determin
 - **Simulate** — Game of Life, Monte Carlo π, dice probability lab, random walk (canvas, run/pause/reset)
 - **Lab** — virtual experiment bench: pendulum, projectile motion, Ohm's law, ideal gas. Sliders, live readouts, lab notebook, CSV export.
 
-Every tab: 🔊 Read aloud (tiered TTS: speechSynthesis female voice → ResponsiveVoice → Google TTS), ⧉ Copy result, ⤓ Download .txt, and "Send this to…" cross-links (IWB Dictionary, JAH Wiki, Spec Catalog).
+Every tab: 🔊 Read aloud (tiered TTS: speechSynthesis female voice → ResponsiveVoice → Google TTS), ⧉ Copy result, ⤓ Download .txt, and "Send this to…" cross-links (The Signature Dictionary, JAH Wiki, Spec Catalog).
 
 ## The JAH Network
 
 1. Catalog of Public Patents — https://justinahiggins614-cmyk.github.io/cyber-patent-catalog/
 2. Spec Catalog — https://justinahiggins614-cmyk.github.io/signature-one-archive/specs.html
-3. IWB Dictionary — https://justinahiggins614-cmyk.github.io/jah-dictionary/
+3. The Signature Dictionary — https://justinahiggins614-cmyk.github.io/jah-dictionary/
 4. JAH Wiki — https://justinahiggins614-cmyk.github.io/jah-wiki/
 5. JAH-N Wiki Leaks — https://justinahiggins614-cmyk.github.io/jah-n-wiki-leaks/
 6. Universal Calculator (this site)

@@ -556,7 +556,7 @@ function sendLinks(term){
  if(!term)return "";
  var e=encodeURIComponent(term);
  return '<div class="sendto">Send this to: '+
- '<a href="https://justinahiggins614-cmyk.github.io/jah-dictionary/?w='+e+'" target="_blank" rel="noopener">IWB Dictionary</a>'+
+ '<a href="https://justinahiggins614-cmyk.github.io/jah-dictionary/?w='+e+'" target="_blank" rel="noopener">The Signature Dictionary</a>'+
  '<a href="https://justinahiggins614-cmyk.github.io/jah-wiki/?page='+e+'" target="_blank" rel="noopener">JAH Wiki</a>'+
  '<a href="https://justinahiggins614-cmyk.github.io/signature-one-archive/specs.html" target="_blank" rel="noopener">Signature Spec Catalog Pending Patents</a></div>';
 }
@@ -1057,8 +1057,8 @@ function askGo(){
    modeTag="FACTUAL EXPLANATION";html+='<div class="verdict"><b style="color:var(--gn)">JAH ANSWER \u2713</b><p style="margin:6px 0;font-size:.95em;line-height:1.55">'+DEFS[dk]+'</p><p class="note" style="margin:8px 0 0">SOURCE: JAH stored answer bank \u2014 a fixed on-page definition list (no browsing, nothing invented).</p>'+sigref+'</div>';
    plain+="JAH ANSWER: "+DEFS[dk]+"\n\n";
   }else{
-   modeTag="UNSUPPORTED";html+='<div class="factna" role="alert"><div class="errtitle">\u26a0 FACT NOT AVAILABLE \u2014 not a calculated result</div><p style="margin:6px 0;font-size:.95em;line-height:1.55">No stored definition for \u201c'+esc(subj)+'\u201d yet \u2014 nothing is invented here. The ten-lens analysis below breaks it down from structure only, and the full established definition is one tap away in the IWB Dictionary link below.</p><p class="note" style="margin:6px 0 0">SOURCE: none \u2014 no stored definition exists for this term.</p>'+sigref+'</div>';
-   plain+="FACT NOT AVAILABLE: no stored definition for '"+subj+"' yet; nothing invented. See the ten-lens analysis below and the IWB Dictionary link.\n\n";
+   modeTag="UNSUPPORTED";html+='<div class="factna" role="alert"><div class="errtitle">\u26a0 FACT NOT AVAILABLE \u2014 not a calculated result</div><p style="margin:6px 0;font-size:.95em;line-height:1.55">No stored definition for \u201c'+esc(subj)+'\u201d yet \u2014 nothing is invented here. The ten-lens analysis below breaks it down from structure only, and the full established definition is one tap away in the Signature Dictionary link below.</p><p class="note" style="margin:6px 0 0">SOURCE: none \u2014 no stored definition exists for this term.</p>'+sigref+'</div>';
+   plain+="FACT NOT AVAILABLE: no stored definition for '"+subj+"' yet; nothing invented. See the ten-lens analysis below and the Signature Dictionary link.\n\n";
   }
   term=subj;
  }
