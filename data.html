@@ -13,7 +13,7 @@
 {"@context":"https://schema.org","@type":"Dataset","name":"JAH-EQ Solved-Equation Archive (official within the Signature/JAH system)","description":"Solved equation records published by the Signature Universal Paradox Immune Calculator. Each record is solved once at generation, numerically verified, and then retrieved — never solved again.","url":"https://justinahiggins614-cmyk.github.io/jah-calculator/data/exports/equations.csv","distribution":{"@type":"DataDownload","encodingFormat":"text/csv","contentUrl":"https://justinahiggins614-cmyk.github.io/jah-calculator/data/exports/equations.csv"}}
 </script>
 <style>
-:root{--bg:#0a0e14;--panel:#131b29;--line:#243149;--txt:#dbe7f5;--mut:#8fa3bd;--cy:#35e0ff;--gold:#e8d98a}
+:root{--bg:#0a0e14;--panel:#131b29;--panel2:#0f1520;--line:#243149;--txt:#dbe7f5;--mut:#8fa3bd;--cy:#35e0ff;--gold:#e8d98a}
 body{margin:0;background:var(--bg);color:var(--txt);font-family:Arial,Helvetica,sans-serif}
 .wrap{max-width:860px;margin:0 auto;padding:20px 16px}
 h1{font-size:1.5em;letter-spacing:1px;color:#fff}
@@ -26,6 +26,10 @@ table{border-collapse:collapse;width:100%;font-size:.85em;margin-top:8px}
 td,th{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
 th{color:var(--gold);font-weight:normal}
 .top a{color:var(--cy);text-decoration:none}
+/* pill tab bar — same tabs as the index.html front door (archive tab active here) */
+.tabs{display:flex;gap:6px;overflow-x:auto;padding:10px 12px;background:var(--panel2);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.tabs a.tablink{flex:0 0 auto;background:var(--panel);color:var(--txt);border:1px solid var(--line);border-radius:6px;padding:9px 14px;font-size:.92em;cursor:pointer;text-decoration:none;font-family:Arial,Helvetica,sans-serif}
+.tabs a.tablink.on{background:var(--cy);color:#04121a;font-weight:bold;border-color:var(--cy)}
 /* BEST OF THE BEST — Manon's 2026-10-04 archive pattern: the AI's top pick pinned above the A–Z list */
 .bestofbest{border:2px solid var(--gold);border-radius:12px;background:linear-gradient(180deg,rgba(232,217,138,.09),rgba(232,217,138,.02));padding:18px;margin:16px 0}
 .bestofbest h2{margin:0 0 4px;color:var(--gold)}
@@ -46,6 +50,15 @@ th{color:var(--gold);font-weight:normal}
 </style>
 </head>
 <body>
+<nav class="tabs" id="tabbar" aria-label="Calculator modes">
+  <a class="tablink" href="index.html?tab=basic">Basic</a>
+  <a class="tablink" href="index.html?tab=sci">Scientific</a>
+  <a class="tablink" href="index.html?tab=ask">Ask Anything</a>
+  <a class="tablink" href="index.html?tab=paradox">Paradox Check</a>
+  <a class="tablink" href="index.html?tab=project">Projection</a>
+  <a class="tablink" href="index.html?tab=sim">Simulate</a>
+  <a class="tablink" href="index.html?tab=lab">Lab</a><a class="tablink" href="index.html?tab=eq">Equations</a><a class="tablink" href="index.html?tab=rec">Record</a><a class="tablink on" href="data.html" aria-current="page">📚 1 Million Archive</a>
+</nav>
 <div class="wrap">
 <p class="top"><a href="index.html">&larr; Back to the Signature Universal Paradox Immune Calculator</a></p>
 <h1>DATA &amp; METHODOLOGY</h1>
