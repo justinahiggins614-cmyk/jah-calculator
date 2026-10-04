@@ -34,6 +34,19 @@ th{color:var(--gold);font-weight:normal}
 <h1>DATA &amp; METHODOLOGY</h1>
 <p class="card"><span id="eq-count-num">98,300</span> solved equation records in the JAH-EQ archive (official within the Signature/JAH system) as of <span id="eq-count-date">2026-10-04</span>. This page documents how the archive is built, identified, verified, and versioned.</p>
 
+<h2 id="archive">BROWSE THE FULL EQUATION ARCHIVE (A&ndash;Z)</h2>
+<p>The archive itself is the product: every JAH-EQ record ever solved, listed A&ndash;Z by equation title. Open a letter to load just that letter's index (the archive is never loaded all at once), or search the whole catalog. Every record links to its live equation page.</p>
+<p class="card" style="text-align:center"><b><span id="eq-arch-num">98,300</span></b> solved equation records listed below, as of <span id="eq-arch-date">2026-10-04</span>.</p>
+<div class="card">
+<label for="az-search" style="display:block;margin-bottom:8px;font-weight:bold;color:var(--cy)">Search all <span id="az-search-total">98,300</span> records</label>
+<input id="az-search" type="search" placeholder="Type part of an equation title or a JAH-EQ id&hellip;" style="width:100%;max-width:560px;padding:10px;border-radius:6px;border:1px solid var(--line);background:#0b111c;color:var(--txt);font-size:1em" autocomplete="off">
+<p class="note" id="az-search-note" style="margin:8px 0 0;font-size:.85em;color:var(--mut)"></p>
+<div id="az-search-results" style="margin-top:8px"></div>
+</div>
+<noscript><p class="card">The A&ndash;Z browser needs JavaScript. <a href="data/exports/equations.csv" download>Download the full equation catalog (CSV)</a> instead.</p></noscript>
+<div id="az-list"><p class="note" style="color:var(--mut)">Loading the A&ndash;Z index&hellip;</p></div>
+<p class="note" style="font-size:.85em;color:var(--mut)">Each letter list is paged (200 records per page) so it stays fast on phones. Letter indexes are fetched only when you open them; searching fetches any letters it still needs, then filters on your device.</p>
+
 <h2>WHAT THE EQUATION ARCHIVE IS</h2>
 <p>Every equation is solved <b>once</b> by this calculator, published as a <b>JAH-EQ</b> record (official within the Signature/JAH system) — then just <b>retrieved</b>, never solved again. The archive is the calculator's permanent solved-once memory, marching to <b>1,000,000</b> records. "Official JAH-EQ record" means a canonical record generated and stored by this calculator — official within the Signature/JAH system.</p>
 
@@ -84,5 +97,141 @@ th{color:var(--gold);font-weight:normal}
 </ul>
 <p><a href="index.html">&larr; Back to the calculator</a></p>
 </div>
+<script>
+(function(){
+"use strict";
+var PAGE=200, cache={}, manifest=null, searchTimer=null;
+
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+function $(id){return document.getElementById(id);}
+
+function gunzip(ab){
+  if(!("DecompressionStream" in window)) return Promise.reject(new Error("no-gunzip"));
+  var ds=new DecompressionStream("gzip");
+  var s=new Response(ab).body.pipeThrough(ds);
+  return new Response(s).text();
+}
+
+function loadLetter(L){
+  if(cache[L]) return Promise.resolve(cache[L]);
+  return fetch("data/index/az/eq-az-"+L+".json.gz").then(function(r){
+    if(!r.ok) throw new Error("fetch "+r.status);
+    return r.arrayBuffer();
+  }).then(gunzip).then(function(text){
+    var rows=text.split("\n").filter(Boolean).map(function(line){return JSON.parse(line);});
+    cache[L]={L:L,rows:rows};
+    return cache[L];
+  });
+}
+
+function letterLabel(L){return L==="#"?"0\u20139 & symbols":L;}
+
+function renderPage(entry,page){
+  var box=$("az-page-"+entry.L);
+  var totalPages=Math.max(1,Math.ceil(entry.rows.length/PAGE));
+  page=Math.min(Math.max(1,page),totalPages);
+  entry.page=page;
+  var start=(page-1)*PAGE, slice=entry.rows.slice(start,start+PAGE);
+  var html='<ol start="'+(start+1)+'" style="font-size:.88em;line-height:1.9;margin:8px 0;padding-left:22px">';
+  for(var i=0;i<slice.length;i++){
+    var r=slice[i];
+    html+='<li><a href="index.html?tab=eq&amp;eq='+esc(r[0])+'">'+esc(r[0])+'</a> &mdash; '+esc(r[1])+' <span style="color:var(--mut);font-size:.85em">'+esc(r[2])+'</span></li>';
+  }
+  html+="</ol>";
+  html+='<div style="margin:10px 0;font-size:.85em">';
+  html+='<button class="azpg" data-l="'+entry.L+'" data-p="'+(page-1)+'"'+(page<=1?' disabled':'')+'>&larr; Prev</button> ';
+  html+='<span style="margin:0 10px;color:var(--mut)">Page '+page+' of '+totalPages+'</span>';
+  html+='<button class="azpg" data-l="'+entry.L+'" data-p="'+(page+1)+'"'+(page>=totalPages?' disabled':'')+'>Next &rarr;</button></div>';
+  box.innerHTML=html;
+  var btns=box.getElementsByClassName("azpg");
+  for(var b=0;b<btns.length;b++){
+    (function(btn){btn.onclick=function(){renderPage(entry,parseInt(btn.getAttribute("data-p"),10));};})(btns[b]);
+  }
+}
+
+function openLetter(L,det){
+  var body=$("az-body-"+L);
+  if(body.getAttribute("data-loaded")==="1") return;
+  body.innerHTML='<p style="color:var(--mut);font-size:.85em">Loading letter '+esc(L)+'&hellip;</p>';
+  loadLetter(L).then(function(entry){
+    body.setAttribute("data-loaded","1");
+    renderPage(entry,1);
+  }).catch(function(){
+    body.innerHTML='<p style="font-size:.85em">Could not load this letter index. <a href="data/exports/equations.csv" download>Use the CSV catalog</a> instead.</p>';
+  });
+}
+
+function init(){
+  var list=$("az-list");
+  fetch("data/index/az/manifest.json").then(function(r){
+    if(!r.ok) throw new Error("manifest "+r.status);
+    return r.json();
+  }).then(function(m){
+    manifest=m;
+    $("az-search-total").textContent=m.total.toLocaleString("en-US");
+    var html="";
+    for(var i=0;i<m.letters.length;i++){
+      var e=m.letters[i];
+      html+='<details class="card azl" id="az-'+e.l+'" style="margin:10px 0"><summary style="cursor:pointer;font-size:1.05em"><b>'+esc(letterLabel(e.l))+'</b> &mdash; <span style="color:var(--mut)">'+e.n.toLocaleString("en-US")+' records</span></summary><div id="az-body-'+e.l+'"></div></details>';
+    }
+    list.innerHTML=html;
+    var dets=list.getElementsByTagName("details");
+    for(var d=0;d<dets.length;d++){
+      (function(det){
+        var L=det.id.replace("az-","");
+        det.addEventListener("toggle",function(){if(det.open) openLetter(L,det);});
+      })(dets[d]);
+    }
+    // ?letter=X deep link: auto-open that letter
+    var q=(location.search||"").match(/[?&]letter=([^&#]*)/);
+    if(q){
+      var L=decodeURIComponent(q[1]).toUpperCase().charAt(0);
+      var det=$("az-"+L)||$("az-#");
+      if(det){det.open=true;openLetter(L,det);det.scrollIntoView();}
+    }
+  }).catch(function(){
+    list.innerHTML='<p class="card">The A&ndash;Z index is unavailable. <a href="data/exports/equations.csv" download>Download the full equation catalog (CSV)</a> instead.</p>';
+  });
+}
+
+function doSearch(){
+  var q=$("az-search").value.trim();
+  var note=$("az-search-note"), out=$("az-search-results");
+  if(q.length<2){note.textContent="";out.innerHTML="";return;}
+  if(!manifest){note.textContent="Index still loading\u2026 try again in a moment.";return;}
+  note.textContent="Searching "+manifest.total.toLocaleString("en-US")+" records\u2026";
+  var missing=manifest.letters.map(function(e){return e.l;}).filter(function(L){return !cache[L];});
+  Promise.all(missing.map(loadLetter)).then(function(){
+    var ql=q.toLowerCase(), idq=q.toUpperCase().replace(/\s+/g,""), hits=[];
+    for(var i=0;i<manifest.letters.length && hits.length<100;i++){
+      var rows=cache[manifest.letters[i].l].rows;
+      for(var j=0;j<rows.length && hits.length<100;j++){
+        var r=rows[j];
+        if(r[1].toLowerCase().indexOf(ql)>-1 || r[0].toUpperCase().indexOf(idq)>-1)
+          hits.push([manifest.letters[i].l,r]);
+      }
+    }
+    if(!hits.length){note.textContent="No records match \u201C"+q+"\u201D.";out.innerHTML="";return;}
+    var many=hits.length>=100;
+    note.textContent="Found "+(many?"100+":hits.length)+" match"+(hits.length===1?"":"es")+" for \u201C"+q+"\u201D"+(many?" (showing first 100)":"");
+    var html='<ol style="font-size:.88em;line-height:1.9;margin:8px 0;padding-left:22px">';
+    for(var k=0;k<hits.length;k++){
+      var r2=hits[k][1];
+      html+='<li><a href="index.html?tab=eq&amp;eq='+esc(r2[0])+'">'+esc(r2[0])+'</a> &mdash; '+esc(r2[1])+' <span style="color:var(--mut);font-size:.85em">'+esc(r2[2])+' · '+esc(hits[k][0])+'</span></li>';
+    }
+    out.innerHTML=html+"</ol>";
+  }).catch(function(){
+    note.textContent="Search failed to load an index chunk. Check your connection and try again.";
+  });
+}
+
+var si=$("az-search");
+si.addEventListener("input",function(){clearTimeout(searchTimer);searchTimer=setTimeout(doSearch,450);});
+si.addEventListener("keydown",function(e){if(e.key==="Enter"){e.preventDefault();clearTimeout(searchTimer);doSearch();}});
+
+if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",init);
+else init();
+})();
+</script>
 </body>
 </html>

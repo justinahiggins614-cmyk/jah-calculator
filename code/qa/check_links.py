@@ -28,11 +28,14 @@ for u in urls:
         except Exception as e:
             dead.append((u, "%s: %s" % (type(e).__name__, e)))
     else:
-        p = os.path.join(ROOT, u.lstrip("/"))
+        # strip fragment/query: data.html#archive and ?tab=eq both resolve locally
+        local = u.split("#", 1)[0]
+        if local == "" or local.startswith("?"):
+            local = "index.html"
+        p = os.path.join(ROOT, local.lstrip("/"))
         if os.path.exists(p):
             ok.append((u, "local"))
         else:
-            # deep-link query strings hit index.html itself
             dead.append((u, "missing local file"))
 
 print("checked %d links" % len(urls))

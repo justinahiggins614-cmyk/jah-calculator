@@ -5,6 +5,7 @@ import gzip, json, math, os, re
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
 BASE = "https://justinahiggins614-cmyk.github.io/jah-calculator/index.html"
+DATABASE = "https://justinahiggins614-cmyk.github.io/jah-calculator/data.html"
 BATCH = 50000
 CATEGORIES = ["linear", "quadratic", "system2", "trig", "power", "log", "exp",
               "evaluate", "percent", "derivative", "integral", "geometry"]
@@ -38,6 +39,18 @@ def main():
             f.write(f'  <url><loc>{BASE}?tab=eq&amp;type={cat}</loc><changefreq>weekly</changefreq></url>\n')
         f.write('</urlset>\n')
     files.append("sitemap-eq-cats.xml")
+    # A-Z archive letter deep links (data.html?letter=X auto-opens that letter)
+    az_letters = []
+    az_manifest = os.path.join(ROOT, "data", "index", "az", "manifest.json")
+    if os.path.exists(az_manifest):
+        az_letters = [e["l"] for e in json.load(open(az_manifest, encoding="utf-8"))["letters"]]
+    with open(os.path.join(ROOT, "sitemap-eq-az.xml"), "w", encoding="utf-8") as f:
+        f.write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n')
+        for L in az_letters:
+            f.write(f'  <url><loc>{DATABASE}?letter={L}</loc><changefreq>weekly</changefreq></url>\n')
+        f.write('</urlset>\n')
+    files.append("sitemap-eq-az.xml")
+    print(f"sitemap: {len(az_letters)} A-Z letter URLs")
     # sitemap index
     with open(os.path.join(ROOT, "sitemap-index.xml"), "w", encoding="utf-8") as f:
         f.write('<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n')
