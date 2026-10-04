@@ -1,11 +1,9 @@
-/* JAH GUIDE BACKFILL — site 2 of 27: Signature Universal Paradox Immune Calculator
-   1) First-visit spotlight tour (localStorage flag jah-tour-seen-calculator):
-      "New here? Take the 1-minute tour" prompt -> Start/Skip.
-      Step-by-step spotlight in place: WHAT it is / WHAT it does / HOW to use it.
-      Controls: Next / Back / Skip tour. Esc + arrow keys. 44px+ touch buttons.
-      Never blocks content: no full-page dimmer; dismissible at any time; dismissal remembered.
-   2) Permanent "? Guide" button in the sticky tab bar: opens the full user guide
-      (every user-facing feature, what-it-does + how-to-use-it, plain language).
+/* JAH GUIDE (2026-10-04 TOUR-FIX standard):
+   1) First-visit WELCOME overlay (localStorage flag jah-tour-seen-calculator):
+      centered modal, 5 plain-language steps, ONE "OK — Got it" button.
+      NO auto-scroll, NO spotlight ring, NO section jumps — the page stays put.
+   2) Permanent "? Guide" button in the sticky tab bar re-opens the welcome overlay;
+      the overlay has a "Full how-to guide" button for the full feature guide below.
    ES5-safe, additive, theme untouched (reuses --cy/--panel/--line/--txt vars). */
 (function(){
 "use strict";
@@ -88,86 +86,43 @@ var BASECSS={
 };
 function style(d,obj){for(var k in obj)d.style[k]=obj[k];return d}
 function bigBtn(t,primary){var b=el("button",null,t);
- style(b,{minHeight:"44px",minWidth:"44px",fontSize:"1em",padding:"10px 18px",
-  borderRadius:"8px",cursor:"pointer",margin:"6px 6px 0 0",fontFamily:"Arial,Helvetica,sans-serif",
+ style(b,{minHeight:"48px",minWidth:"48px",fontSize:"1.05em",padding:"12px 22px",
+  borderRadius:"8px",cursor:"pointer",margin:"8px 8px 0 0",fontFamily:"Arial,Helvetica,sans-serif",
   border:primary?"none":"1px solid "+CY,
   background:primary?CY:"#1c2940",color:primary?"#04121a":"var(--txt,#dbe7f5)",
   fontWeight:primary?"bold":"normal"});
  return b}
 
-/* ---------------- first-visit prompt ---------------- */
-function showPrompt(){
- var p=el("div");
- style(p,BASECSS);
- style(p,{left:"50%",bottom:"18px",transform:"translateX(-50%)",maxWidth:"92vw",width:"380px",zIndex:100001});
- p.setAttribute("role","dialog");p.setAttribute("aria-label","First-time tour prompt");
- var t=el("div",null,"<b style=\"color:"+CY+"\">NEW HERE?</b> Take the 1-minute tour —<br><span style=\"font-size:.9em\">see what this calculator can do.</span>");
- t.style.marginBottom="4px";p.appendChild(t);
- var s=bigBtn("Start tour",true),k=bigBtn("Skip",false);
- s.addEventListener("click",function(){p.remove();startTour()});
- k.addEventListener("click",function(){markSeen();p.remove()});
- p.appendChild(s);p.appendChild(k);document.body.appendChild(p);
-}
-
-/* ---------------- the tour ---------------- */
-var T=null;
-function currentTab(){var b=document.querySelector("#tabbar a.tablink.on");return b?b.getAttribute("data-t"):"basic"}
-function endTour(){if(T){T.ring.remove();T.cap.remove();if(T.keyh)document.removeEventListener("keydown",T.keyh);T=null}}
-function startTour(){
- endTour();
- var ring=el("div");style(ring,{position:"fixed",zIndex:99998,pointerEvents:"none",
-  border:"3px solid "+CY,borderRadius:"8px",boxShadow:"0 0 0 9999px rgba(0,0,0,0)",display:"none"});
- document.body.appendChild(ring);
- var cap=el("div");style(cap,BASECSS);
- style(cap,{left:"50%",bottom:"14px",transform:"translateX(-50%)",width:"560px",maxWidth:"94vw",
-  maxHeight:"46vh",overflowY:"auto",zIndex:99999});
- cap.setAttribute("role","dialog");cap.setAttribute("aria-label","Calculator tour");
- document.body.appendChild(cap);
- var keyh=function(e){
-  if(e.key==="Escape"){markSeen();endTour()}
-  else if(e.key==="ArrowRight"){step(T.i+1)}
-  else if(e.key==="ArrowLeft"){step(T.i-1)}
- };
- document.addEventListener("keydown",keyh);
- T={ring:ring,cap:cap,keyh:keyh,i:0};
- step(0);
-}
-function step(n){
- if(!T)return;
- if(n<0)n=0;
- if(n>=STEPS.length){markSeen();endTour();return}
- T.i=n;
- var st=STEPS[n];
- try{if(st.tab&&st.tab!==currentTab()&&typeof showTab==="function")showTab(st.tab)}catch(e){}
- var target=null;
- try{target=document.querySelector(st.sel)}catch(e){}
- if(!target){step(n+1);return}
- try{target.scrollIntoView({block:"center",behavior:"smooth"})}catch(e){try{target.scrollIntoView()}catch(x){}}
- setTimeout(function(){if(!T||T.i!==n)return;position(T.ring,target);renderCap(st,n)},120);
- position(T.ring,target);renderCap(st,n);
-}
-function position(ring,target){
- var r=target.getBoundingClientRect();
- style(ring,{display:"block",left:(r.left-5)+"px",top:(r.top-5)+"px",
-  width:(r.width+10)+"px",height:(r.height+10)+"px"});
-}
-function renderCap(st,n){
- var c=T.cap;c.innerHTML="";
- var head=el("div",null,"<b style=\"color:"+CY+"\">"+st.title+"</b> <span style=\"color:#8fa3bd;font-size:.8em\">("+(n+1)+" of "+STEPS.length+")</span>");
- c.appendChild(head);
- [["WHAT",st.what],["WHAT IT DOES",st.does],["HOW",st.how]].forEach(function(pair){
-  var d=el("div",null,"<b style=\"color:"+CY+";font-size:.78em;letter-spacing:.06em\">"+pair[0]+"</b><br><span style=\"font-size:.92em\">"+pair[1]+"</span>");
-  d.style.marginTop="8px";c.appendChild(d);
- });
- var row=el("div");row.style.marginTop="10px";
- var back=bigBtn("Back",false),next=bigBtn(n===STEPS.length-1?"Finish":"Next",true),skip=bigBtn("Skip tour",false);
- back.disabled=(n===0);if(n===0)back.style.opacity=".4";
- back.addEventListener("click",function(){step(n-1)});
- next.addEventListener("click",function(){if(n===STEPS.length-1){markSeen();endTour()}else step(n+1)});
- skip.addEventListener("click",function(){markSeen();endTour()});
- row.appendChild(back);row.appendChild(next);row.appendChild(skip);
- c.appendChild(row);
- if(T){T.ring.style.display="block"}
+/* ---------------- first-visit WELCOME overlay ---------------- */
+var WELCOME_STEPS=[
+ "<b>Pick a mode tab.</b> The sticky bar at the top has 9 tools: Basic, Scientific, Ask Anything, Paradox Check, Projection, Simulate, Lab, Equations, and Record.",
+ "<b>Type and calculate.</b> In Basic, type any expression and hit Calculate — it shows its work step by step.",
+ "<b>Ask, or check for paradoxes.</b> Ask Anything answers plain-words questions; Paradox Check tests a statement like \"This statement is false\" through the three-gate engine.",
+ "<b>Explore the archives.</b> The Equations tab holds the JAH-EQ solved-equation archive; the Record tab keeps every solve — on this device only.",
+ "<b>Read, copy, download.</b> Every result has read-aloud, copy, and .txt download buttons in the row beneath it."
+];
+function openWelcome(){
+ var back=el("div");style(back,{position:"fixed",inset:"0",background:"rgba(0,0,0,.78)",
+  zIndex:100003,display:"flex",alignItems:"center",justifyContent:"center",padding:"16px"});
+ var card=el("div");style(card,BASECSS);
+ style(card,{maxWidth:"540px",width:"100%",maxHeight:"88vh",overflowY:"auto",position:"relative"});
+ card.setAttribute("role","dialog");card.setAttribute("aria-label","Welcome to the calculator");
+ card.appendChild(el("div",null,"<b style=\"color:"+CY+";font-size:1.25em\">Welcome to the Calculator</b>"));
+ card.appendChild(el("div",null,"<span style=\"color:#8fa3bd;font-size:.9em\">The Signature Universal Paradox Immune Calculator — 9 tools, one page. Here is how to use it:</span>"));
+ var ol=el("ol");ol.style.margin="10px 0 0";ol.style.paddingLeft="22px";ol.style.lineHeight="1.55";ol.style.fontSize=".95em";
+ WELCOME_STEPS.forEach(function(t){var li=el("li",null,t);li.style.margin="8px 0";ol.appendChild(li)});
+ card.appendChild(ol);
+ var row=el("div");row.style.marginTop="8px";
+ var ok=bigBtn("OK \u2014 Got it \u2713",true),full=bigBtn("Full how-to guide",false);
+ ok.addEventListener("click",function(){closeW()});
+ full.addEventListener("click",function(){closeW();openGuide()});
+ row.appendChild(ok);row.appendChild(full);card.appendChild(row);
+ function closeW(){if(back.parentNode)back.parentNode.removeChild(back);document.removeEventListener("keydown",kh);markSeen()}
+ var kh=function(e){if(e.key==="Escape")closeW()};
+ document.addEventListener("keydown",kh);
+ back.addEventListener("click",function(e){if(e.target===back)closeW()});
+ back.appendChild(card);document.body.appendChild(back);
+ try{ok.focus()}catch(e){}
 }
 
 /* ---------------- the permanent guide ---------------- */
@@ -181,7 +136,7 @@ function openGuide(){
  var x=el("button",null,"\u2715");style(x,{position:"absolute",top:"8px",right:"8px",minHeight:"44px",minWidth:"44px",
   background:"none",border:"1px solid "+CY,color:"var(--txt,#dbe7f5)",borderRadius:"8px",cursor:"pointer",fontSize:"1.1em"});
  x.setAttribute("aria-label","Close guide");
- var h=el("div",null,"<b style=\"color:"+CY+";font-size:1.15em;letter-spacing:1px\">HOW TO USE THIS SITE</b><br><span style=\"color:#8fa3bd;font-size:.85em\">Signature Universal Paradox Immune Calculator — every feature, plain language.</span>");
+ var h=el("div",null,"<b style=\"color:"+CY+";font-size:1.15em;letter-spacing:1px\">HOW TO USE THIS SITE</b><br><span style=\"color:#8fa3bd;font-size:.85em\">Signature Universal Paradox Immune Calculator \u2014 every feature, plain language.</span>");
  h.style.marginBottom="6px";card.appendChild(x);card.appendChild(h);
  GUIDE.forEach(function(g){
   var d=el("div",null,"<b style=\"color:"+CY+"\">"+g.h+"</b>");
@@ -190,8 +145,8 @@ function openGuide(){
   card.appendChild(d);
  });
  var tr=el("div");tr.style.marginTop="14px";
- var tb=bigBtn("Take the 1-minute tour",true);
- tb.addEventListener("click",function(){back.remove();startTour()});
+ var tb=bigBtn("Show the welcome guide",true);
+ tb.addEventListener("click",function(){back.remove();openWelcome()});
  tr.appendChild(tb);card.appendChild(tr);
  function close(){back.remove();document.removeEventListener("keydown",kh)}
  x.addEventListener("click",close);
@@ -208,13 +163,13 @@ function init(){
   if(bar&&!document.getElementById("jah-guide-btn")){
    var b=el("button",null,"? Guide");
    b.id="jah-guide-btn";b.type="button";b.className="tablink";
-   b.setAttribute("aria-label","Open the how-to-use guide");
+   b.setAttribute("aria-label","Open the welcome guide");
    b.style.marginLeft="auto";b.style.borderColor=CY;
-   b.addEventListener("click",function(e){e.preventDefault();openGuide()});
+   b.addEventListener("click",function(e){e.preventDefault();openWelcome()});
    bar.appendChild(b);
   }
  }catch(e){}
- if(!seen()){setTimeout(showPrompt,900)}
+ if(!seen()){setTimeout(openWelcome,900)}
 }
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init);
 else init();
