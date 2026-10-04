@@ -122,7 +122,7 @@ function openWelcome(){
  document.addEventListener("keydown",kh);
  back.addEventListener("click",function(e){if(e.target===back)closeW()});
  back.appendChild(card);document.body.appendChild(back);
- try{ok.focus()}catch(e){}
+ try{ok.focus({preventScroll:true})}catch(e){}
 }
 
 /* ---------------- the permanent guide ---------------- */
