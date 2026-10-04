@@ -26,6 +26,23 @@ table{border-collapse:collapse;width:100%;font-size:.85em;margin-top:8px}
 td,th{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
 th{color:var(--gold);font-weight:normal}
 .top a{color:var(--cy);text-decoration:none}
+/* BEST OF THE BEST — Manon's 2026-10-04 archive pattern: the AI's top pick pinned above the A–Z list */
+.bestofbest{border:2px solid var(--gold);border-radius:12px;background:linear-gradient(180deg,rgba(232,217,138,.09),rgba(232,217,138,.02));padding:18px;margin:16px 0}
+.bestofbest h2{margin:0 0 4px;color:var(--gold)}
+.bestofbest .whybest{font-size:.92em;background:rgba(232,217,138,.1);border-left:3px solid var(--gold);padding:8px 12px;border-radius:0 8px 8px 0;margin:10px 0;line-height:1.6}
+.bestofbest .beststats{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.bestofbest .beststat{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:6px 12px;font-size:.85em}
+.bestofbest .beststat b{color:var(--gold)}
+.bestofbest ol.steps{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:12px 12px 12px 32px;margin:10px 0;font-size:.92em}
+.bestofbest ol.steps li{margin:4px 0}
+.bestofbest .solution{font-size:1.05em}
+.bestofbest .toolbar{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.bestofbest .btn{background:#1b2650;color:#dbe7f5;border:1px solid var(--line);border-radius:8px;padding:9px 14px;cursor:pointer;font-size:.92em;text-decoration:none;display:inline-block}
+.bestofbest .btn:hover{border-color:var(--gold)}
+.bestflow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:12px 0;justify-content:center}
+.bestflow .bnode{background:var(--bg);border:1px solid var(--cy);border-radius:10px;padding:10px 14px;text-align:center;font-size:.82em;max-width:160px}
+.bestflow .bnode b{display:block;color:var(--cy);margin-bottom:4px}
+.bestflow .barrow{color:var(--gold);font-size:20px;font-weight:700}
 </style>
 </head>
 <body>
@@ -150,6 +167,54 @@ document.getElementById("jah-askai-q").addEventListener("keydown",function(e){if
 </div>
 
 <noscript><p class="card">The A&ndash;Z browser needs JavaScript. <a href="data/exports/equations.csv" download>Download the full equation catalog (CSV)</a> instead.</p></noscript>
+<section class="bestofbest" aria-labelledby="besth">
+<h2 id="besth">★ BEST OF THE BEST</h2>
+<p style="margin:4px 0;font-size:.9em;color:var(--mut)">The AI's top pick from this archive — the single record that best shows what this calculator does. Popped open for you.</p>
+<details open>
+<summary style="cursor:pointer;font-size:1.05em"><b>Differentiate f(x) = x<sup>4</sup> − 7x<sup>3</sup> − 3x<sup>2</sup> + x − 3</b><br><span style="font-size:.8em;color:var(--gold)">JAH-EQ-00000034 · derivative · record #34</span></summary>
+<div style="padding-top:8px">
+<p class="whybest"><b>Why this is the best:</b> the most complete worked solution in the whole archive — 8 solution steps, every term differentiated one by one with the power rule, then verified. It shows the calculator's whole promise in a single record: solved once, checked, published forever.</p>
+<div class="bestflow" aria-hidden="true"><div class="bnode"><b>You type it</b>f(x) = x⁴ − 7x³ − 3x² + x − 3</div><div class="barrow">→</div><div class="bnode"><b>It solves once</b>power rule, term by term</div><div class="barrow">→</div><div class="bnode"><b>It verifies</b>check ✓ stamped</div><div class="barrow">→</div><div class="bnode"><b>Yours forever</b>retrieved, never re-solved</div></div>
+<p><b>What it does:</b> differentiates a 4th-degree polynomial — applying d/dx[xⁿ] = n·xⁿ⁻¹ to each of the five terms, including the constant term (which becomes 0).</p>
+<p><b>Implications:</b> this is the "solved-once" archive in action. The work below was done a single time; every future visit just retrieves it. That is how all <b>112,300</b> records in this archive were made — and how it marches to 1,000,000.</p>
+<p><b>The full worked solution:</b></p>
+<ol class="steps">
+<li>f(x) = x<sup>4</sup> − 7x<sup>3</sup> − 3x<sup>2</sup> + x − 3</li>
+<li>Apply the power rule d/dx[x<sup>n</sup>] = n·x<sup>n−1</sup>:</li>
+<li>d/dx[x<sup>4</sup>] = 4x<sup>3</sup></li>
+<li>d/dx[−7x<sup>3</sup>] = −21x<sup>2</sup></li>
+<li>d/dx[−3x<sup>2</sup>] = −6x</li>
+<li>d/dx[x] = 1</li>
+<li>d/dx[−3] = 0 (constant)</li>
+<li>f′(x) = 4x<sup>3</sup> − 21x<sup>2</sup> − 6x + 1</li>
+</ol>
+<p class="solution"><b>Solution:</b> f′(x) = 4x<sup>3</sup> − 21x<sup>2</sup> − 6x + 1 &nbsp;·&nbsp; <b>Check:</b> Power rule applied term by term ✓</p>
+<div class="beststats"><span class="beststat"><b>112,300</b> records in archive</span><span class="beststat">Family: <b>derivative</b> (1 of 12)</span><span class="beststat"><b>8</b> solution steps — most in archive</span><span class="beststat">Verified: <b>✓</b></span></div>
+<div class="toolbar">
+<button class="btn" id="best-speak" type="button">🔊 Read aloud</button>
+<button class="btn" id="best-copy" type="button">⧉ Copy</button>
+<button class="btn" id="best-dl" type="button">⤓ Download</button>
+<a class="btn" href="index.html?tab=eq&amp;eq=JAH-EQ-00000034">Open live equation →</a>
+</div>
+</div>
+</details>
+</section>
+<script>
+(function(){
+"use strict";
+var plain="Best of the Best — Differentiate f(x) = x^4 - 7x^3 - 3x^2 + x - 3. JAH-EQ-00000034. The most complete worked solution in the archive: 8 steps. Step 1: f(x) = x^4 - 7x^3 - 3x^2 + x - 3. Step 2: apply the power rule. d/dx of x^4 is 4x^3. d/dx of -7x^3 is -21x^2. d/dx of -3x^2 is -6x. d/dx of x is 1. d/dx of -3 is 0. Solution: f prime of x = 4x^3 - 21x^2 - 6x + 1. Verified.";
+var dl="JAH-EQ-00000034 — Differentiate f(x) = x^4 - 7x^3 - 3x^2 + x - 3\nderivative · record #34 of 112,300 · Official JAH Equation Archive\n\nWHAT IT DOES\nDifferentiates a 4th-degree polynomial, applying d/dx[x^n] = n*x^(n-1) term by term.\n\nWORKED SOLUTION\n1. f(x) = x^4 - 7x^3 - 3x^2 + x - 3\n2. Apply the power rule d/dx[x^n] = n*x^(n-1):\n3. d/dx[x^4] = 4x^3\n4. d/dx[-7x^3] = -21x^2\n5. d/dx[-3x^2] = -6x\n6. d/dx[x] = 1\n7. d/dx[-3] = 0 (constant)\n8. f'(x) = 4x^3 - 21x^2 - 6x + 1\n\nSOLUTION: f'(x) = 4x^3 - 21x^2 - 6x + 1\nCHECK: Power rule applied term by term \u2713\n\nOfficial JAH Equation Archive — solved once, published officially, retrieved thereafter.";
+function copyText(t,btn){function done(ok){var o=btn.textContent;btn.textContent=ok?"Copied ✓":"Copy failed";setTimeout(function(){btn.textContent=o;},1500);}if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(function(){done(true);},function(){done(false);});}else{var ta=document.createElement("textarea");ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand("copy");done(true);}catch(e){done(false);}document.body.removeChild(ta);}}
+function download(name,text){try{var url=URL.createObjectURL(new Blob([text],{type:"text/plain"}));var a=document.createElement("a");a.href=url;a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){document.body.removeChild(a);try{URL.revokeObjectURL(url);}catch(e){}},800);}catch(e){}}
+var speakTimer=null;
+function speakStop(){try{if(window.speechSynthesis)window.speechSynthesis.cancel();}catch(e){}if(speakTimer){clearTimeout(speakTimer);speakTimer=null;}}
+var speakBtn=document.getElementById("best-speak");
+function speak(){speakStop();try{if(!("speechSynthesis" in window)){speakBtn.textContent="No voice on this device";setTimeout(function(){speakBtn.innerHTML="🔊 Read aloud";},1800);return;}var u=new SpeechSynthesisUtterance(plain);speakBtn.textContent="⏹ Stop";u.onend=function(){speakBtn.innerHTML="🔊 Read aloud";};u.onerror=function(){speakBtn.innerHTML="🔊 Read aloud";};window.speechSynthesis.speak(u);speakTimer=setTimeout(function(){speakBtn.innerHTML="🔊 Read aloud";},30000);}catch(e){speakBtn.innerHTML="🔊 Read aloud";}}
+speakBtn.onclick=function(){try{if(window.speechSynthesis&&window.speechSynthesis.speaking){speakStop();speakBtn.innerHTML="🔊 Read aloud";}else{speak();}}catch(e){speak();}};
+document.getElementById("best-copy").onclick=function(){copyText(dl,this);};
+document.getElementById("best-dl").onclick=function(){download("JAH-EQ-00000034-best.txt",dl);};
+})();
+</script>
 <div id="az-list"><p class="note" style="color:var(--mut)">Loading the A&ndash;Z index&hellip;</p></div>
 <p class="note" style="font-size:.85em;color:var(--mut)">Each letter list is paged (200 records per page) so it stays fast on phones. Letter indexes are fetched only when you open them; searching fetches any letters it still needs, then filters on your device.</p>
 
