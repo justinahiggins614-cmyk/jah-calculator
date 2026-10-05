@@ -2,7 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<script>try{if(localStorage.getItem('jah-theme')==='dark'){document.documentElement.setAttribute('data-theme','dark');}}catch(e){}</script>
+<script src="js/signin.js"></script>
+<script>/* profile-aware storage wrapper: signed out = plain localStorage (unchanged); signed in = per-profile namespace */
+var PS=(typeof JAHProfile!=="undefined"&&JAHProfile)?JAHProfile.store:{get:function(k){try{return localStorage.getItem(k)}catch(e){return null}},set:function(k,v){try{localStorage.setItem(k,v)}catch(e){}},remove:function(k){try{localStorage.removeItem(k)}catch(e){}}};</script>
+<script>try{if(PS.get('jah-theme')==='dark'){document.documentElement.setAttribute('data-theme','dark');}}catch(e){}</script>
 <style>
 html[data-theme="dark"]{filter:invert(1) hue-rotate(180deg)}
 html[data-theme="dark"] img,html[data-theme="dark"] video,html[data-theme="dark"] canvas,html[data-theme="dark"] svg{filter:invert(1) hue-rotate(180deg)}
@@ -528,12 +531,12 @@ var LAST={};
 function setLast(tab,text,term){LAST[tab]={text:text,term:term||""}}
 function recGet(){
  try{
-  var r=JSON.parse(localStorage.getItem("jah_calc_record")||"[]"),chg=false;
+  var r=JSON.parse(PS.get("jah_calc_record")||"[]"),chg=false;
   for(var i=0;i<r.length;i++){
    if(!r[i].id){r[i].id=solveId(r[i].tab,r[i].text,r[i].t);chg=true}
    if(r[i].input==null){r[i].input="";chg=true}
   }
-  if(chg)localStorage.setItem("jah_calc_record",JSON.stringify(r));
+  if(chg)PS.set("jah_calc_record",JSON.stringify(r));
   return r;
  }catch(e){return[]}
 }
@@ -553,7 +556,7 @@ function recPush(tab,text,term){
   if(r.length&&r[0].text===text&&r[0].tab===tab)return;
   r.unshift({id:solveId(tab,text,now),t:now,tab:tab,input:String(term||""),text:text.slice(0,1500)});
   if(r.length>500)r.length=500;
-  localStorage.setItem("jah_calc_record",JSON.stringify(r));
+  PS.set("jah_calc_record",JSON.stringify(r));
  }catch(e){recRender();recQuota()}
 }
 function recQuota(){
@@ -1030,7 +1033,8 @@ function askSocial(q){
  var t=String(q||"").toLowerCase();
  var social=/^(hi|hii+|hey|hello|yo|howdy|good\s?(morning|afternoon|evening|day)|greetings|sup|hiya)\b/.test(t)||
   /\b(what are your duties|what is your duty|what do you do|what can you do|your duties|your job|your role|your abilities|explain your duties|who are you|your name|introduce yourself|how are you|thank|bye|goodbye)\b/.test(t);
- return social?JAHtalk.chatFor(ASK_PROFILE,'page:calc-ask').reply(q):null;
+ var ck=(typeof JAHProfile!=="undefined"&&JAHProfile)?JAHProfile.chatKey('page:calc-ask'):'page:calc-ask';
+ return social?JAHtalk.chatFor(ASK_PROFILE,ck).reply(q):null;
 }
 function askGuard(s){
  return (typeof JAHtalk==="undefined")?s:JAHtalk.guard(s,ASK_PROFILE);
@@ -1661,7 +1665,7 @@ function dlFooter(kind,n,extra,src){
  return head+tail+"size: "+size+" bytes\n";
 }
 function recDownload(){var t=recText();if(t){download("jah-calculator-solve-record.txt",dlFooter("JAH CALCULATOR — SOLVE RECORD",recGet().length,t));flashNote("Export complete \u2014 jah-calculator-solve-record.txt")}}
-function recClear(){try{localStorage.removeItem("jah_calc_record")}catch(e){}recRender()}
+function recClear(){try{PS.remove("jah_calc_record")}catch(e){}recRender()}
 
 /* ================= official equation archive ================= */
 var EQIDX=null,EQCHUNKS={},EQSHOWN=0,EQCUR=[],EQLASTMOD="",EQIDX_P=null;
@@ -1922,29 +1926,39 @@ jahSelfTest();
 
 <button id="jah-theme-toggle" title="Toggle dark mode" aria-label="Toggle dark mode">&#9681;</button>
 <script>
-(function(){try{var b=document.getElementById('jah-theme-toggle');if(!b)return;function upd(){b.textContent=document.documentElement.getAttribute('data-theme')==='dark'?'\u2600':'\u25d0';}upd();b.addEventListener('click',function(){var dark=document.documentElement.getAttribute('data-theme')!=='dark';document.documentElement.setAttribute('data-theme',dark?'dark':'');try{localStorage.setItem('jah-theme',dark?'dark':'');}catch(e){}upd();});}catch(e){}})();
+(function(){try{var b=document.getElementById('jah-theme-toggle');if(!b)return;function upd(){b.textContent=document.documentElement.getAttribute('data-theme')==='dark'?'\u2600':'\u25d0';}upd();b.addEventListener('click',function(){var dark=document.documentElement.getAttribute('data-theme')!=='dark';document.documentElement.setAttribute('data-theme',dark?'dark':'');try{PS.set('jah-theme',dark?'dark':'');}catch(e){}upd();});}catch(e){}})();
 </script>
 <script>
 /* JAH session restore: scroll + tabs + last record. localStorage only, nothing leaves the device. */
 (function(){try{
 var path=location.pathname.replace(/\/$/,'')||'/';
 var KEY='jah-session:'+path;
-var state={};try{state=JSON.parse(localStorage.getItem(KEY)||'{}');}catch(e){state={};}
+var state={};try{state=JSON.parse(PS.get(KEY)||'{}');}catch(e){state={};}
 var deep=/[?&](spec|patent|dossier|w|id|dial|q|query|term|word)=/i.test(location.search||'')||location.hash.length>1;
 if(state.y&&!deep){addEventListener('load',function(){setTimeout(function(){try{window.scrollTo(0,state.y);}catch(e){}},60);});}
-var t=null;addEventListener('scroll',function(){if(t)return;t=setTimeout(function(){t=null;try{state.y=window.scrollY||window.pageYOffset;localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}},600);},{passive:true});
+var t=null;addEventListener('scroll',function(){if(t)return;t=setTimeout(function(){t=null;try{state.y=window.scrollY||window.pageYOffset;PS.set(KEY,JSON.stringify(state));}catch(e){}},600);},{passive:true});
 var tabs=[],sels=['[role="tab"]','.tab-button','.tabbtn','button.tab','a.tab','.wikitabs button'];
 for(var si=0;si<sels.length;si++){var n=document.querySelectorAll(sels[si]);for(var i=0;i<n.length;i++){if(tabs.indexOf(n[i])<0)tabs.push(n[i]);}}
 if(tabs.length){if(state.tab!=null&&tabs[state.tab]){addEventListener('load',function(){setTimeout(function(){try{tabs[state.tab].click();}catch(e){}},150);});}
-for(var k=0;k<tabs.length;k++){(function(el,i){el.addEventListener('click',function(){try{state.tab=i;localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}});})(tabs[k],k);}}
+for(var k=0;k<tabs.length;k++){(function(el,i){el.addEventListener('click',function(){try{state.tab=i;PS.set(KEY,JSON.stringify(state));}catch(e){}});})(tabs[k],k);}}
 var RP=/[?&](spec|patent|dossier|w|id|dial)=([^&#]+)/i.exec(location.search||'');
-if(RP){try{localStorage.setItem('jah-last-record',decodeURIComponent(RP[2]));}catch(e){}}
-document.addEventListener('click',function(ev){var a=ev.target&&ev.target.closest?ev.target.closest('a[href]'):null;if(!a)return;var m=/[?&](spec|patent|dossier|w|id|dial)=([^&#]+)/i.exec(a.getAttribute('href')||'');if(m){try{localStorage.setItem('jah-last-record',decodeURIComponent(m[2]));}catch(e){}}},true);
-if(!deep){var last=null;try{last=localStorage.getItem('jah-last-record');}catch(e){}
+if(RP){try{PS.set('jah-last-record',decodeURIComponent(RP[2]));}catch(e){}}
+document.addEventListener('click',function(ev){var a=ev.target&&ev.target.closest?ev.target.closest('a[href]'):null;if(!a)return;var m=/[?&](spec|patent|dossier|w|id|dial)=([^&#]+)/i.exec(a.getAttribute('href')||'');if(m){try{PS.set('jah-last-record',decodeURIComponent(m[2]));}catch(e){}}},true);
+if(!deep){var last=null;try{last=PS.get('jah-last-record');}catch(e){}
 if(last){addEventListener('load',function(){setTimeout(function(){try{var el=document.querySelector('[data-id="'+last+'"],[id*="'+last+'"],a[href*="'+last+'"]');if(el)el.scrollIntoView({block:'center'});}catch(e){}},300);});}}
 }catch(e){}})();
 </script>
 <script src="js/jah-guide.js"></script>
 
+<script>
+(function () {
+  var mount = document.querySelector("header .booksearch") ||
+              document.querySelector("nav.jtabbar") ||
+              document.querySelector("header nav") ||
+              document.querySelector("header") ||
+              document.body;
+  if (window.JAHProfile && JAHProfile.ui) JAHProfile.ui.renderButton(mount);
+})();
+</script>
 </body>
 </html>

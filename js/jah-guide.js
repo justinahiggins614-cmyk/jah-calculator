@@ -75,8 +75,9 @@ var GUIDE=[
  {h:"Also handy",p:["The status line under the title shows the engine self-test result, definition count, archive size, and record mode.","The circle button at the bottom-right toggles dark mode.","The footer has Data & methodology, the full equation catalog CSV, and the sitemap."]}
 ];
 
-function seen(){try{return localStorage.getItem(LS_KEY)==="1"}catch(e){return true}}
-function markSeen(){try{localStorage.setItem(LS_KEY,"1")}catch(e){}}
+function _jps(){if(typeof JAHProfile!=="undefined"&&JAHProfile&&JAHProfile.store)return JAHProfile.store;return{get:function(k){try{return localStorage.getItem(k)}catch(e){return null}},set:function(k,v){try{localStorage.setItem(k,v)}catch(e){}}}}
+function seen(){try{return _jps().get(LS_KEY)==="1"}catch(e){return true}}
+function markSeen(){try{_jps().set(LS_KEY,"1")}catch(e){}}
 function el(tag,cls,html){var d=document.createElement(tag);if(cls)d.className=cls;if(html!=null)d.innerHTML=html;return d}
 var BASECSS={
  position:"fixed",zIndex:100000,fontFamily:"Arial,Helvetica,sans-serif",
