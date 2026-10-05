@@ -1030,7 +1030,7 @@ function askSocial(q){
  var t=String(q||"").toLowerCase();
  var social=/^(hi|hii+|hey|hello|yo|howdy|good\s?(morning|afternoon|evening|day)|greetings|sup|hiya)\b/.test(t)||
   /\b(what are your duties|what is your duty|what do you do|what can you do|your duties|your job|your role|your abilities|explain your duties|who are you|your name|introduce yourself|how are you|thank|bye|goodbye)\b/.test(t);
- return social?JAHtalk.reply(ASK_PROFILE,q):null;
+ return social?JAHtalk.chatFor(ASK_PROFILE,'page:calc-ask').reply(q):null;
 }
 function askGuard(s){
  return (typeof JAHtalk==="undefined")?s:JAHtalk.guard(s,ASK_PROFILE);
