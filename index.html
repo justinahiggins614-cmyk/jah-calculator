@@ -491,7 +491,7 @@ function mem(tab,op){MEM[tab]=MEM[tab]||0;if(op==="+")MEM[tab]+=lastNum(tab);els
 function memPaint(tab){var e=document.getElementById("mem-"+tab);if(e)e.innerHTML="Memory: <b>"+esc(fmt(MEM[tab]||0))+"</b>"}
 function lastNum(){return LASTNUM||0}
 var LASTNUM=0;
-function ins(id,t){var e=document.getElementById(id);var s=e.selectionStart||e.value.length;e.value=e.value.slice(0,s)+t+e.value.slice(e.selectionEnd||s);e.focus();}
+function ins(id,t){var e=document.getElementById(id);var s=e.selectionStart;if(s==null)s=e.value.length;var en=e.selectionEnd;if(en==null)en=s;e.value=e.value.slice(0,s)+t+e.value.slice(en);try{e.setSelectionRange(s+t.length,s+t.length)}catch(x){}e.focus();}
 /* tabs */
 var TABS=["basic","sci","ask","paradox","project","sim","lab","eq","rec"];
 document.getElementById("tabbar").addEventListener("click",function(e){var b=e.target.closest("a[data-t]");if(!b)return;e.preventDefault();showTab(b.getAttribute("data-t"))});
@@ -620,32 +620,17 @@ function ttsUrlTier(chunks,tier){
 function ttsSpeak(text){
  if(window.__JAHREAD&&!window.__JAHREAD.playGuard("ttsSpeak"))return;
  ttsStop();var chunks=ttsChunks(text);if(!chunks.length)return;TTS.stopped=false;
- if("speechSynthesis" in window){
-  try{
-   var synth=window.speechSynthesis;
-   var start=function(){
-    if(TTS.stopped)return;
-    var i=0;
-    var step=function(){
-     if(TTS.stopped||i>=chunks.length){ttsStop();return}
-     var u=new SpeechSynthesisUtterance(chunks[i]);TTS.utter=u;
-     u.lang="en-US";u.rate=TTS.speed;var v=pickVoice();if(v)u.voice=v;
-     u.onend=function(){i++;step()};
-     u.onerror=function(){TTS.utter=null;ttsUrlTier(chunks.slice(i),0)};
-     synth.speak(u);
-    };step();
-   };
-   if(synth.getVoices().length){start()}
-   else{var to=setTimeout(function(){ttsUrlTier(chunks,0)},3000);
-    synth.onvoiceschanged=function(){clearTimeout(to);start()}}
-   return;
-  }catch(e){}
- }
+ /* Audio-only: speechSynthesis fails SILENTLY on Android/FB WebView (no onend/onerror),
+    which dead-ends the queue. Skip it — go straight to the audio tiers (jah-wiki pattern). */
  ttsUrlTier(chunks,0);
 }
 
 /* ================= expression parser (hand-written, never eval) ================= */
 var DEGMODE=true;
+/* PCT: tracks a trailing postfix % inside the term currently being parsed.
+   Lets A+B% mean A + (A*B/100) — the standard calculator percent-of behavior —
+   while A%B with an operand after % stays modulo. */
+var PCT=null;
 function tokenize(s){
  s=String(s).replace(/×/g,"*").replace(/÷/g,"/").replace(/−/g,"-").replace(/π/g,"pi").replace(/√/g,"sqrt(");
  var toks=[],i=0;
@@ -671,11 +656,21 @@ var FUNCS={
 function parseEval(s){
  var toks=tokenize(s),pos=0;
  function peek(){return toks[pos]}function next(){return toks[pos++]}
- function pExpr(){var v=pTerm();while(peek()&&peek().t==="op"&&(peek().v==="+"||peek().v==="-")){var o=next().v;var r=pTerm();v=o==="+"?v+r:v-r}return v}
- function pTerm(){var v=pUnary();while(peek()&&peek().t==="op"&&(peek().v==="*"||peek().v==="/"||peek().v==="%")){var o=next().v;var r=pUnary();v=o==="*"?v*r:o==="/"?v/r:v%r}return v}
+ function pExpr(){var v=pTerm();while(peek()&&peek().t==="op"&&(peek().v==="+"||peek().v==="-")){var o=next().v;var r=pTerm();if(PCT!=null){r=v*PCT/100;PCT=null}v=o==="+"?v+r:v-r}return v}
+ function pTerm(){PCT=null;var v=pUnary();while(peek()&&peek().t==="op"){var o=peek().v;
+  if(o==="*"||o==="/"){next();PCT=null;var r=pUnary();v=o==="*"?v*r:v/r}
+  else if(o==="%"){var t1=toks[pos+1];var infix=t1&&(t1.t==="n"||t1.t==="id"||(t1.t==="op"&&t1.v==="("));
+   if(!infix)break;next();PCT=null;var r2=pUnary();v=v%r2}
+  else break}return v}
  function pPow(){var v=pPost();if(peek()&&peek().t==="op"&&peek().v==="^"){next();var r=pUnary();v=Math.pow(v,r)}return v}
  function pUnary(){if(peek()&&peek().t==="op"&&(peek().v==="-"||peek().v==="+")){var o=next().v;var v=pUnary();return o==="-"?-v:v}return pPow()}
- function pPost(){var v=pPrim();if(peek()&&peek().t==="op"&&peek().v==="!"){next();v=FUNCS.fact(v)}return v}
+ function pPost(){var v=pPrim();for(;;){var t0=peek();
+  if(t0&&t0.t==="op"&&t0.v==="!"){next();v=FUNCS.fact(v);continue}
+  /* postfix % = percent (/100). Infix A%B (operand follows %) stays modulo. */
+  if(t0&&t0.t==="op"&&t0.v==="%"){var t1=toks[pos+1];
+   var infix=t1&&(t1.t==="n"||t1.t==="id"||(t1.t==="op"&&t1.v==="("));
+   if(infix)break;next();PCT=v;v=v/100;continue}
+  break}return v}
  function pPrim(){
   var t=next();if(!t)throw new Error("unexpected end");
   if(t.t==="n")return t.v;
@@ -782,7 +777,7 @@ function zeroPowNote(raw){
  return "";
 }
 function basicGo(){
- var raw=closeParens(document.getElementById("basic-in").value.trim().replace(/=+$/,""));
+ var raw=closeParens(document.getElementById("basic-in").value.trim().replace(/=+$/,"").replace(/%\s*of\b/gi,"/100*"));
  if(!raw){fieldErr("basic-in","Type an expression first — try (12 + 8) * 3 / 4 - 2^3.");return}
  fieldErr("basic-in",null);
  var out=document.getElementById("basic-out"),txt,term=raw;
@@ -802,7 +797,7 @@ function basicGo(){
  setLast("basic",txt,term);refreshSend("basic");
 }
 function sciGo(){
- var raw=closeParens(document.getElementById("sci-in").value.trim().replace(/=+$/,""));
+ var raw=closeParens(document.getElementById("sci-in").value.trim().replace(/=+$/,"").replace(/%\s*of\b/gi,"/100*"));
  if(!raw){fieldErr("sci-in","Type an expression first — try sin(30) + log(1000) + 2^10.");return}
  fieldErr("sci-in",null);
  var out=document.getElementById("sci-out"),txt,term=raw,method=METHOD_PARSER+" ("+(DEGMODE?"degrees":"radians")+")";
@@ -1796,7 +1791,7 @@ function eqProvHTML(rec){
   ["Record timestamp",rec.ts||"not yet stamped"],
   ["Record hash (SHA-256)",rec.record_hash||"legacy record \u2014 stamped on republication"],
   ["Canonical hash",rec.canonical_hash||"not yet assigned"]];
- var h='<div style="margin-top:12px;border:1px solid var(--ln);border-radius:8px;padding:10px 12px;font-size:.82em"><b style="letter-spacing:.06em">RECORD PROVENANCE \u00B7 JAH-EQ STANDARD</b><table class="dt" style="margin-top:6px">';
+ var h='<div style="margin-top:12px;border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:.82em"><b style="letter-spacing:.06em">RECORD PROVENANCE \u00B7 JAH-EQ STANDARD</b><table class="dt" style="margin-top:6px">';
  rows.forEach(function(r){h+="<tr><td style='color:var(--mut)'>"+esc(r[0])+"</td><td>"+esc(String(r[1]))+"</td></tr>"});
  h+='</table><p class="note" style="margin:8px 0 0">The JAH-EQ ID is the permanent serial of this record: once published, the record is retrieved, never solved again.</p></div>';
  return h;
